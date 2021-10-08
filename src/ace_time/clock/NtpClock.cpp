@@ -4,11 +4,14 @@
  */
 
 #include <Arduino.h>
-#include "../common/compat.h"
-#include "../common/logging.h"
 #include "NtpClock.h"
 
 #if defined(ESP8266) || defined(ESP32)
+
+// ESP32 does not define SERIAL_PORT_MONITOR
+#ifndef SERIAL_PORT_MONITOR
+#define SERIAL_PORT_MONITOR Serial
+#endif
 
 namespace ace_time {
 namespace clock {

@@ -10,7 +10,7 @@
 #if defined(STM32F1xx)
 
 #include <stdint.h>
-#include "../hw/Stm32F1Rtc.h"
+#include "../ace_time_hw/Stm32F1Rtc.h"
 #include "Clock.h"
 
 namespace ace_time {

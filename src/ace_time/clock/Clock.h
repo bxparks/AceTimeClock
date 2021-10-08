@@ -7,8 +7,7 @@
 #define ACE_TIME_CLOCK_H
 
 #include <stdint.h>
-#include "../common/common.h"
-#include "../LocalTime.h"
+#include <AceTime.h> // LocalTime, acetime_t
 
 namespace ace_time {
 namespace clock {

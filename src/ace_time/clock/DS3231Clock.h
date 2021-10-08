@@ -7,9 +7,9 @@
 #define ACE_TIME_DS3231_CLOCK_H
 
 #include <stdint.h>
+#include <AceTime.h>
 #include "../hw/DS3231.h"
 #include "../hw/HardwareDateTime.h"
-#include "../LocalDateTime.h"
 #include "Clock.h"
 
 namespace ace_time {

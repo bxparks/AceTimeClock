@@ -12,9 +12,9 @@
 #if defined(ARDUINO_ARCH_STM32)
 
 #include <stdint.h>
-#include "../hw/StmRtc.h"
-#include "../hw/HardwareDateTime.h"
-#include "../LocalDateTime.h"
+#include <AceTime.h> // LocalDateTime
+#include "../ace_time_hw/StmRtc.h"
+#include "../ace_time_hw/HardwareDateTime.h"
 #include "Clock.h"
 
 namespace ace_time {

@@ -4,8 +4,8 @@
  */
 
 #include <AceCommon.h>
+#include <AceTime.h>
 #include "HardwareDateTime.h"
-#include "../common/DateStrings.h"
 
 using ace_common::printPad2To;
 

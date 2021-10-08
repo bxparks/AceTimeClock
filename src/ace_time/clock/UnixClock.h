@@ -9,8 +9,8 @@
 #if defined(EPOXY_DUINO)
 
 #include <time.h> // time()
+#include <AceTime.h> // LocalDate
 #include "Clock.h"
-#include "../LocalDate.h"
 
 namespace ace_time {
 namespace clock {
