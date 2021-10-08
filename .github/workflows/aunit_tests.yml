@@ -1,0 +1,34 @@
+# See https://docs.github.com/en/actions/guides for documentation about GitHub
+# Actions.
+
+name: AUnit Tests
+
+# Run on all branches.
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup
+      run: |
+        cd ..
+        git clone https://github.com/bxparks/EpoxyDuino
+        git clone https://github.com/bxparks/AceRoutine
+        git clone https://github.com/bxparks/AUnit
+        git clone https://github.com/bxparks/AceCommon
+        git clone https://github.com/bxparks/AceTime
+        git clone https://github.com/bxparks/AceWire
+
+    - name: Verify examples
+      run: |
+        make -C examples
+
+    - name: Verify tests
+      run: |
+        make -C tests
+        make -C tests runtests
