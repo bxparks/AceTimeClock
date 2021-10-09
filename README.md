@@ -34,9 +34,12 @@ not available on all Arduino platforms. On the AVR platform, the value of the
 the `system_tick()` function exactly once a second. On the SAMD21 and Teensy
 platforms, the `time.h` header file does not exist.
 
-The companion [AceTime](https://github.com/bxparks/AceTime) library provides the
-mechanism for converting the epoch seconds from AceTimeClock into human-readable
-date and time in different time zones.
+This library was part of the [AceTime](https://github.com/bxparks/AceTime)
+library, but extracted into a separate library to manage the complexity of both
+libraries. The AceTime library provides the mechanism for converting the epoch
+seconds from AceTimeClock into human-readable date and time in different time
+zones. AceTimeClock currently has a dependency on AceTime, but that may go away
+in the future.
 
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
@@ -57,7 +60,7 @@ This library can be an alternative to the Arduino Time
 * [Documentation](#Documentation)
     * [HelloSystemClock](#HelloSystemClock)
     * [Other Examples](#OtherExamples)
-* [Usage](#Usage)
+* [User Guide](#UserGuide)
     * [Headers](#Headers)
     * [Class Hierarchy](#ClassHierarchy)
     * [Clock Class](#ClockClass)
@@ -118,7 +121,6 @@ The `master` branch contains the stable releases.
 
 The source files are organized as follows:
 * `src/AceTimeClock.h` - main header file
-* `src/ace_time/` - date and time classes (`ace_time::`)
 * `src/ace_time/clock/` - system clock from RTC or NTP sources
   (`ace_time::clock`)
 * `src/ace_time/hw/` - thin hardware abstraction layer (`ace_time::hw`)
@@ -129,19 +131,26 @@ The source files are organized as follows:
 <a name="Dependencies"></a>
 ### Dependencies
 
-To use the AceTime library, client apps need:
+To use the AceTimeClock library, client apps must install the following
+libraries:
 
 * AceTime (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
-* AceRoutine (https://github.com/bxparks/AceRoutine)
-    * Optional. Needed if you use the `SystemClockCoroutine` class for automatic
-      syncing. This is recommended but not strictly necessary.
 
-Various programs in the `examples/` directory have one or more of the following
-external dependencies. The comment section near the top of the `*.ino` file will
-usually have more precise dependency information:
+Specific classes depend on additional libraries which do not need to be
+installed if those special classes are not used. The `SystemClockCoroutine`
+class depends on the following library:
 
 * AceRoutine (https://github.com/bxparks/AceRoutine)
+
+The `DS3231Clock` depends on the following:
+
+* AceWire (https://github.com/bxparks/AceWire)
+
+Various programs in the `examples/` directory may have additional external
+dependencies. The comment section near the top of the `*.ino` file will usually
+have more precise dependency information:
+
 * Arduino Time Lib (https://github.com/PaulStoffregen/Time)
 * Arduino Timezone (https://github.com/JChristensen/Timezone)
 
@@ -171,6 +180,7 @@ This is the example code for using the `SystemClock` taken from
 
 ```C++
 #include <Arduino.h>
+#include <AceTime.h>
 #include <AceTimeClock.h>
 using ace_time::acetime_t;
 using ace_time::ZonedDateTime;
@@ -272,27 +282,17 @@ https://github.com/bxparks/clocks repo:
 * [LedClock](https://github.com/bxparks/clocks/tree/master/LedClock)
     * a clock using 7-segment LED modules
 
-<a name="Usage"></a>
-## Usage
-
-This library provides Clock classes which provide access to more accurate
-external time sources, and provide a fast access to an auto-updating "Epoch
-Seconds" on all Arduino platforms. Initially, the classes of this library were
-part of the [AceTime](https://github.com/bxparks/AceTime) library, but
-eventually extracted into a separate library to manage the complexity of both
-libraries.
-
-The main purpose of the `Clock` class hierarchy is to provide a 32-bit signed
-integer (`int32_t`) that represents the number of seconds since a fixed point in
-the past called the "Epoch". Just like the AceTime library, the epoch is defined
-to be 2000-01-01T00:00:00 UTC.
+<a name="UserGuide"></a>
+## User Guide
 
 <a name="Headers"></a>
 ### Headers and Namespaces
 
 Only a single header file `AceTimeClock.h` is required to use this library.
-To use the Clock classes without prepending the namespace prefixes, use
-the following `using` directive:
+The code in this library previously lived in the AceTime library under the
+`ace_time::clock` namespace. To preserve backwards compatibility, the directory
+structure and namespace have been retained. To use the Clock classes without
+prepending the namespace prefixes, use the following `using` directive:
 
 ```C++
 #include <AceTimeClock.h>
