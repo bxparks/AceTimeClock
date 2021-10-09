@@ -4,4 +4,5 @@ sizeof(clock::SystemClock): 28
 sizeof(clock::SystemClockLoop): 41
 sizeof(clock::SystemClockCoroutine): 52
 BENCHMARKS
+SystemClockLoop 19.564
 END
