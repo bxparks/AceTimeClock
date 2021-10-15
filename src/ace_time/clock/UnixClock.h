@@ -22,6 +22,7 @@ class UnixClock: public Clock {
   public:
     explicit UnixClock() {}
 
+    /** Setup function that currently does nothing. */
     void setup() {}
 
     acetime_t getNow() const override {

@@ -23,10 +23,12 @@ namespace clock {
 template<typename T_WIREI>
 class DS3231Clock : public Clock {
   public:
+    /** Constructor. */
     explicit DS3231Clock(const T_WIREI& wireInterface) :
         mDS3231(wireInterface)
     {}
 
+    /** Setup that currently does nothing. */
     void setup() {}
 
     acetime_t getNow() const override {

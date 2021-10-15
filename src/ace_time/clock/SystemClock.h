@@ -78,6 +78,14 @@ class SystemClockTemplate: public Clock {
       }
     }
 
+    /**
+     * Return the number of seconds since the AceTime epoch
+     * (2000-01-01T00:00:00Z). Returns kInvalidSeconds if an error has occured.
+     *
+     * This is a blocking call. Some clocks (e.g. NTP client) this may take
+     * many seconds. On those clocks, use the asynchronous methods
+     * (sendRequest(), isResponseReady(), and readResponse()) instead.
+     */
     acetime_t getNow() const override {
       if (!mIsInit) return kInvalidSeconds;
 
@@ -106,6 +114,12 @@ class SystemClockTemplate: public Clock {
       return mEpochSeconds;
     }
 
+    /**
+     * Set the time to the indicated seconds. Calling with a value of
+     * kInvalidSeconds indicates an error condition, so the method should do
+     * nothing. Some clocks do not support this feature, for example, NTP or
+     * GPS clocks and this method will be a no-op.
+     */
     void setNow(acetime_t epochSeconds) override {
       syncNow(epochSeconds);
 

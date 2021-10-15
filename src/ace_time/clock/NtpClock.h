@@ -75,7 +75,7 @@ class NtpClock: public Clock {
      * prepare the UDP connection. If the WiFi connection was set up elsewhere,
      * you can call the method with no arguments to bypass the WiFi setup.
      *
-     * @param server wireless SSID (default nullptr)
+     * @param ssid wireless SSID (default nullptr)
      * @param password password of the SSID (default nullptr)
      * @param connectTimeoutMillis how long to wait for a WiFi connection
      *    (default 10000 ms)

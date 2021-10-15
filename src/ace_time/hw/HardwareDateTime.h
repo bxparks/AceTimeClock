@@ -20,13 +20,26 @@ struct HardwareDateTime {
   /** Print HardwareDateTime to 'printer'. */
   void printTo(Print& printer) const;
 
-  uint8_t year; // [00, 99], year - 2000
-  uint8_t month; // [1, 12]
-  uint8_t day; // [1, 31]
-  uint8_t hour; // [0, 23]
-  uint8_t minute; // [0, 59]
-  uint8_t second; // [0, 59]
-  uint8_t dayOfWeek; // [1, 7], interpretation undefined, increments every day
+  /** [00, 99], year - 2000 */
+  uint8_t year;
+
+  /** [1, 12] */
+  uint8_t month;
+
+  /** [1, 31] */
+  uint8_t day;
+
+  /** [0, 23] */
+  uint8_t hour;
+
+  /** [0, 59] */
+  uint8_t minute;
+
+  /** [0, 59] */
+  uint8_t second;
+
+  /** [1, 7], interpretation undefined, increments every day */
+  uint8_t dayOfWeek;
 };
 
 /**

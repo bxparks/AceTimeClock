@@ -47,7 +47,10 @@ struct HardwareTemperature {
     ace_common::printPad2To(printer, frac, '0');
   }
 
+  /** Upper byte of signed (8.8) fixed point temperature. */
   uint8_t msb;
+
+  /** Lower byte of signed (8.8) fixed point temperature. */
   uint8_t lsb;
 };
 
