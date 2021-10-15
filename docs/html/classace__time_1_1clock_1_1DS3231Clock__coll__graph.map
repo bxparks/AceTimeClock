@@ -1,0 +1,4 @@
+<map id="ace_time::clock::DS3231Clock&lt; T_WIREI &gt;" name="ace_time::clock::DS3231Clock&lt; T_WIREI &gt;">
+<area shape="rect" id="node1" title="An implementation of Clock that uses a DS3231 RTC chip." alt="" coords="5,80,224,121"/>
+<area shape="rect" id="node2" href="$classace__time_1_1clock_1_1Clock.html" title="Abstract base class for objects that provide and store time." alt="" coords="31,5,199,32"/>
+</map>
