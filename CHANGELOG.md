@@ -1,6 +1,10 @@
 # Changelog
 
 * Unreleased
+* v1.0.0 (2021-10-15)
+    * Extracted from AceTime v1.7.5 to work with AceTime v1.8.0. See
+      [Migrating to
+      v1.8](https://github.com/bxparks/AceTime/blob/develop/MIGRATING.md#MigratingToVersion180) for migration notes.
     * Merge `installation.md` and `docs/clock_system_clock.md` from AceTime
       library into a self-contained README.md, instead of information being
       scattered over multiple files.

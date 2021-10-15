@@ -44,7 +44,7 @@ in the future.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: (2021-10-08, Initial split from AceTime)
+**Version**: v1.0.0 (2021-10-15)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
@@ -66,7 +66,6 @@ This library can be an alternative to the Arduino Time
     * [Clock Class](#ClockClass)
     * [NtpClock Class](#NtpClockClass)
     * [DS3231Clock Class](#DS3231ClockClass)
-        * [Migrating DS3231Clock](#MigratingDS3231Clock)
     * [StmRtcClock Class](#StmRtcClockClass)
     * [Stm32F1Clock Class](#Stm32F1ClockClass)
     * [UnixClock Class](#UnixClockClass)
@@ -134,7 +133,7 @@ The source files are organized as follows:
 To use the AceTimeClock library, client apps must install the following
 libraries:
 
-* AceTime (https://github.com/bxparks/AceTime)
+* AceTime v1.8.0 or later (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
 
 Specific classes depend on additional libraries which do not need to be
@@ -470,9 +469,11 @@ you delete the commit, they can be retrieved from the git history.
 <a name="DS3231ClockClass"></a>
 ### DS3231Clock Class
 
-**Breaking Change**: Version 1.8 made a breaking change to the `DS3231Clock`
-class. See [Migrating DS3231Clock](#MigratingDS3231Clock) section
-below.
+**Breaking Change**: AceTime v1.8 moved the `ace_time::clock` classes to
+this new `AceTimeClock` library. At the same time, it made a breaking change to
+the `DS3231Clock` class. See [Migrating the
+DS3231Clock](https://github.com/bxparks/AceTime/blob/develop/MIGRATING.md#MigratingTheDS3231Clock)
+in the AceTime MIGRATING.md document.
 
 The `DS3231Clock` class uses the DS3231 RTC chip. It contains an internal
 temperature-compensated oscillator that counts time in 1 second steps. It is
@@ -547,83 +548,6 @@ It has been claimed that the DS1307 and DS3232 RTC chips have exactly same
 interface as DS3231 when accessing the time and date functionality. I don't have
 these chips so I cannot confirm that. Contact @Naguissa
 (https://github.com/Naguissa) for more info.
-
-<a name="MigratingDS3231Clock"></a>
-#### Migrating DS3231Clock
-
-In AceTime v1.8, coincident with moving `ace_time::clock` classes into the
-AceTimeClock library, the `DS3231Clock` was also converted into a template
-class, replacing its direct dependency to the pre-installed `<Wire.h>` library
-with an indirect dependency to the [AceWire](https://github.com/bxparks/AceWire)
-library. Here is the migration process. For all occurrences of the following:
-
-```C++
-#include <AceTimeClock.h>
-using namespace ace_time;
-using namespace ace_time::clock;
-...
-DS3231Clock dsClock;
-```
-
-Replace that with this:
-
-```C++
-#include <AceTimeClock.h>
-#include <AceWire.h> // TwoWireInterface
-#include <Wire.h> // TwoWire, Wire
-using namespace ace_time;
-using namespace ace_time::clock;
-...
-using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
-WireInterface wireInterface(Wire);
-DS3231Clock<WireInterface> dsClock(wireInterface);
-```
-
-There are several reasons for this change:
-
-* The `<Wire.h>` library is written in such a way that just including the
-  `<Wire.h>` header file increases the flash usage by ~1300 bytes on AVR,
-  *even* if the `Wire` object is never used.
-    * The `DS3231Clock` class is the *only* class in the AceTime library
-      that depends on the `<Wire.h>`.
-    * Any application that pulls in `<AceTime.h>` for only the time zone classes
-      without using the `DS3231Clock` suffers the cost of the `<Wire.h>` library
-      for no reason.
-* The `TwoWire` class from `<Wire.h>` cannot be used polymorphically.
-    * In other words, it is impossible to substitute the `Wire` object
-      with a different I2C implementation (for example, one of the many listed
-      in this [Overview of Arduino I2C
-      libraries](https://github.com/Testato/SoftwareWire/wiki/Arduino-I2C-libraries).
-    * The `<AceWire.h>` library solves this problem by using compile-time
-      polymorphism using C++ templates.
-    * Any number of alternative I2C libraries can be used with the `DS3231Clock`
-      class using `<AceWire.h>`.
-
-Here is an example of using an alternative, software I2C implementation provided
-by the `<AceWire.h>` library itself:
-
-```C++
-#include <AceTimeClock.h>
-#include <AceWire.h>
-using namespace ace_time;
-...
-const uint8_t SCL_PIN = SCL;
-const uint8_t SDA_PIN = SDA;
-const uint8_t DELAY_MICROS = 4;
-using WireInterface = ace_wire::SimpleWireInterface;
-WireInterface wireInterface(SDA_PIN, SCL_PIN, DELAY_MICROS);
-DS3231Clock<WireInterface> dsClock(wireInterface);
-```
-
-According to the benchmarks at
-[AceWire/MemoryBenchmark](https://github.com/bxparks/AceWire/tree/develop/examples/MemoryBenchmark),
-using `SimpleWireInterface` instead of the `TwoWire` class reduces flash
-consumption by 1500 bytes on an AVR processor. The flash consumption can be
-reduced by 2000 bytes if the "fast" version `SimpleWireFastInterface` is used
-instead.
-
-Regardless of the specific I2C implementation used, no changes to `DS3231Clock`
-are required.
 
 <a name="StmRtcClockClass"></a>
 ### Stm32RtcClock Class
