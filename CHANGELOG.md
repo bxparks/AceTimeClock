@@ -1,6 +1,10 @@
 # Changelog
 
 * Unreleased
+* v1.0.1 (2021-10-16)
+    * Add AceWire and AceRoutine to the `depends` parameter in
+      `library.properties` so that the Library Manager installs them
+      automatically for convenience.
 * v1.0.0 (2021-10-15)
     * Extracted from AceTime v1.7.5 to work with AceTime v1.8.0. See
       [Migrating to
