@@ -44,7 +44,7 @@ in the future.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.0.0 (2021-10-15)
+**Version**: v1.0.1 (2021-10-16)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
@@ -95,22 +95,20 @@ This library can be an alternative to the Arduino Time
 
 The latest stable release is available in the Arduino Library Manager in the
 IDE. Search for "AceTimeClock". Click install. The Library Manager should
-automatically install 2 other dependent libraries:
-
-* AceTime (https://github.com/bxparks/AceTime)
-* AceCommon (https://github.com/bxparks/AceCommon)
-
-The development version can be installed by cloning the 3 git repos:
+automatically install AceTimeClock and its dependent libraries:
 
 * AceTimeClock (https://github.com/bxparks/AceTimeClock)
 * AceTime (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
+* AceWire (https://github.com/bxparks/AceWire)
+* AceRoutine (https://github.com/bxparks/AceRoutine)
 
-You can copy over the contents to the `./libraries` directory used by the
-Arduino IDE. (The result is directories named `./libraries/AceTimeClock`,
-`./libraries/AceTime`, and `./libraries/AceCommon`). Or you can create symlinks
-from `./libraries` to these directories. Or you can `git clone` directly into
-the `./libraries` directory.
+The development version can be installed by cloning the above repos manually.
+You can copy over these directories to the `./libraries` directory used by the
+Arduino IDE. (The result is a set of directories named
+`./libraries/AceTimeClock`, `./libraries/AceTime`, and so on). Or you can create
+symlinks from `./libraries` to these directories. Or you can `git clone`
+directly into the `./libraries` directory.
 
 The `develop` branch contains the latest development.
 The `master` branch contains the stable releases.
@@ -119,6 +117,7 @@ The `master` branch contains the stable releases.
 ### Source Code
 
 The source files are organized as follows:
+
 * `src/AceTimeClock.h` - main header file
 * `src/ace_time/clock/` - system clock from RTC or NTP sources
   (`ace_time::clock`)
@@ -127,28 +126,33 @@ The source files are organized as follows:
 * `tests/` - unit tests using [AUnit](https://github.com/bxparks/AUnit)
 * `examples/` - example programs and benchmarks
 
+The main Clock classes are under `src/ace_time/clock` (instead of
+`src/ace_time_clock` for example) for backwards compatibility with the code when
+these classes were inside the AceTime library.
+
 <a name="Dependencies"></a>
 ### Dependencies
 
 To use the AceTimeClock library, client apps must install the following
-libraries:
+libraries at a minimum:
 
+* AceTimeClock (https://github.com/bxparks/AceTimeClock)
 * AceTime v1.8.0 or later (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
 
-Specific classes depend on additional libraries which do not need to be
-installed if those special classes are not used. The `SystemClockCoroutine`
-class depends on the following library:
+The following libraries are optional because they are needed only by specific
+classes and only if the client application uses them. For convenience, they are
+listed in the `depends` parameter of `libraries.properties` so that they are
+installed automatically by the Arduino Library Manager:
 
-* AceRoutine (https://github.com/bxparks/AceRoutine)
-
-The `DS3231Clock` depends on the following:
-
-* AceWire (https://github.com/bxparks/AceWire)
+* AceWire (https://github.com/bxparks/AceWire), needed by `DS3231Clock`.
+* AceRoutine (https://github.com/bxparks/AceRoutine), needed by
+  `SystemClockCoroutine`
 
 Various programs in the `examples/` directory may have additional external
 dependencies. The comment section near the top of the `*.ino` file will usually
-have more precise dependency information:
+have more precise dependency information. Some of these additional libraries
+are:
 
 * Arduino Time Lib (https://github.com/PaulStoffregen/Time)
 * Arduino Timezone (https://github.com/JChristensen/Timezone)
