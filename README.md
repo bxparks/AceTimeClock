@@ -535,6 +535,7 @@ void setup() {
   while(!Serial); // needed for Leonardo/Micro
   ...
   Wire.begin();
+  wireInterface.begin();
   dsClock.setup();
   dsClock.setNow(0); // 2000-01-01T00:00:00Z
 }
@@ -927,6 +928,7 @@ SystemClockLoop systemClock(dsClock, nullptr /*backup*/);
 void setup() {
   ...
   Wire.begin();
+  wireInterface.begin();
   dsClock.setup();
   systemClock.setup();
   ...
@@ -967,6 +969,7 @@ SystemClock systemClock(dsClock, nullptr /*backup*/);
 void setup() {
   ...
   Wire.begin();
+  wireInterface.begin();
   dsClock.setup();
   systemClock.setupCoroutine(F("systemClock"));
   CoroutineScheduler::setup();
@@ -1152,6 +1155,7 @@ void setup() {
   while (!Serial); // wait for Leonardo/Micro
 
   Wire.begin();
+  wireInterface.begin();
   dsClock.setup();
   systemClock.setup();
   ...
@@ -1205,6 +1209,7 @@ void setup() {
   while (!Serial); // wait for Leonardo/Micro
 
   Wire.begin();
+  wireInterface.begin();
   dsClock.setup();
   ntpClock.setup();
   systemClock.setup();
@@ -1246,6 +1251,7 @@ void setup() {
   while (!Serial); // wait for Leonardo/Micro
 
   Wire.begin();
+  wireInterface.begin();
   dsClock.setup();
   systemClock.setup();
 }

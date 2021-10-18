@@ -44,6 +44,7 @@ void setup() {
   while (!SERIAL_PORT_MONITOR); // Wait until ready - Leonardo/Micro
 
   Wire.begin();
+  wireInterface.begin();
   dsClock.setup();
   LocalDateTime ldt = LocalDateTime::forComponents(2021, 10, 18, 10, 28, 0);
   dsClock.setNow(ldt.toEpochSeconds());
