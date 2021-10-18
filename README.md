@@ -58,7 +58,7 @@ This library can be an alternative to the Arduino Time
     * [Source Code](#SourceCode)
     * [Dependencies](#Dependencies)
 * [Documentation](#Documentation)
-    * [HelloSystemClock](#HelloSystemClock)
+    * [HelloSystemClockLoop](#HelloSystemClockLoop)
     * [Other Examples](#OtherExamples)
 * [User Guide](#UserGuide)
     * [Headers](#Headers)
@@ -170,11 +170,11 @@ machine, you need:
 * [Doxygen docs](https://bxparks.github.io/AceTimeClock/html) - hosted on GitHub
   Pages
 
-<a name="HelloSystemClock"></a>
-### HelloSystemClock
+<a name="HelloSystemClockLoop"></a>
+### HelloSystemClockLoop
 
 This is the example code for using the `SystemClock` taken from
-[examples/HelloSystemClock](examples/HelloSystemClock).
+[examples/HelloSystemClockLoop](examples/HelloSystemClockLoop).
 
 ```C++
 #include <Arduino.h>
@@ -191,6 +191,17 @@ static BasicZoneProcessor pacificProcessor;
 
 static SystemClockLoop systemClock(nullptr /*reference*/, nullptr /*backup*/);
 
+void printCurrentTime() {
+  acetime_t now = systemClock.getNow();
+
+  // Create a time
+  auto pacificTz = TimeZone::forZoneInfo(&zonedb::kZoneAmerica_Los_Angeles,
+      &pacificProcessor);
+  auto pacificTime = ZonedDateTime::forEpochSeconds(now, pacificTz);
+  pacificTime.printTo(Serial);
+  Serial.println();
+}
+
 void setup() {
   delay(1000);
   Serial.begin(115200);
@@ -206,17 +217,6 @@ void setup() {
   auto pacificTime = ZonedDateTime::forComponents(
       2019, 6, 17, 19, 50, 0, pacificTz);
   systemClock.setNow(pacificTime.toEpochSeconds());
-}
-
-void printCurrentTime() {
-  acetime_t now = systemClock.getNow();
-
-  // Create a time
-  auto pacificTz = TimeZone::forZoneInfo(&zonedb::kZoneAmerica_Los_Angeles,
-      &pacificProcessor);
-  auto pacificTime = ZonedDateTime::forEpochSeconds(now, pacificTz);
-  pacificTime.printTo(Serial);
-  Serial.println();
 }
 
 // Do NOT use delay() here.
@@ -245,17 +245,17 @@ then printing the system time every 2 seconds:
 
 The following programs are provided in the `examples/` directory:
 
-* [HelloSystemClock](../examples/HelloSystemClock/)
+* [HelloSystemClockLoop](examples/HelloSystemClockLoop/)
     * demo program of `SystemClock`
-* [HelloSystemClockCoroutine](../examples/HelloSystemClockCoroutine/)
-    * same as `HelloSystemClock` but using AceRoutine coroutines
-* [HelloDS3231Clock](../examples/HelloDS3231Clock/)
+* [HelloSystemClockCoroutine](examples/HelloSystemClockCoroutine/)
+    * same as `HelloSystemClockLoop` but using AceRoutine coroutines
+* [HelloDS3231Clock](examples/HelloDS3231Clock/)
     * demo program of `DS3231Clock<T>` template class using `<AceWire.h>`
-* [HelloNtpClock](../examples/HelloNtpClock/)
+* [HelloNtpClock](examples/HelloNtpClock/)
     * demo program of `NtpClock`
-* [AutoBenchmark](../examples/AutoBenchmark/)
+* [AutoBenchmark](examples/AutoBenchmark/)
     * perform CPU and memory benchmarking of various methods and print a report
-* [MemoryBenchmark](../examples/MemoryBenchmark/)
+* [MemoryBenchmark](examples/MemoryBenchmark/)
     * compiles `MemoryBenchmark.ino` for 13 different features and collecs the
       flash and static RAM usage from the compiler into a `*.txt` file for
       a number of platforms (AVR, SAMD, ESP8266, etc)

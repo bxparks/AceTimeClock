@@ -3,6 +3,8 @@
 * Unreleased
     * Add `examples/HelloDS3231Clock` to show how to configure and use the new
       `DS3231Clock<T>` template class.
+    * Rename `examples/HelloSystemClock` to `examples/HelloSystemClockLoop` for
+      consistency.
 * v1.0.1 (2021-10-16)
     * Add AceWire and AceRoutine to the `depends` parameter in
       `library.properties` so that the Library Manager installs them
