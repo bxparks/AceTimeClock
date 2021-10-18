@@ -166,14 +166,9 @@ machine, you need:
 <a name="Documentation"></a>
 ## Documentation
 
-* [README.md](README.md)
-    * this file
-* Doxygen docs
-    * See [Doxygen docs](https://bxparks.github.io/AceTime/html) hosted on
-      GitHub Pages
-* Benchmarks
-    * See [docs/benchmarks.md](docs/benchmarks.md) for CPU and memory usage
-      benchmarks
+* [README.md](README.md) - this file
+* [Doxygen docs](https://bxparks.github.io/AceTimeClock/html) - hosted on GitHub
+  Pages
 
 <a name="HelloSystemClock"></a>
 ### HelloSystemClock
