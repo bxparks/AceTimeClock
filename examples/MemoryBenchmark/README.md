@@ -5,7 +5,7 @@ memory and static RAM sizes were recorded. The `FEATURE_BASELINE` selection is
 the baseline, and its memory usage  numbers are subtracted from the subsequent
 `FEATURE_*` memory usage.
 
-**Version**: AceTimeClock v1.0.0
+**Version**: AceTimeClock v1.0.2
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -48,6 +48,9 @@ In v1.0.0:
 * Add benchmarks for `SystemClockCoroutine` separately from `SystemClockLoop`.
 * Rename `SystemClock` label to `SystemClockLoop`.
 
+In v1.0.2:
+* No changes. Fix bad merge in README.md.
+
 ## Arduino Nano
 
 * 16MHz ATmega328P
@@ -75,7 +78,6 @@ In v1.0.0:
 
 * 16 MHz ATmega32U4
 * Arduino IDE 1.8.16, Arduino CLI 0.19.2
->>>>>>> MemoryBenchmark: Regenerate after replacing direct dependency on <Wire.h> with <AceWire.h>; saves 500-4000 bytes of flash
 * SparkFun AVR Boards 1.1.13
 
 ```
