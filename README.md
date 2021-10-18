@@ -249,6 +249,8 @@ The following programs are provided in the `examples/` directory:
     * demo program of `SystemClock`
 * [HelloSystemClockCoroutine](../examples/HelloSystemClockCoroutine/)
     * same as `HelloSystemClock` but using AceRoutine coroutines
+* [HelloDS3231Clock](../examples/HelloDS3231Clock/)
+    * demo program of `DS3231Clock<T>` template class using `<AceWire.h>`
 * [HelloNtpClock](../examples/HelloNtpClock/)
     * demo program of `NtpClock`
 * [AutoBenchmark](../examples/AutoBenchmark/)
