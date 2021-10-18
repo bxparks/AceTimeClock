@@ -1,5 +1,5 @@
 /*
- * A program to demonstrate the use of AceTime SystemClock. It should print the
+ * A program to demonstrate the use of SystemClockLoop. It should print the
  * following on the SERIAL_PORT_MONITOR port every 2 seconds:
  *
  *   2019-06-17T19:50:00-07:00[America/Los_Angeles]
@@ -13,6 +13,11 @@
 
 using namespace ace_time;
 using namespace ace_time::clock;
+
+// ESP32 does not define SERIAL_PORT_MONITOR
+#ifndef SERIAL_PORT_MONITOR
+#define SERIAL_PORT_MONITOR Serial
+#endif
 
 // ZoneProcessor instance should be created statically at initialization time.
 static BasicZoneProcessor pacificProcessor;

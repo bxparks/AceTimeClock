@@ -1,6 +1,6 @@
 /*
- * A program to demonstrate the use of the DS3231Clock. It should print the
- * following on the SERIAL_PORT_MONITOR port every 2 seconds:
+ * A program to demonstrate the use of the DS3231Clock<T> class. It should print
+ * the following on the SERIAL_PORT_MONITOR port every 2 seconds:
  *
  *   2021-10-18T10:28:00
  *   2021-10-18T10:28:02
