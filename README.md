@@ -1295,20 +1295,20 @@ having possibility that the setup process of the application could take longer.
 **8-bit processors**
 
 ```
-sizeof(clock::DS3231Clock): 3
-sizeof(clock::SystemClock): 28
-sizeof(clock::SystemClockLoop): 41
-sizeof(clock::SystemClockCoroutine): 52
+sizeof(DS3231Clock): 7
+sizeof(SystemClock): 28
+sizeof(SystemClockLoop): 41
+sizeof(SystemClockCoroutine): 52
 ```
 
 **32-bit processors**
 
 ```
-sizeof(clock::DS3231Clock): 8
-sizeof(clock::NtpClock): 116
-sizeof(clock::SystemClock): 36
-sizeof(clock::SystemClockLoop): 52
-sizeof(clock::SystemClockCoroutine): 72
+sizeof(DS3231Clock): 12
+sizeof(NtpClock): 92
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 72
 ```
 
 <a name="FlashAndStaticMemory"></a>
@@ -1381,7 +1381,7 @@ Arduino Nano
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop                                  |    9.031 |
 +--------------------------------------------------+----------+
 ```
 
@@ -1391,7 +1391,7 @@ ESP8266
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop                                  |    9.582 |
 +--------------------------------------------------+----------+
 ```
 
