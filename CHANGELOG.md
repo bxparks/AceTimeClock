@@ -5,6 +5,8 @@
       `DS3231Clock<T>` template class.
     * Rename `examples/HelloSystemClock` to `examples/HelloSystemClockLoop` for
       consistency.
+    * Update README.md sample codes to work with the new `DS3231Clock<T>`
+      template class and the `<AceWire.h>` library.
 * v1.0.1 (2021-10-16)
     * Add AceWire and AceRoutine to the `depends` parameter in
       `library.properties` so that the Library Manager installs them

@@ -525,12 +525,13 @@ using namespace ace_time::clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
-DS3231Clock dsClock;
+DS3231Clock<WireInterface> dsClock(wireInterface);
 
 void setup() {
   Serial.begin(115200);
   while(!Serial); // needed for Leonardo/Micro
   ...
+  Wire.begin();
   dsClock.setup();
   dsClock.setNow(0); // 2000-01-01T00:00:00Z
 }
@@ -545,7 +546,7 @@ void loop() {
 }
 ```
 
-It has been claimed that the DS1307 and DS3232 RTC chips have exactly same
+It has been claimed that the DS1307 and DS3232 RTC chips have exactly the same
 interface as DS3231 when accessing the time and date functionality. I don't have
 these chips so I cannot confirm that. Contact @Naguissa
 (https://github.com/Naguissa) for more info.
@@ -908,16 +909,24 @@ This class synchronizes to the `referenceClock` through the
 `loop()` method, like this:
 
 ```C++
+#include <AceWire.h> // TwoWireInterface
+#include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
 using namespace ace_time::clock;
 ...
 
-DS3231Clock dsClock;
+using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
+WireInterface wireInterface(Wire);
+DS3231Clock<WireInterface> dsClock(Wire);
+
 SystemClockLoop systemClock(dsClock, nullptr /*backup*/);
 
 void setup() {
+  ...
+  Wire.begin();
   dsClock.setup();
   systemClock.setup();
+  ...
 }
 
 void loop() {
@@ -938,17 +947,23 @@ This class synchronizes to the `referenceClock` using an
 [AceRoutine](https://github.com/bxparks/AceRoutine) coroutine.
 
 ```C++
+#include <AceWire.h> // TwoWireInterface
+#include <Wire.h> // TwoWire, Wire
 #include <AceRoutine.h> // include this before <AceTimeClock.h>
 #include <AceTimeClock.h>
 using namespace ace_time::clock;
 using namespace ace_routine;
 ...
 
-DS3231Clock dsClock;
+using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
+WireInterface wireInterface(Wire);
+DS3231Clock<WireInterface> dsClock(Wire);
+
 SystemClock systemClock(dsClock, nullptr /*backup*/);
 
 void setup() {
   ...
+  Wire.begin();
   dsClock.setup();
   systemClock.setupCoroutine(F("systemClock"));
   CoroutineScheduler::setup();
@@ -1069,17 +1084,20 @@ explicit SystemClockLoop(
 <a name="SystemClockExamples"></a>
 ## SystemClock Examples
 
+The examples below are shown using `SystemClockLoop` but `SystemClockCoroutine`
+should also work.
+
 <a name="NoReferenceAndNoBackup"></a>
 ### No Reference And No Backup
 
 This is the most basic example of a `SystemClockLoop` that uses no
 `referenceClock` or a `backupClock`. The accuracy of this clock is limited by
 the accuracy of the internal `millis()` function, and the clock has no backup
-against power failure. Upon reboot, the `SystemClock::setNow()` must be called
-to set the current time. The `SystemClock::loop()` must still be called to
-perform a maintenance task of incrementing the AceTime epochSeconds returned by
-`SystemClock::getNow()` using the progression of the Arduino `millis()`
-function.
+against power failure. Upon reboot, the `SystemClockLoop::setNow()` must be
+called to set the current time. The `SystemClockLoop::loop()` must still be
+called to perform a maintenance task of incrementing the AceTime epochSeconds
+returned by `SystemClockLoop::getNow()` using the progression of the Arduino
+`millis()` function.
 
 This configuration is not very practical, but it might be useful for quick
 debugging.
@@ -1088,7 +1106,7 @@ debugging.
 #include <AceTimeClock.h>
 using namespace ace_time::clock;
 
-SystemClock systemClock(nullptr /*reference*/, nullptr /*backup*/);
+SystemClockLoop systemClock(nullptr /*reference*/, nullptr /*backup*/);
 ...
 
 void setup() {
@@ -1107,19 +1125,30 @@ void loop() {
 
 This `SystemClockLoop` uses a `DS3231Clock` as a `referenceClock`. No backup
 clock is actually needed because the DS3231 RTC preserves its info as long as a
-battery is connected to it. The `SystemClock::loop()` advances the internal
+battery is connected to it. The `SystemClockLoop::loop()` advances the internal
 `epochSeconds` every second using the `millis()` function, and it synchronizes
-the `epochSeconds` to the `DS3231` clock every one hour (by default).
+the `epochSeconds` to the `DS3231` clock every one hour (by default). In the
+following example, the `DS3231Clock` is configured to use the `<Wire.h>` library
+for I2C communication.
 
 ```C++
 #include <AceTimeClock.h>
+#include <AceWire.h> // TwoWireInterface
+#include <Wire.h> // TwoWire, Wire
 using namespace ace_time::clock;
 
-DS3231Clock dsClock;
-SystemClock systemClock(&dsClock /*reference*/, nullptr /*backup*/);
+using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
+WireInterface wireInterface(Wire);
+DS3231Clock<WireInterface> dsClock(wireInterface);
+
+SystemClockLoop systemClock(&dsClock /*reference*/, nullptr /*backup*/);
 ...
 
 void setup() {
+  Serial.begin(115200);
+  while (!Serial); // wait for Leonardo/Micro
+
+  Wire.begin();
   dsClock.setup();
   systemClock.setup();
   ...
@@ -1155,11 +1184,15 @@ time to update does not seem like not a good candidate as a `backupClock`. But
 let me know if my assumptions are incorrect.)
 
 ```C++
+#include <AceWire.h> // TwoWireInterface
+#include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
-using ace_time::acetime_t;
 using namespace ace_time::clock;
 
-DS3231Clock dsClock;
+using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
+WireInterface wireInterface(Wire);
+DS3231Clock<WireInterface> dsClock(wireInterface);
+
 NtpClock ntpClock(SSID, PASSWORD);
 SystemClockLoop systemClock(&ntpClock /*reference*/, &dsClock /*backup*/);
 ...
@@ -1168,33 +1201,24 @@ void setup() {
   Serial.begin(115200);
   while (!Serial); // wait for Leonardo/Micro
 
+  Wire.begin();
   dsClock.setup();
   ntpClock.setup();
   systemClock.setup();
 }
 
-
 void loop() {
-  static acetime_t prevNow = systemClock.getNow();
-
   systemClock.loop();
-
-  // Print the date/time every 10 seconds.
-  acetime_t now = systemClock.getNow();
-  if (now - prevNow >= 10) {
-    auto odt = OffsetDateTime::forEpochSeconds(
-        now, TimeOffset::forHours(-8)); // convert epochSeconds to UTC-08:00
-    odt.printTo(Serial);
-  }
+  ...
 }
 ```
 
 **Note**: This configuration does *not* provide fail-over. In other words, if
 the `referenceClock` is unreachable, then the code does not automatically start
 using the `backupClock` as the reference clock. The `backupClock` is used *only*
-during initial startup to initialize the `SystemClock`. If the network continues
-to be unreachable for a long time, then the `SystemClock` will be only as
-accurate as the `millis()` function.
+during initial startup to initialize the `SystemClockLoop`. If the network
+continues to be unreachable for a long time, then the `SystemClockLoop` will be
+only as accurate as the `millis()` function.
 
 <a name="DS3231ReferenceAndBackup"></a>
 ### DS3231 As Both Reference and Backup
@@ -1203,15 +1227,33 @@ The `DS3231Clock` for example can be given as *both* the reference and backup
 clock sources, like this:
 
 ```C++
+#include <AceWire.h> // TwoWireInterface
+#include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
 using namespace ace_time::clock;
 
-DS3231Clock dsClock;
+using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
+WireInterface wireInterface(Wire);
+DS3231Clock<WireInterface> dsClock(wireInterface);
 
 SystemClockLoop systemClock(&dsClock /*reference*/, &dsClock /*backup*/);
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial); // wait for Leonardo/Micro
+
+  Wire.begin();
+  dsClock.setup();
+  systemClock.setup();
+}
+
+void loop() {
+  systemClock.loop();
+  ...
+}
 ```
 
-The `SystemClock` will notice that the `referenceClock` is the same as the
+The `SystemClockLoop` will notice that the `referenceClock` is the same as the
 `backupClock`, and will take precautions to avoid writing to the  `backupClock`
 in the `syncNow()` method. Otherwise, there would be progressive skewing the
 `referenceClock`. To see how this would happen, recall that the `referenceClock`
@@ -1223,23 +1265,23 @@ would be lost, and the RTC would lose a small fraction of a second each time
 
 The biggest advantage of using this configuration (where the same clock is used
 as `referenceClock` and `backupClock`) is guarantee a valid state of
-`SystemClock` after a successful call to `setup()`. Without a `backupClock`, the
-`SystemClock::getNow()` returns a `kInvalidSeconds` error condition until the
-first successful `syncNow()` complete. With a `backupClock`, the
-`SystemClock::setup()` blocks until a valid time is retrieved from the
-`backupClock`, uses that value to initialize the `SystemClock`. The `getNow()`
-method will always return a valid vlaue (as long as both reference and backup
-clock remain valid).
+`SystemClockLoop` after a successful call to `setup()`. Without a `backupClock`,
+the `SystemClockLoop::getNow()` returns a `kInvalidSeconds` error condition
+until the first successful `syncNow()` complete. With a `backupClock`, the
+`SystemClockLoop::setup()` blocks until a valid time is retrieved from the
+`backupClock`, uses that value to initialize the `SystemClockLoop`. The
+`getNow()` method will always return a valid vlaue (as long as both reference
+and backup clock remain valid).
 
 In summary, if your application can tolerate a short period (order of seconds or
-less) where the `SystemClock::getNow()` can return `kInvalidSeconds`, then you
-can use just define the reference clock without reusing it as a backup clock,
-`SystemClockLoop(&dsClock, nullptr)`. For robustness, most applications should
-be written to tolerate and correctly handle this situation anyways, but I
+less) where the `SystemClockLoop::getNow()` can return `kInvalidSeconds`, then
+you can use just define the reference clock without reusing it as a backup
+clock, `SystemClockLoop(&dsClock, nullptr)`. For robustness, most applications
+should be written to tolerate and correctly handle this situation anyways, but I
 understand that people want to do the least amount of work, and handling error
 conditions is more work. Configuring the `referenceClock` as the `backupClock`
-provides a slightly better well-behaved `SystemClock`, at the expense of having
-possibility that the setup process of the application could take longer.
+provides a slightly better well-behaved `SystemClockLoop`, at the expense of
+having possibility that the setup process of the application could take longer.
 
 <a name="MemoryUsage"></a>
 ## Memory Usage
