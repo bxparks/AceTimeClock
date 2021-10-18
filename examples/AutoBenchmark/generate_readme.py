@@ -26,7 +26,7 @@ print(f"""\
 
 Here are the results from `AutoBenchmark.ino` for various boards.
 
-**Version**: AceTimeClock v1.0.0
+**Version**: AceTimeClock v1.0.2
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -80,6 +80,9 @@ The CPU times below are given in microseconds.
 v1.0.0:
 * Initial extraction from AceTime library.
 
+v1.0.2:
+* Regenerate all benchmarks to get correct numbers. Previous numbers were all
+  identical. I probably added them as placeholders, then forgot to regenerate.
 ## Arduino Nano
 
 * 16MHz ATmega328P

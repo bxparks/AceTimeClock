@@ -81,7 +81,10 @@ This library can be an alternative to the Arduino Time
     * [DS3231 Reference](#DS3231Reference)
     * [NTP Reference With DS3231 Backup](#NtpReferenceWithDS3231Backup)
     * [DS3231 Reference and Backup](#DS3231ReferenceAndBackup)
-* [Memory Usage](#MemoryUsage)
+* [Resource Consumption](#ResourceConsumption)
+    * [Size Of Classes](#SizeOfClasses)
+    * [Flash And Static Memory](#FlashAndStaticMemory)
+    * [CPU Usage](#CPUUsage)
 * [System Requirements](#SystemRequirements)
     * [Hardware](#Hardware)
     * [Tool Chain](#ToolChain)
@@ -1283,8 +1286,73 @@ conditions is more work. Configuring the `referenceClock` as the `backupClock`
 provides a slightly better well-behaved `SystemClockLoop`, at the expense of
 having possibility that the setup process of the application could take longer.
 
-<a name="MemoryUsage"></a>
-## Memory Usage
+<a name="ResourceConsumption"></a>
+## Resource Consumption
+
+<a name="SizeOfClasses"></a>
+### Size Of Classes
+
+**8-bit processors**
+
+```
+sizeof(clock::DS3231Clock): 3
+sizeof(clock::SystemClock): 28
+sizeof(clock::SystemClockLoop): 41
+sizeof(clock::SystemClockCoroutine): 52
+```
+
+**32-bit processors**
+
+```
+sizeof(clock::DS3231Clock): 8
+sizeof(clock::NtpClock): 116
+sizeof(clock::SystemClock): 36
+sizeof(clock::SystemClockLoop): 52
+sizeof(clock::SystemClockCoroutine): 72
+```
+
+<a name="FlashAndStaticMemory"></a>
+### Flash And Static Memory
+
+[MemoryBenchmark](examples/MemoryBenchmark/) was used to determine the
+size of the library for various microcontrollers (Arduino Nano to ESP32). Here
+are 2 samples:
+
+Arduino Nano
+
+```
++---------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |       delta |
+|----------------------------------------+--------------+-------------|
+| Baseline                               |    474/   11 |     0/    0 |
+|----------------------------------------+--------------+-------------|
+| DS3231Clock                            |   4108/  150 |  3634/  139 |
+| SystemClockLoop                        |   2692/  142 |  2218/  131 |
+| SystemClockLoop+1 Basic zone           |   8220/  328 |  7746/  317 |
+| SystemClockLoop+1 Extended zone        |  11230/  362 | 10756/  351 |
+| SystemClockCoroutine                   |   3456/  154 |  2982/  143 |
+| SystemClockCoroutine+1 Basic zone      |   9024/  340 |  8550/  329 |
+| SystemClockCoroutine+1 Extended zone   |  12034/  374 | 11560/  363 |
++---------------------------------------------------------------------+
+```
+
+ESP8266:
+
+```
++---------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |       delta |
+|----------------------------------------+--------------+-------------|
+| Baseline                               | 260089/27892 |     0/    0 |
+|----------------------------------------+--------------+-------------|
+| DS3231Clock                            | 265161/28452 |  5072/  560 |
+| SystemClockLoop                        | 263761/28448 |  3672/  556 |
+| SystemClockLoop+1 Basic zone           | 269737/29024 |  9648/ 1132 |
+| SystemClockLoop+1 Extended zone        | 271881/29168 | 11792/ 1276 |
+| SystemClockCoroutine                   | 264305/28448 |  4216/  556 |
+| SystemClockCoroutine+1 Basic zone      | 270297/29024 | 10208/ 1132 |
+| SystemClockCoroutine+1 Extended zone   | 272441/29168 | 12352/ 1276 |
++---------------------------------------------------------------------+
+```
 
 This library does not perform dynamic allocation of memory so that it can be
 used in small microcontroller environments. In other words, it does not call the
@@ -1299,6 +1367,33 @@ which has 3 OLED displays over SPI, 3 timezones using `BasicZoneProcessor`, a
 debouncing and event dispatching provided by the AceButton
 (https://github.com/bxparks/AceButton) library. This application consumes about
 24 kB, well inside the 28 kB flash limit of a SparkFun Pro Micro controller.
+
+<a name="CPUUsage"></a>
+### CPU Usage
+
+[AutoBenchmark](examples/AutoBenchmark/) was used to determine the
+CPU time consume by various features of the classes in this library. Two samples
+are shown below:
+
+Arduino Nano
+
+```
++--------------------------------------------------+----------+
+| Method                                           |   micros |
+|--------------------------------------------------+----------|
+| SystemClockLoop                                  |   19.564 |
++--------------------------------------------------+----------+
+```
+
+ESP8266
+
+```
++--------------------------------------------------+----------+
+| Method                                           |   micros |
+|--------------------------------------------------+----------|
+| SystemClockLoop                                  |   19.564 |
++--------------------------------------------------+----------+
+```
 
 <a name="SystemRequirements"></a>
 ## System Requirements
