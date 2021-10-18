@@ -253,13 +253,13 @@ The following programs are provided in the `examples/` directory:
     * demo program of `DS3231Clock<T>` template class using `<AceWire.h>`
 * [HelloNtpClock](examples/HelloNtpClock/)
     * demo program of `NtpClock`
-* [AutoBenchmark](examples/AutoBenchmark/)
-    * perform CPU and memory benchmarking of various methods and print a report
-* [MemoryBenchmark](examples/MemoryBenchmark/)
-    * compiles `MemoryBenchmark.ino` for 13 different features and collecs the
-      flash and static RAM usage from the compiler into a `*.txt` file for
-      a number of platforms (AVR, SAMD, ESP8266, etc)
-    * the `README.md` transforms the `*.txt` file into a human-readable form
+* Benchmarks
+    * [AutoBenchmark](examples/AutoBenchmark/)
+        * perform CPU and memory benchmarking of various methods and print a
+          report
+    * [MemoryBenchmark](examples/MemoryBenchmark/)
+        * determines flash and static RAM usage for various AceTimeClock
+          features, across various platforms (AVR, SAMD, ESP8266, etc)
 
 Various fully-featured hardware clocks can be found in the
 https://github.com/bxparks/clocks repo:
