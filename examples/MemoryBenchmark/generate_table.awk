@@ -42,7 +42,7 @@ END {
   printf(\
     "| Functionality                          |  flash/  ram |       delta |\n")
 
-  for (i = 1; i <= NUM_FEATURES; i++) {
+  for (i = 0; i <= NUM_FEATURES; i++) {
     if (u[i]["flash"] == "-1") continue
 
     name = labels[i]
