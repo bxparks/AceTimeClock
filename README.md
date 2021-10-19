@@ -4,11 +4,11 @@
 
 The AceTimeClock library provides various `Clock` classes to retrieve and
 synchronize the real time clock from different sources. The different clock
-sources are converted to a common 32-bit signed integer (`int32_t`) that
+sources are converted to a 32-bit signed integer (`int32_t`) that
 represents the number of seconds since a fixed point in the past called the
-"Epoch". The epoch in this library is defined to be 2000-01-01T00:00:00 UTC for
-compatibility with the [AceTime](https://github.com/bxparks/AceTime) companion
-library.
+**epoch**. The epoch in this library is defined to be 2000-01-01T00:00:00 UTC
+for compatibility with the [AceTime](https://github.com/bxparks/AceTime)
+companion library.
 
 The following clock sources are supported:
 
@@ -386,8 +386,7 @@ API, but subclasses are expected to provide the non-blocking interface when
 needed.
 
 The `acetime_t` value from `getNow()` can be converted into the desired time
-zone using the `ZonedDateTime` and `TimeZone` classes described in the previous
-sections.
+zone using the `ZonedDateTime` and `TimeZone` classes from the AceTime library.
 
 <a name="NtpClockClass"></a>
 ## NtpClock Class
@@ -427,7 +426,7 @@ class NtpClock: public Clock {
 ```
 
 The constructor takes the name of the NTP server. The default value is
-`kNtpServerName` which is `us.pool.npt.org`. The default `kLocalPort` is set to
+`kNtpServerName` which is `us.pool.ntp.org`. The default `kLocalPort` is set to
 8888. And the default `kRequestTimeout` is 1000 milliseconds.
 
 You need to call the `setup()` with the `ssid` and `password` of the WiFi
@@ -712,14 +711,15 @@ implementations, `SystemClockLoop` and `SystemClockCoroutine`:
 * The `SystemClockCoroutine` is coroutine designed to be called through the
   AceRoutine (https://github.com/bxparks/AceRoutine) library.
 
-They implement the periodic maintenance that is required on the `SystemClock`
-(see the [SystemClockMaintenance](#SystemClockMaintenance) subsection below).
-One of the maintenance task is to synchronize the system clock with an external
-clock. But getting the time from the external clock is an expensive process
-because, for example, it could go over the network to an NTP server. So the
-`SystemClockCoroutine::runCoroutine()` and the `SystemClockLoop::loop()` methods
-both use the non-block API of the `Clock` interface to retrieve the external
-time, which allow other things to to continue to run on the microcontroller.
+They implement the periodic maintenance tasks that are required on the
+`SystemClock` (see the [System Clock Maintenance Tasks](#SystemClockMaintenance)
+subsection below). One of the maintenance tasks is to synchronize the system
+clock with an external clock. But getting the time from the external clock is an
+expensive process because, for example, it could go over the network to an NTP
+server. So the `SystemClockCoroutine::runCoroutine()` and the
+`SystemClockLoop::loop()` methods both use the non-block API of the `Clock`
+interface to retrieve the external time, which allow other things to to continue
+to run on the microcontroller.
 
 ```C++
 namespace ace_time {
@@ -797,10 +797,10 @@ class SystemClockCoroutine :
 
 The `SystemClockCoroutine` class is available only if you have installed the
 [AceRoutine](https://github.com/bxparks/AceRoutine) library and include its
-header before `<AceTime.h>`, like this:
+header **before** `<AceTimeClock.h>`, like this:
 
 ```C++
-#include <AceRoutine.h>
+#include <AceRoutine.h> // enables SystemClockCoroutine
 #include <AceTimeClock.h>
 ...
 ```
@@ -809,7 +809,7 @@ header before `<AceTime.h>`, like this:
 #### Reference Clock and Backup Clock
 
 The constructor of both `SystemClockLoop` and `SystemClockCoroutine`
-take 2 parameters which are required but are *nullable*:
+takes 2 parameters which are required but are *nullable*:
 
 * the `referenceClock`
     * an instance of the `Clock` class which provides an external clock of high
@@ -852,11 +852,16 @@ Since both parameters are nullable, there are 4 combinations:
       can initialize the `SystemClock` quickly when the board restarts
     * this configuration allows the clock to keep working if the network goes
       down
+
+An example of each configuration is given in the [SystemClock
+Examples](#SystemClockExamples) section below.
+
+There is some of special handling of the case where the referenceClock and the
+backupClock are non-null and identical:
+
 * `SystemClock(referenceClock, referenceClock)`
-    * if the `backupClock` is defined to be identical to the `referenceClock`
-      then the code takes special precautions to avoid updating the
-      `backupClock` when `syncNow()` is called
-    * this avoids writing the same value back into the RTC, which would cause
+    * precaution taken to avoid updating the `backupClock` during `syncNow()`
+    * avoids writing the same value back into the RTC, which would cause
       progressive loss of accuracy due to the overwriting of sub-second
       information
     * this configuration has the benefit of guaranteeing that the `SystemClock`
