@@ -2,7 +2,7 @@
 
 Here are the results from `AutoBenchmark.ino` for various boards.
 
-**Version**: AceTimeClock v1.0.0
+**Version**: AceTimeClock v1.0.2
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -56,6 +56,10 @@ The CPU times below are given in microseconds.
 v1.0.0:
 * Initial extraction from AceTime library.
 
+v1.0.2:
+* Regenerate all benchmarks to get correct numbers. Previous numbers were all
+  identical. I probably added them as placeholders, then forgot to regenerate.
+
 ## Arduino Nano
 
 * 16MHz ATmega328P
@@ -64,16 +68,16 @@ v1.0.0:
 
 ```
 Sizes of Objects:
-sizeof(clock::DS3231Clock): 3
-sizeof(clock::SystemClock): 28
-sizeof(clock::SystemClockLoop): 41
-sizeof(clock::SystemClockCoroutine): 52
+sizeof(DS3231Clock): 7
+sizeof(SystemClock): 28
+sizeof(SystemClockLoop): 41
+sizeof(SystemClockCoroutine): 52
 
 CPU:
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop::loop()                          |    9.031 |
 +--------------------------------------------------+----------+
 
 ```
@@ -86,16 +90,16 @@ CPU:
 
 ```
 Sizes of Objects:
-sizeof(clock::DS3231Clock): 3
-sizeof(clock::SystemClock): 28
-sizeof(clock::SystemClockLoop): 41
-sizeof(clock::SystemClockCoroutine): 52
+sizeof(DS3231Clock): 7
+sizeof(SystemClock): 28
+sizeof(SystemClockLoop): 41
+sizeof(SystemClockCoroutine): 52
 
 CPU:
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop::loop()                          |    8.986 |
 +--------------------------------------------------+----------+
 
 ```
@@ -108,16 +112,16 @@ CPU:
 
 ```
 Sizes of Objects:
-sizeof(clock::DS3231Clock): 8
-sizeof(clock::SystemClock): 36
-sizeof(clock::SystemClockLoop): 52
-sizeof(clock::SystemClockCoroutine): 72
+sizeof(DS3231Clock): 12
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 72
 
 CPU:
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop::loop()                          |    3.018 |
 +--------------------------------------------------+----------+
 
 ```
@@ -130,16 +134,16 @@ CPU:
 
 ```
 Sizes of Objects:
-sizeof(clock::DS3231Clock): 8
-sizeof(clock::SystemClock): 36
-sizeof(clock::SystemClockLoop): 52
-sizeof(clock::SystemClockCoroutine): 72
+sizeof(DS3231Clock): 12
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 72
 
 CPU:
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop::loop()                          |    2.069 |
 +--------------------------------------------------+----------+
 
 ```
@@ -152,17 +156,17 @@ CPU:
 
 ```
 Sizes of Objects:
-sizeof(clock::DS3231Clock): 8
-sizeof(clock::NtpClock): 92
-sizeof(clock::SystemClock): 36
-sizeof(clock::SystemClockLoop): 52
-sizeof(clock::SystemClockCoroutine): 72
+sizeof(DS3231Clock): 12
+sizeof(NtpClock): 92
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 72
 
 CPU:
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop::loop()                          |    9.582 |
 +--------------------------------------------------+----------+
 
 ```
@@ -175,17 +179,17 @@ CPU:
 
 ```
 Sizes of Objects:
-sizeof(clock::DS3231Clock): 8
-sizeof(clock::NtpClock): 116
-sizeof(clock::SystemClock): 36
-sizeof(clock::SystemClockLoop): 52
-sizeof(clock::SystemClockCoroutine): 72
+sizeof(DS3231Clock): 12
+sizeof(NtpClock): 116
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 72
 
 CPU:
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop::loop()                          |    2.463 |
 +--------------------------------------------------+----------+
 
 ```
@@ -202,16 +206,16 @@ duration of an empty loop, the numbers become unreliable.
 
 ```
 Sizes of Objects:
-sizeof(clock::DS3231Clock): 8
-sizeof(clock::SystemClock): 36
-sizeof(clock::SystemClockLoop): 52
-sizeof(clock::SystemClockCoroutine): 72
+sizeof(DS3231Clock): 12
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 72
 
 CPU:
 +--------------------------------------------------+----------+
 | Method                                           |   micros |
 |--------------------------------------------------+----------|
-| SystemClockLoop                                  |   19.564 |
+| SystemClockLoop::loop()                          |    0.544 |
 +--------------------------------------------------+----------+
 
 ```

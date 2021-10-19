@@ -11,18 +11,25 @@
   #error This sketch works only for the ESP8266 and ESP32
 #endif
 
+#include <Arduino.h>
+#include <AceTimeClock.h>
 #include <AceTime.h>
 
 using namespace ace_time;
 using namespace ace_time::clock;
 
-// Replace AUNITER_SSID and AUNITER_PASSWORD with your WiFi SSID and password.
+// ESP32 does not define SERIAL_PORT_MONITOR
+#ifndef SERIAL_PORT_MONITOR
+#define SERIAL_PORT_MONITOR Serial
+#endif
+
+// Replace WIFI_SSID and WIFI_PASSWORD with your WiFi SSID and password.
 // (I have a wrapper script that replaces these with the the correct values.
 // You will have to replace them manually.)
 // WARNING: For security, do NOT commit your ssid and password into a public
 // source repository.
-static const char SSID[] = AUNITER_SSID;
-static const char PASSWORD[] = AUNITER_PASSWORD;
+static const char SSID[] = WIFI_SSID;
+static const char PASSWORD[] = WIFI_PASSWORD;
 
 static BasicZoneProcessor parisProcessor;
 static NtpClock ntpClock, ntpClock2;

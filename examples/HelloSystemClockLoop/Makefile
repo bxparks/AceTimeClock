@@ -1,6 +1,6 @@
 # See https://github.com/bxparks/EpoxyDuino for documentation about this
 # Makefile to compile and run Arduino programs natively on Linux or MacOS.
 
-APP_NAME := HelloSystemClock
+APP_NAME := HelloSystemClockLoop
 ARDUINO_LIBS := AceCommon AceTime AceTimeClock
 include ../../../EpoxyDuino/EpoxyDuino.mk

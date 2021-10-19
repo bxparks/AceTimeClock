@@ -1,6 +1,16 @@
 # Changelog
 
 * Unreleased
+* v1.0.2 (2021-10-19)
+    * Add `examples/HelloDS3231Clock` to show how to configure and use the new
+      `DS3231Clock<T>` template class.
+    * Rename `examples/HelloSystemClock` to `examples/HelloSystemClockLoop` for
+      consistency.
+    * Update README.md sample codes to work with the new `DS3231Clock<T>`
+      template class and the `<AceWire.h>` library.
+    * Update MemoryBenchmark with 3 variations of `DS3231Clock`: TwoWire,
+      SimpleWire, and SimpleWireFast.
+        * Saves 1600-2200 bytes of flash on AVR by avoiding `<Wire.h>`.
 * v1.0.1 (2021-10-16)
     * Add AceWire and AceRoutine to the `depends` parameter in
       `library.properties` so that the Library Manager installs them

@@ -1,8 +1,6 @@
 /*
- * A program to determine how long it takes to execute some of the more complex
- * methods of ZonedDateTime and LocalDate.
- *
- * This should compile on all microcontrollers supported by the Arduino IDE.
+ * A program to determine how long it takes to execute certain features of the
+ * AceTimeClock classes.
  */
 
 #include <Arduino.h>
@@ -13,6 +11,11 @@
 
 using namespace ace_time::clock;
 using ace_wire::SimpleWireInterface;
+
+// ESP32 does not define SERIAL_PORT_MONITOR
+#ifndef SERIAL_PORT_MONITOR
+#define SERIAL_PORT_MONITOR Serial
+#endif
 
 void setup() {
 #if ! defined(EPOXY_DUINO)

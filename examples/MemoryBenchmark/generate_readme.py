@@ -29,7 +29,7 @@ memory and static RAM sizes were recorded. The `FEATURE_BASELINE` selection is
 the baseline, and its memory usage  numbers are subtracted from the subsequent
 `FEATURE_*` memory usage.
 
-**Version**: AceTimeClock v1.0.0
+**Version**: AceTimeClock v1.0.2
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -72,6 +72,16 @@ In v1.0.0:
 * Add benchmarks for `SystemClockCoroutine` separately from `SystemClockLoop`.
 * Rename `SystemClock` label to `SystemClockLoop`.
 
+In v1.0.2:
+* Fix bad merge in README.md.
+* Create benchmarks for 3 variations of `DS3231Clock`: TwoWire, SimpleWire, and
+  SimpleWireFast.
+    * Make sure `<Wire.h>` is *not* included when using SimpleWireInterface and
+      SimpleWireFastInterface.
+    * Flash consumption reduced by 1600 bytes using SimpleWireInterface and
+      2200 bytes using `SimpleWireInterface` on AVR.
+    * Saves 800-8800 bytes of flash on 32-bit processors.
+
 ## Arduino Nano
 
 * 16MHz ATmega328P
@@ -86,7 +96,6 @@ In v1.0.0:
 
 * 16 MHz ATmega32U4
 * Arduino IDE 1.8.16, Arduino CLI 0.19.2
->>>>>>> MemoryBenchmark: Regenerate after replacing direct dependency on <Wire.h> with <AceWire.h>; saves 500-4000 bytes of flash
 * SparkFun AVR Boards 1.1.13
 
 ```

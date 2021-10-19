@@ -1,6 +1,7 @@
 /*
- * Identical to HelloSystemClock, but using AceRoutine coroutines.
- * Should print the following on the SERIAL_PORT_MONITOR port every 2 seconds:
+ * Identical to HelloSystemClockLoop, but uses SystemClockCoroutine which uses
+ * AceRoutine coroutines. Should print the following on the SERIAL_PORT_MONITOR
+ * port every 2 seconds:
  *
  *   2019-06-17T19:50:00-07:00[America/Los_Angeles]
  *   2019-06-17T19:50:02-07:00[America/Los_Angeles]
@@ -8,12 +9,18 @@
  *   ...
  */
 
+#include <Arduino.h>
 #include <AceRoutine.h>  // activates SystemClockCoroutine
 #include <AceTimeClock.h>
 
+// ESP32 does not define SERIAL_PORT_MONITOR
+#ifndef SERIAL_PORT_MONITOR
+#define SERIAL_PORT_MONITOR Serial
+#endif
+
 using namespace ace_time;
 using namespace ace_time::clock;
-using namespace ace_routine;
+using ace_routine::CoroutineScheduler;
 
 // ZoneProcessor instance should be created statically at initialization time.
 static BasicZoneProcessor pacificProcessor;
@@ -23,6 +30,26 @@ static BasicZoneProcessor pacificProcessor;
 // to structure the code if the 'referenceClock' was actually defined.
 static SystemClockCoroutine systemClock(
     nullptr /*reference*/, nullptr /*backup*/);
+
+void printCurrentTime() {
+  acetime_t now = systemClock.getNow();
+
+  // Create Pacific Time and print.
+  auto pacificTz = TimeZone::forZoneInfo(&zonedb::kZoneAmerica_Los_Angeles,
+      &pacificProcessor);
+  auto pacificTime = ZonedDateTime::forEpochSeconds(now, pacificTz);
+  pacificTime.printTo(SERIAL_PORT_MONITOR);
+  SERIAL_PORT_MONITOR.println();
+}
+
+COROUTINE(print) {
+  COROUTINE_LOOP() {
+    printCurrentTime();
+    COROUTINE_DELAY(2000);
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 void setup() {
 #if ! defined(EPOXY_DUINO)
@@ -43,24 +70,6 @@ void setup() {
   systemClock.setNow(pacificTime.toEpochSeconds());
 
   CoroutineScheduler::setup();
-}
-
-void printCurrentTime() {
-  acetime_t now = systemClock.getNow();
-
-  // Create Pacific Time and print.
-  auto pacificTz = TimeZone::forZoneInfo(&zonedb::kZoneAmerica_Los_Angeles,
-      &pacificProcessor);
-  auto pacificTime = ZonedDateTime::forEpochSeconds(now, pacificTz);
-  pacificTime.printTo(SERIAL_PORT_MONITOR);
-  SERIAL_PORT_MONITOR.println();
-}
-
-COROUTINE(print) {
-  COROUTINE_LOOP() {
-    printCurrentTime();
-    COROUTINE_DELAY(2000);
-  }
 }
 
 void loop() {
