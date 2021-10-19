@@ -49,7 +49,14 @@ In v1.0.0:
 * Rename `SystemClock` label to `SystemClockLoop`.
 
 In v1.0.2:
-* No changes. Fix bad merge in README.md.
+* Fix bad merge in README.md.
+* Create benchmarks for 3 variations of `DS3231Clock`: TwoWire, SimpleWire, and
+  SimpleWireFast.
+    * Make sure `<Wire.h>` is *not* included when using SimpleWireInterface and
+      SimpleWireFastInterface.
+    * Flash consumption reduced by 1600 bytes using SimpleWireInterface and
+      2200 bytes using `SimpleWireInterface` on AVR.
+    * Saves 800-8800 bytes of flash on 32-bit processors.
 
 ## Arduino Nano
 
@@ -61,15 +68,17 @@ In v1.0.2:
 +---------------------------------------------------------------------+
 | Functionality                          |  flash/  ram |       delta |
 |----------------------------------------+--------------+-------------|
-| Baseline                               |    474/   11 |     0/    0 |
+| DS3231Clock<TwoWire>                   |   4688/  249 |  4214/  238 |
+| DS3231Clock<SimpleWire>                |   3030/   37 |  2556/   26 |
+| DS3231Clock<SimpleWireFast>            |   2482/   37 |  2008/   26 |
 |----------------------------------------+--------------+-------------|
-| DS3231Clock                            |   4108/  150 |  3634/  139 |
-| SystemClockLoop                        |   2692/  142 |  2218/  131 |
-| SystemClockLoop+1 Basic zone           |   8220/  328 |  7746/  317 |
-| SystemClockLoop+1 Extended zone        |  11230/  362 | 10756/  351 |
-| SystemClockCoroutine                   |   3456/  154 |  2982/  143 |
-| SystemClockCoroutine+1 Basic zone      |   9024/  340 |  8550/  329 |
-| SystemClockCoroutine+1 Extended zone   |  12034/  374 | 11560/  363 |
+| SystemClockLoop                        |   1500/   29 |  1026/   18 |
+| SystemClockLoop+1 Basic zone           |   7028/  215 |  6554/  204 |
+| SystemClockLoop+1 Extended zone        |  10038/  249 |  9564/  238 |
+|----------------------------------------+--------------+-------------|
+| SystemClockCoroutine                   |   2264/   41 |  1790/   30 |
+| SystemClockCoroutine+1 Basic zone      |   7832/  227 |  7358/  216 |
+| SystemClockCoroutine+1 Extended zone   |  10842/  261 | 10368/  250 |
 +---------------------------------------------------------------------+
 
 ```
@@ -84,15 +93,17 @@ In v1.0.2:
 +---------------------------------------------------------------------+
 | Functionality                          |  flash/  ram |       delta |
 |----------------------------------------+--------------+-------------|
-| Baseline                               |   3470/  153 |     0/    0 |
+| DS3231Clock<TwoWire>                   |   7674/  391 |  4204/  238 |
+| DS3231Clock<SimpleWire>                |   6144/  179 |  2674/   26 |
+| DS3231Clock<SimpleWireFast>            |   5478/  179 |  2008/   26 |
 |----------------------------------------+--------------+-------------|
-| DS3231Clock                            |   7216/  292 |  3746/  139 |
-| SystemClockLoop                        |   5796/  284 |  2326/  131 |
-| SystemClockLoop+1 Basic zone           |  11322/  468 |  7852/  315 |
-| SystemClockLoop+1 Extended zone        |  14332/  502 | 10862/  349 |
-| SystemClockCoroutine                   |   6560/  296 |  3090/  143 |
-| SystemClockCoroutine+1 Basic zone      |  12126/  480 |  8656/  327 |
-| SystemClockCoroutine+1 Extended zone   |  15136/  514 | 11666/  361 |
+| SystemClockLoop                        |   4496/  171 |  1026/   18 |
+| SystemClockLoop+1 Basic zone           |  10022/  355 |  6552/  202 |
+| SystemClockLoop+1 Extended zone        |  13032/  389 |  9562/  236 |
+|----------------------------------------+--------------+-------------|
+| SystemClockCoroutine                   |   5260/  183 |  1790/   30 |
+| SystemClockCoroutine+1 Basic zone      |  10826/  367 |  7356/  214 |
+| SystemClockCoroutine+1 Extended zone   |  13836/  401 | 10366/  248 |
 +---------------------------------------------------------------------+
 
 ```
@@ -107,15 +118,16 @@ In v1.0.2:
 +---------------------------------------------------------------------+
 | Functionality                          |  flash/  ram |       delta |
 |----------------------------------------+--------------+-------------|
-| Baseline                               |  10064/    0 |     0/    0 |
+| DS3231Clock<TwoWire>                   |  12688/    0 |  2624/    0 |
+| DS3231Clock<SimpleWire>                |  11872/    0 |  1808/    0 |
 |----------------------------------------+--------------+-------------|
-| DS3231Clock                            |  12728/    0 |  2664/    0 |
-| SystemClockLoop                        |  11616/    0 |  1552/    0 |
-| SystemClockLoop+1 Basic zone           |  15772/    0 |  5708/    0 |
-| SystemClockLoop+1 Extended zone        |  17756/    0 |  7692/    0 |
-| SystemClockCoroutine                   |  12144/    0 |  2080/    0 |
-| SystemClockCoroutine+1 Basic zone      |  16292/    0 |  6228/    0 |
-| SystemClockCoroutine+1 Extended zone   |  18292/    0 |  8228/    0 |
+| SystemClockLoop                        |  10760/    0 |   696/    0 |
+| SystemClockLoop+1 Basic zone           |  14916/    0 |  4852/    0 |
+| SystemClockLoop+1 Extended zone        |  16908/    0 |  6844/    0 |
+|----------------------------------------+--------------+-------------|
+| SystemClockCoroutine                   |  11288/    0 |  1224/    0 |
+| SystemClockCoroutine+1 Basic zone      |  15444/    0 |  5380/    0 |
+| SystemClockCoroutine+1 Extended zone   |  17436/    0 |  7372/    0 |
 +---------------------------------------------------------------------+
 
 ```
@@ -132,15 +144,16 @@ In v1.0.2:
 +---------------------------------------------------------------------+
 | Functionality                          |  flash/  ram |       delta |
 |----------------------------------------+--------------+-------------|
-| Baseline                               |  21420/ 3536 |     0/    0 |
+| DS3231Clock<TwoWire>                   |  28448/ 3768 |  7028/  232 |
+| DS3231Clock<SimpleWire>                |  25048/ 3584 |  3628/   48 |
 |----------------------------------------+--------------+-------------|
-| DS3231Clock                            |  29428/ 3788 |  8008/  252 |
-| SystemClockLoop                        |  31480/ 3876 | 10060/  340 |
-| SystemClockLoop+1 Basic zone           |  35520/ 3876 | 14100/  340 |
-| SystemClockLoop+1 Extended zone        |  37264/ 3876 | 15844/  340 |
-| SystemClockCoroutine                   |  31948/ 3880 | 10528/  344 |
-| SystemClockCoroutine+1 Basic zone      |  35992/ 3880 | 14572/  344 |
-| SystemClockCoroutine+1 Extended zone   |  37740/ 3880 | 16320/  344 |
+| SystemClockLoop                        |  27100/ 3672 |  5680/  136 |
+| SystemClockLoop+1 Basic zone           |  31136/ 3672 |  9716/  136 |
+| SystemClockLoop+1 Extended zone        |  32880/ 3672 | 11460/  136 |
+|----------------------------------------+--------------+-------------|
+| SystemClockCoroutine                   |  27568/ 3676 |  6148/  140 |
+| SystemClockCoroutine+1 Basic zone      |  31608/ 3676 | 10188/  140 |
+| SystemClockCoroutine+1 Extended zone   |  33356/ 3676 | 11936/  140 |
 +---------------------------------------------------------------------+
 
 ```
@@ -158,15 +171,16 @@ microcontroller and the compiler did not generate the desired information.
 +---------------------------------------------------------------------+
 | Functionality                          |  flash/  ram |       delta |
 |----------------------------------------+--------------+-------------|
-| Baseline                               | 260089/27892 |     0/    0 |
+| DS3231Clock<TwoWire>                   | 266069/28452 |  5980/  560 |
+| DS3231Clock<SimpleWire>                | 264305/27980 |  4216/   88 |
 |----------------------------------------+--------------+-------------|
-| DS3231Clock                            | 265161/28452 |  5072/  560 |
-| SystemClockLoop                        | 263761/28448 |  3672/  556 |
-| SystemClockLoop+1 Basic zone           | 269737/29024 |  9648/ 1132 |
-| SystemClockLoop+1 Extended zone        | 271881/29168 | 11792/ 1276 |
-| SystemClockCoroutine                   | 264305/28448 |  4216/  556 |
-| SystemClockCoroutine+1 Basic zone      | 270297/29024 | 10208/ 1132 |
-| SystemClockCoroutine+1 Extended zone   | 272441/29168 | 12352/ 1276 |
+| SystemClockLoop                        | 262905/27992 |  2816/  100 |
+| SystemClockLoop+1 Basic zone           | 268881/28552 |  8792/  660 |
+| SystemClockLoop+1 Extended zone        | 271025/28696 | 10936/  804 |
+|----------------------------------------+--------------+-------------|
+| SystemClockCoroutine                   | 263449/27992 |  3360/  100 |
+| SystemClockCoroutine+1 Basic zone      | 269425/28552 |  9336/  660 |
+| SystemClockCoroutine+1 Extended zone   | 271585/28696 | 11496/  804 |
 +---------------------------------------------------------------------+
 
 ```
@@ -181,15 +195,16 @@ microcontroller and the compiler did not generate the desired information.
 +---------------------------------------------------------------------+
 | Functionality                          |  flash/  ram |       delta |
 |----------------------------------------+--------------+-------------|
-| Baseline                               | 197748/13084 |     0/    0 |
+| DS3231Clock<TwoWire>                   | 217554/14312 | 19806/ 1228 |
+| DS3231Clock<SimpleWire>                | 208762/13584 | 11014/  500 |
 |----------------------------------------+--------------+-------------|
-| DS3231Clock                            | 212002/14200 | 14254/ 1116 |
-| SystemClockLoop                        | 210362/14200 | 12614/ 1116 |
-| SystemClockLoop+1 Basic zone           | 215282/14200 | 17534/ 1116 |
-| SystemClockLoop+1 Extended zone        | 217302/14200 | 19554/ 1116 |
-| SystemClockCoroutine                   | 210974/14208 | 13226/ 1124 |
-| SystemClockCoroutine+1 Basic zone      | 215894/14208 | 18146/ 1124 |
-| SystemClockCoroutine+1 Extended zone   | 217902/14208 | 20154/ 1124 |
+| SystemClockLoop                        | 206546/13424 |  8798/  340 |
+| SystemClockLoop+1 Basic zone           | 211470/13424 | 13722/  340 |
+| SystemClockLoop+1 Extended zone        | 213490/13424 | 15742/  340 |
+|----------------------------------------+--------------+-------------|
+| SystemClockCoroutine                   | 207158/13432 |  9410/  348 |
+| SystemClockCoroutine+1 Basic zone      | 212082/13432 | 14334/  348 |
+| SystemClockCoroutine+1 Extended zone   | 214090/13432 | 16342/  348 |
 +---------------------------------------------------------------------+
 
 ```
@@ -208,15 +223,16 @@ usage by objects.
 +---------------------------------------------------------------------+
 | Functionality                          |  flash/  ram |       delta |
 |----------------------------------------+--------------+-------------|
-| Baseline                               |  10184/ 4152 |     0/    0 |
+| DS3231Clock<TwoWire>                   |  14416/ 4820 |  4232/  668 |
+| DS3231Clock<SimpleWire>                |  12280/ 4152 |  2096/    0 |
 |----------------------------------------+--------------+-------------|
-| DS3231Clock                            |  14472/ 4820 |  4288/  668 |
-| SystemClockLoop                        |  12976/ 4828 |  2792/  676 |
-| SystemClockLoop+1 Basic zone           |  21892/ 4828 | 11708/  676 |
-| SystemClockLoop+1 Extended zone        |  25648/ 4828 | 15464/  676 |
-| SystemClockCoroutine                   |  14184/ 4832 |  4000/  680 |
-| SystemClockCoroutine+1 Basic zone      |  23092/ 4832 | 12908/  680 |
-| SystemClockCoroutine+1 Extended zone   |  26912/ 4832 | 16728/  680 |
+| SystemClockLoop                        |  10392/ 4160 |   208/    8 |
+| SystemClockLoop+1 Basic zone           |  19704/ 4160 |  9520/    8 |
+| SystemClockLoop+1 Extended zone        |  23460/ 4160 | 13276/    8 |
+|----------------------------------------+--------------+-------------|
+| SystemClockCoroutine                   |  11600/ 4164 |  1416/   12 |
+| SystemClockCoroutine+1 Basic zone      |  20968/ 4164 | 10784/   12 |
+| SystemClockCoroutine+1 Extended zone   |  24724/ 4164 | 14540/   12 |
 +---------------------------------------------------------------------+
 
 ```
