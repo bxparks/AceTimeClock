@@ -59,6 +59,7 @@ v1.0.0:
 v1.0.2:
 * Regenerate all benchmarks to get correct numbers. Previous numbers were all
   identical. I probably added them as placeholders, then forgot to regenerate.
+
 ## Arduino Nano
 
 * 16MHz ATmega328P

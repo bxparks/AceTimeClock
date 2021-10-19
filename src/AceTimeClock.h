@@ -45,7 +45,7 @@
 
 
 // Version format: xxyyzz == "xx.yy.zz"
-#define ACE_TIME_CLOCK_VERSION 10000
-#define ACE_TIME_CLOCK_VERSION_STRING "1.0.0"
+#define ACE_TIME_CLOCK_VERSION 10002
+#define ACE_TIME_CLOCK_VERSION_STRING "1.0.2"
 
 #endif
