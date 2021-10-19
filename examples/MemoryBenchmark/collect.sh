@@ -16,7 +16,7 @@
 set -eu
 
 PROGRAM_NAME='MemoryBenchmark.ino'
-NUM_FEATURES=7 # excluding the baseline
+NUM_FEATURES=9 # excluding the baseline
 
 # Assume that https://github.com/bxparks/AUniter is installed as a
 # sibling project to AceTime.
@@ -63,6 +63,10 @@ function collect_for_board() {
             # Ignore 'Sketch too big' condition, since we just want to
             # collect the flash and ram usage numbers.
             extract_memory "$feature" "$result_file"
+
+        elif grep -q 'Unsupported FEATURE' $auniter_out_file; then
+            # Platform does not support this feature.
+            echo $feature -1 -1 -1 -1 >> $result_file
 
         elif grep -q 'region.*overflowed by' $auniter_out_file; then
             # When STM32duino overflows, it does not print any useful info.

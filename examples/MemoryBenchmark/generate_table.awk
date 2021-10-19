@@ -6,15 +6,17 @@
 # table that can be inserted into the README.md.
 
 BEGIN {
-  NUM_FEATURES = 7
+  NUM_FEATURES = 9
   labels[0] = "Baseline"
-  labels[1] = "DS3231Clock"
-  labels[2] = "SystemClockLoop"
-  labels[3] = "SystemClockLoop+1 Basic zone"
-  labels[4] = "SystemClockLoop+1 Extended zone"
-  labels[5] = "SystemClockCoroutine"
-  labels[6] = "SystemClockCoroutine+1 Basic zone"
-  labels[7] = "SystemClockCoroutine+1 Extended zone"
+  labels[1] = "DS3231Clock<TwoWire>"
+  labels[2] = "DS3231Clock<SimpleWire>"
+  labels[3] = "DS3231Clock<SimpleWireFast>"
+  labels[4] = "SystemClockLoop"
+  labels[5] = "SystemClockLoop+1 Basic zone"
+  labels[6] = "SystemClockLoop+1 Extended zone"
+  labels[7] = "SystemClockCoroutine"
+  labels[8] = "SystemClockCoroutine+1 Basic zone"
+  labels[9] = "SystemClockCoroutine+1 Extended zone"
   record_index = 0
 }
 {
@@ -39,16 +41,20 @@ END {
     "+---------------------------------------------------------------------+\n")
   printf(\
     "| Functionality                          |  flash/  ram |       delta |\n")
-  printf(\
-    "|----------------------------------------+--------------+-------------|\n")
-  printf(\
-    "| %-38s | %6d/%5d | %5d/%5d |\n",
-    labels[0], u[0]["flash"], u[0]["ram"], u[0]["d_flash"], u[0]["d_ram"])
-  printf(\
-    "|----------------------------------------+--------------+-------------|\n")
+
   for (i = 1; i <= NUM_FEATURES; i++) {
+    if (u[i]["flash"] == "-1") continue
+
+    name = labels[i]
+    if (name ~ /^Baseline$/ \
+        || name ~ /^DS3231Clock<TwoWire>$/ \
+        || name ~ /^SystemClockLoop$/ \
+        || name ~ /^SystemClockCoroutine$/) {
+      printf(\
+        "|----------------------------------------+--------------+-------------|\n")
+    }
     printf("| %-38s | %6d/%5d | %5d/%5d |\n",
-        labels[i], u[i]["flash"], u[i]["ram"], u[i]["d_flash"], u[i]["d_ram"])
+        name, u[i]["flash"], u[i]["ram"], u[i]["d_flash"], u[i]["d_ram"])
   }
   printf(\
     "+---------------------------------------------------------------------+\n")

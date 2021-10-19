@@ -73,7 +73,14 @@ In v1.0.0:
 * Rename `SystemClock` label to `SystemClockLoop`.
 
 In v1.0.2:
-* No changes. Fix bad merge in README.md.
+* Fix bad merge in README.md.
+* Create benchmarks for 3 variations of `DS3231Clock`: TwoWire, SimpleWire, and
+  SimpleWireFast.
+    * Make sure `<Wire.h>` is *not* included when using SimpleWireInterface and
+      SimpleWireFastInterface.
+    * Flash consumption reduced by 1600 bytes using SimpleWireInterface and
+      2200 bytes using `SimpleWireInterface` on AVR.
+    * Saves 800-8800 bytes of flash on 32-bit processors.
 
 ## Arduino Nano
 

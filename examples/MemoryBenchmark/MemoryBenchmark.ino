@@ -2,18 +2,19 @@
  * Determine the size of various components of the AceTimeClock library.
  */
 
-#include <stdint.h> // uint8_t
 #include <Arduino.h>
 
 // List of features of the AceTime library that we want to examine.
 #define FEATURE_BASELINE 0
-#define FEATURE_DS3231_CLOCK 1
-#define FEATURE_SYSTEM_CLOCK_LOOP 2
-#define FEATURE_SYSTEM_CLOCK_LOOP_AND_BASIC_TIME_ZONE 3
-#define FEATURE_SYSTEM_CLOCK_LOOP_AND_EXTENDED_TIME_ZONE 4
-#define FEATURE_SYSTEM_CLOCK_COROUTINE 5
-#define FEATURE_SYSTEM_CLOCK_COROUTINE_AND_BASIC_TIME_ZONE 6
-#define FEATURE_SYSTEM_CLOCK_COROUTINE_AND_EXTENDED_TIME_ZONE 7
+#define FEATURE_DS3231_CLOCK_TWO_WIRE 1
+#define FEATURE_DS3231_CLOCK_SIMPLE_WIRE 2
+#define FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST 3
+#define FEATURE_SYSTEM_CLOCK_LOOP 4
+#define FEATURE_SYSTEM_CLOCK_LOOP_AND_BASIC_TIME_ZONE 5
+#define FEATURE_SYSTEM_CLOCK_LOOP_AND_EXTENDED_TIME_ZONE 6
+#define FEATURE_SYSTEM_CLOCK_COROUTINE 7
+#define FEATURE_SYSTEM_CLOCK_COROUTINE_AND_BASIC_TIME_ZONE 8
+#define FEATURE_SYSTEM_CLOCK_COROUTINE_AND_EXTENDED_TIME_ZONE 9
 
 // Select one of the FEATURE_* parameter and compile. Then look at the flash
 // and RAM usage, compared to FEATURE_BASELINE usage to determine how much
@@ -25,11 +26,23 @@
 #if FEATURE != FEATURE_BASELINE
   #include <AceRoutine.h> // activates SystemClockCoroutine
   #include <AceTimeClock.h>
-  #include <Wire.h> // TwoWire, Wire
-  #include <AceWire.h> // TwoWireInterface
   using namespace ace_time;
   using namespace ace_time::clock;
-  using namespace ace_time::hw;
+#endif
+
+#if FEATURE == FEATURE_DS3231_CLOCK_TWO_WIRE \
+    || FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE \
+    || FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST
+  #include <AceWire.h> // TwoWireInterface, SimpleWireInterface, etc.
+#endif
+
+#if FEATURE == FEATURE_DS3231_CLOCK_TWO_WIRE
+  #include <Wire.h> // TwoWire, Wire
+#endif
+
+#if FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST
+  #include <digitalWriteFast.h>
+  #include <ace_wire/SimpleWireFastInterface.h>
 #endif
 
 // Set this variable to prevent the compiler optimizer from removing the code
@@ -66,9 +79,31 @@ void setup() {
 
 #if FEATURE == FEATURE_BASELINE
   guard = 0;
-#elif FEATURE == FEATURE_DS3231_CLOCK
+
+#elif FEATURE == FEATURE_DS3231_CLOCK_TWO_WIRE
+  using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
+  WireInterface wireInterface(Wire);
+  DS3231Clock<WireInterface> dsClock(wireInterface);
+  acetime_t now = dsClock.getNow();
+  guard ^= now;
+
+#elif FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE
+  static const uint8_t DELAY_MICROS = 4;
   using WireInterface = ace_wire::SimpleWireInterface;
-  WireInterface wireInterface(SDA, SCL, 4 /* delayMicros */);
+  WireInterface wireInterface(SDA, SCL, DELAY_MICROS);
+  DS3231Clock<WireInterface> dsClock(wireInterface);
+  acetime_t now = dsClock.getNow();
+  guard ^= now;
+
+#elif FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST
+  #if ! defined(ARDUINO_ARCH_AVR) && ! defined(EPOXY_DUINO)
+    #error Unsupported FEATURE on this platform
+  #endif
+
+  static const uint8_t DELAY_MICROS = 4;
+  using WireInterface = ace_wire::SimpleWireFastInterface<
+      SDA, SCL, DELAY_MICROS>;
+  WireInterface wireInterface;
   DS3231Clock<WireInterface> dsClock(wireInterface);
   acetime_t now = dsClock.getNow();
   guard ^= now;
@@ -133,6 +168,7 @@ void setup() {
   auto dt = ZonedDateTime::forEpochSeconds(now, tz);
   acetime_t epochSeconds = dt.toEpochSeconds();
   guard ^= epochSeconds;
+
 #else
   #error Unknown FEATURE
 #endif
