@@ -89,6 +89,7 @@ This library can be an alternative to the Arduino Time
     * [Hardware](#Hardware)
     * [Tool Chain](#ToolChain)
     * [Operating System](#OperatingSystem)
+* [Bugs and Limitations](#Bugs)
 * [License](#License)
 * [Feedback and Support](#FeedbackAndSupport)
 * [Authors](#Authors)
@@ -1477,6 +1478,21 @@ the EpoxyDuino (https://github.com/bxparks/EpoxyDuino) emulation layer.
 I use Ubuntu 18.04 and 20.04 for the vast majority of my development. I expect
 that the library will work fine under MacOS and Windows, but I have not tested
 them.
+
+<a name="Bugs"></a>
+## Bugs and Limitations
+
+* `NtpClock`
+    * The `NtpClock` on an ESP8266 calls `WiFi.hostByName()` to resolve
+      the IP address of the NTP server. Unfortunately, when I tested this
+      library, it seems to be a blocking call (later versions may have fixed
+      this). When the DNS resolver is working properly, this call returns in
+      ~10ms or less. But sometimes, the DNS resolver seems to get into a state
+      where it takes 4-5 **seconds** to time out. Even if you use AceRoutine
+      coroutines, the entire program will block for those 4-5 seconds.
+    * [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) uses an epoch
+      of 1900-01-01T00:00:00Z, with 32-bit unsigned integer as the seconds
+      counter. It will overflow just after 2036-02-07T06:28:15Z.
 
 <a name="License"></a>
 ## License
