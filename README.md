@@ -44,7 +44,7 @@ in the future.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.0.2 (2021-10-19)
+**Version**: v1.0.3 (2021-12-02)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
@@ -89,6 +89,7 @@ This library can be an alternative to the Arduino Time
     * [Hardware](#Hardware)
     * [Tool Chain](#ToolChain)
     * [Operating System](#OperatingSystem)
+* [Bugs and Limitations](#Bugs)
 * [License](#License)
 * [Feedback and Support](#FeedbackAndSupport)
 * [Authors](#Authors)
@@ -1478,6 +1479,21 @@ I use Ubuntu 18.04 and 20.04 for the vast majority of my development. I expect
 that the library will work fine under MacOS and Windows, but I have not tested
 them.
 
+<a name="Bugs"></a>
+## Bugs and Limitations
+
+* `NtpClock`
+    * The `NtpClock` on an ESP8266 calls `WiFi.hostByName()` to resolve
+      the IP address of the NTP server. Unfortunately, when I tested this
+      library, it seems to be a blocking call (later versions may have fixed
+      this). When the DNS resolver is working properly, this call returns in
+      ~10ms or less. But sometimes, the DNS resolver seems to get into a state
+      where it takes 4-5 **seconds** to time out. Even if you use AceRoutine
+      coroutines, the entire program will block for those 4-5 seconds.
+    * [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) uses an epoch
+      of 1900-01-01T00:00:00Z, with 32-bit unsigned integer as the seconds
+      counter. It will overflow just after 2036-02-07T06:28:15Z.
+
 <a name="License"></a>
 ## License
 
@@ -1486,14 +1502,14 @@ them.
 <a name="FeedbackAndSupport"></a>
 ## Feedback and Support
 
-If you have any questions, comments and other support questions about how to
-use this library, please use the
-[GitHub Discussions](https://github.com/bxparks/AceTimeClock/discussions)
-for this project. If you have bug reports or feature requests, please file a
-ticket in [GitHub Issues](https://github.com/bxparks/AceTimeClock/issues).
-I'd love to hear about how this software and its documentation can be improved.
-I can't promise that I will incorporate everything, but I will give your ideas
-serious consideration.
+If you have any questions, comments, or feature requests for this library,
+please use the [GitHub
+Discussions](https://github.com/bxparks/AceTimeClock/discussions) for this
+project. If you have bug reports, please file a ticket in [GitHub
+Issues](https://github.com/bxparks/AceTimeClock/issues). Feature requests should
+go into Discussions first because they often have alternative solutions which
+are useful to remain visible, instead of disappearing from the default view of
+the Issue tracker after the ticket is closed.
 
 Please refrain from emailing me directly unless the content is sensitive. The
 problem with email is that I cannot reference the email conversation when other

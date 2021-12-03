@@ -1,6 +1,10 @@
 # Changelog
 
 * Unreleased
+* v1.0.3 (2021-12-02)
+    * Add `AceSorting` library to various Makefiles, a new dependency for
+      AceTime v1.9.0.
+    * Adding accidentally missing Baseline line in MemoryBenchmark.
 * v1.0.2 (2021-10-19)
     * Add `examples/HelloDS3231Clock` to show how to configure and use the new
       `DS3231Clock<T>` template class.
