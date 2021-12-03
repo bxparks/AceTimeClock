@@ -44,7 +44,7 @@ in the future.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.0.2 (2021-10-19)
+**Version**: v1.0.3 (2021-12-02)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
