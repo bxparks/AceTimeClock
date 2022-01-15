@@ -68,6 +68,7 @@ This library can be an alternative to the Arduino Time
     * [DS3231Clock Class](#DS3231ClockClass)
     * [StmRtcClock Class](#StmRtcClockClass)
     * [Stm32F1Clock Class](#Stm32F1ClockClass)
+    * [EspSntpClock Class](#EspSntpClockClass)
     * [UnixClock Class](#UnixClockClass)
     * [SystemClock Class](#SystemClockClass)
         * [Reference Clock And Backup Clock](#ReferenceClockAndBackupClock)
@@ -654,6 +655,58 @@ accurate to better than 1 second per 48 hours. See for example:
 The `Stm32F1Clock` and `Stm32F1Rtc` classes are new for v1.7 and should be
 considered experimental. They seem to work great for me on my Blue Pill for what
 it is worth.
+
+<a name="EspSntpClockClass"></a>
+### ESP SNTP Clock Class
+
+The `EspSntpClock` class is specifically designed for the ESP8266 and ESP32
+platforms, using its built-in SNTP client which synchronizes with the `time()`
+function in the C-library.
+
+```C++
+namespace ace_time {
+namespace clock {
+
+class EspSntpClock: public Clock {
+  public:
+    static const char kDefaultNtpServer[];
+    static const uint32_t kDefaultTimeoutMillis = 15000;
+
+    explicit EspSntpClock() {}
+
+    bool setup(
+        const char* ntpServer = kDefaultNtpServer,
+        uint32_t timeoutMillis = kDefaultTimeoutMillis);
+
+    acetime_t getNow() const override;
+};
+
+}
+}
+```
+
+The class depends on the `WiFi` stack to be configured elsewhere.
+
+The `EspSntpClock::setup()` function calls the `configTime()` function provided
+by the ESP8266 and ESP32 platforms, with the timezone set to UTC (STD offset and
+DST offset are set to 0). The `setup()` method returns `true` on success,
+`false` upon timeout. The `kDefaultNtpServer` is "pool.ntp.org".`
+
+The `getNow()` method calls the built-in `time()` function and converts the
+64-bit `time_t` Unix epoch seconds used on the ESP8266 and ESP32 platforms to
+the 32-bit `acetime_t` epoch seconds used by the AceTime library. In the current
+version of AceTime, this is valid until 2068-01-19 03:14:07 UTC.
+
+The SNTP client apparently performs automatic synchronization of the `time()`
+function every 1 hour, but the only documentation for this that I can find is in
+this
+[NTP-TZ-DST](https://github.com/esp8266/Arduino/tree/master/libraries/esp8266/examples/NTP-TZ-DST)
+example file.
+
+See also the
+[AceTime/examples/EspTime](https://github.com/bxparks/AceTime/tree/develop/examples/EspTime)
+app from the AceTime project which shows how to integrate the ESP SNTP service
+with AceTime directly without going through this class.
 
 <a name="UnixClockClass"></a>
 ### UnixClock Class
