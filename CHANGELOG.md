@@ -1,9 +1,9 @@
 # Changelog
 
 * Unreleased
-    * Add `EspSntpClock` class which configures the SNTP client, sets the
-      `configTime()` timezone to UTC, and exposes the `time()` function
-      through the `Clock` interface.
+    * Add `EspSntpClock` class which configures the SNTP client on the ESP8266
+      and ESP32 platforms, sets the `configTime()` timezone to UTC, and exposes
+      the `time()` function through the `Clock` interface.
 * v1.0.3 (2021-12-02)
     * Add `AceSorting` library to various Makefiles, a new dependency for
       AceTime v1.9.0.

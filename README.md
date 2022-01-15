@@ -16,8 +16,11 @@ The following clock sources are supported:
 * an [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) server
 * a [DS3231 RTC](https://www.maximintegrated.com/en/products/analog/real-time-clocks/DS3231.html)
 chip
-* the generic STM32 RTC Clock
-* the special STM32F1 RTC clock
+* the generic [STM32 RTC Clock](https://github.com/stm32duino/STM32RTC)
+* the special [STM32F1 RTC Clock](https://github.com/stm32duino/STM32RTC/issues/29)
+* the SNTP client on ESP8266 and ESP32 platforms (the documentation for this is
+  almost non-existent, try https://www.esp8266.com/viewtopic.php?p=75141
+  and expanding the internet search from there)
 * a Unix `time()` clock (when using
   [EpoxyDuino](https://github.com/bxparks/EpoxyDuino))
 
