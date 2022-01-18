@@ -24,7 +24,10 @@ namespace clock {
  */
 class EspSntpClock: public Clock {
   public:
+    /** Default NTP server, "pool.ntp.org". */
     static const char kDefaultNtpServer[];
+
+    /** Default time out for setup(). */
     static const uint32_t kDefaultTimeoutMillis = 15000;
 
     explicit EspSntpClock() {}
@@ -34,8 +37,8 @@ class EspSntpClock: public Clock {
      * be skipped if the SNTP client is configured somewhere else.
      *
      * @param ntpServer name of the NTP server, default "pool.ntp.org"
-     * @param timeout number of millis to wait before returning if the SNTP
-     *    does not stabilize, default 15000 (15 seconds)
+     * @param timeoutMillis number of millis to wait before returning if
+     *    the SNTP does not stabilize, default 15000 (15 seconds)
      *
      * @returns true if the setup() was successful, false if the timeout
      *    occurred
