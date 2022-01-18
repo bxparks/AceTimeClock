@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['ntpclock_67',['NtpClock',['../classace__time_1_1clock_1_1NtpClock.html',1,'ace_time::clock']]]
+  ['hardwaredatetime_69',['HardwareDateTime',['../structace__time_1_1hw_1_1HardwareDateTime.html',1,'ace_time::hw']]],
+  ['hardwaretemperature_70',['HardwareTemperature',['../structace__time_1_1hw_1_1HardwareTemperature.html',1,'ace_time::hw']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7eclock_60',['~Clock',['../classace__time_1_1clock_1_1Clock.html#ad0d9d27352a1d8d09221f2f15bc0f9c4',1,'ace_time::clock::Clock']]]
+  ['year_62',['year',['../structace__time_1_1hw_1_1HardwareDateTime.html#a8163450add28999dcc1e69fc5f550316',1,'ace_time::hw::HardwareDateTime']]]
 ];

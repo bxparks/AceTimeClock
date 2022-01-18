@@ -26,7 +26,7 @@ print(f"""\
 
 Here are the results from `AutoBenchmark.ino` for various boards.
 
-**Version**: AceTimeClock v1.0.3
+**Version**: AceTimeClock v1.0.4
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
