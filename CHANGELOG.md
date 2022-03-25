@@ -1,6 +1,9 @@
 # Changelog
 
 * Unreleased
+* v1.0.5 (2022-03-25)
+    * Add a `uint16_t` template parameter to `CoroutineTemplate` for
+      compatibility with AceRoutine v1.5.0.
 * v1.0.4 (2022-01-18)
     * Add `EspSntpClock` class which configures the SNTP client on the ESP8266
       and ESP32 platforms, sets the `configTime()` timezone to UTC, and exposes
