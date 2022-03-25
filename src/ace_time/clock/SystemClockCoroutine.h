@@ -49,7 +49,7 @@ namespace clock {
 template <typename T_SCCI, typename T_CRCI>
 class SystemClockCoroutineTemplate :
     public SystemClockTemplate<T_SCCI>,
-    public ace_routine::CoroutineTemplate<T_CRCI> {
+    public ace_routine::CoroutineTemplate<T_CRCI, uint16_t> {
 
   public:
     /**
@@ -76,7 +76,7 @@ class SystemClockCoroutineTemplate :
         uint16_t requestTimeoutMillis = 1000,
         ace_common::TimingStats* timingStats = nullptr):
       SystemClockTemplate<T_SCCI>(referenceClock, backupClock),
-      ace_routine::CoroutineTemplate<T_CRCI>(),
+      ace_routine::CoroutineTemplate<T_CRCI, uint16_t>(),
       mSyncPeriodSeconds(syncPeriodSeconds),
       mRequestTimeoutMillis(requestTimeoutMillis),
       mTimingStats(timingStats),
