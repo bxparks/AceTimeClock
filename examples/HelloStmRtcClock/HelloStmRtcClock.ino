@@ -16,8 +16,9 @@
   #include <STM32RTC.h>
 #endif
 
-using namespace ace_time;
-using namespace ace_time::clock;
+using ace_time::acetime_t;
+using ace_time::LocalDateTime;
+using ace_time::clock::StmRtcClock;
 
 // ESP32 does not define SERIAL_PORT_MONITOR
 #ifndef SERIAL_PORT_MONITOR
