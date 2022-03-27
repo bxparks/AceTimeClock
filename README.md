@@ -256,13 +256,17 @@ then printing the system time every 2 seconds:
 The following programs are provided in the `examples/` directory:
 
 * [HelloSystemClockLoop](examples/HelloSystemClockLoop/)
-    * demo program of `SystemClock`
+    * demo of `SystemClock` using a manual loop
 * [HelloSystemClockCoroutine](examples/HelloSystemClockCoroutine/)
     * same as `HelloSystemClockLoop` but using AceRoutine coroutines
 * [HelloDS3231Clock](examples/HelloDS3231Clock/)
-    * demo program of `DS3231Clock<T>` template class using `<AceWire.h>`
+    * demo of `DS3231Clock<T>` template class using `<AceWire.h>`
 * [HelloNtpClock](examples/HelloNtpClock/)
-    * demo program of `NtpClock`
+    * demo of `NtpClock` on ESP8266 and ESP32
+* [HelloEspSntpClock](examples/HelloEspSntpClock/)
+    * demo of `EspSntpClock` on ESP8266 and ESP32
+* [HelloStmRtcClock](examples/HelloStmRtcClock/)
+    * demo of `StmRtcClock` on STM32 boards (STM32F1 and STM32F4 tested)
 * Benchmarks
     * [AutoBenchmark](examples/AutoBenchmark/)
         * perform CPU and memory benchmarking of various methods and print a
