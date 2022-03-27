@@ -188,11 +188,13 @@ This is the example code for using the `SystemClock` taken from
 #include <Arduino.h>
 #include <AceTime.h>
 #include <AceTimeClock.h>
+
 using ace_time::acetime_t;
 using ace_time::ZonedDateTime;
-using ace_time::zonedb;
+using ace_time::TimeZone;
 using ace_time::BasicZoneProcessor;
-using namespace ace_time::clock;
+using ace_time::zonedb::kZoneAmerica_Los_Angeles;
+using ace_time::clock::SystemClockLoop;
 
 // ZoneProcessor instances should be created statically at initialization time.
 static BasicZoneProcessor pacificProcessor;
@@ -319,11 +321,12 @@ and the diamond-line means "is-aggregation-of":
 .----------- Clock
 |            ^    ^
 |            |     \
-|            |      NtpClock --------> WiFi, ESP8266WiFi
 |            |      DS3231Clock -----> hw::DS3231
+|            |      EspSntpClock ----> time()
+|            |      NtpClock --------> WiFi, ESP8266WiFi
 |            |      StmRtcClock -----> hw::StmRtc
 |            |      Stm32F1Clock ----> hw::Stm32F1Rtc
-|            |      UnixClock -------> time()
+|            |      UnixClock -------> configTime(), time()
 |            |
 `------<> SystemClock
            ^       ^
@@ -335,6 +338,7 @@ These are arranged in the following C++ namespaces:
 
 * `ace_time::clock::Clock`
     * `ace_time::clock::DS3231Clock`
+    * `ace_time::clock::EspSntpClock`
     * `ace_time::clock::NtpClock`
     * `ace_time::clock::StmRtcClock`
     * `ace_time::clock::Stm32F1Clock`
@@ -354,7 +358,8 @@ This is an abstract class which provides 3 functionalities:
 
 * `setNow(acetime_t now)`: set the current time
 * `acetime_ getNow()`: get current time (blocking)
-* `sendRequest()`, `isResponseReady()`, `readResponse()`: get current time (non-blocking)
+* `sendRequest()`, `isResponseReady()`, `readResponse()`: get current time
+  (non-blocking)
 
 ```C++
 namespace ace_time {
@@ -440,8 +445,10 @@ be established. Here is a sample of how it can be used:
 
 ```C++
 #include <AceTimeClock.h>
-using namespace ace_time;
-using namespace ace_time::clock;
+
+using ace_time::acetime_t;
+using ace_time::OffsetDateTime;
+using ace_time::clock::NtpClock;
 
 const char SSID[] = ...; // Warning: don't store SSID in GitHub
 const char PASSWORD[] = ...; // Warning: don't store passwd in GitHub
@@ -519,16 +526,17 @@ AceTime Epoch by converting the UTC date and time components to `acetime_t`
 into either an `OffsetDateTime` or a `ZonedDateTime` as needed.
 
 The `DS3231Clock::setup()` should be called from the global `setup()`
-function to initialize the object. Here is a sample that:
+function to initialize the object. Here is a sample of that:
 
 ```C++
 #include <Arduino.h>
 #include <AceTimeClock.h>
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
-using ace_time::acetime_t
+
+using ace_time::acetime_t;
 using ace_time::OffsetDateTime;
-using namespace ace_time::clock;
+using ace_time::clock::DS3231Clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
@@ -590,18 +598,71 @@ class StmRtcClock: public Clock {
 ```
 
 This class is relatively new (added in v1.4) and may require more extensive
-testing across various STM32 boards. It has one known problem on the STM32F1
-chip, used by the popular "Blue Pill" boards. According to a few bug reports
-(https://github.com/stm32duino/STM32RTC/issues/29,
-https://github.com/stm32duino/STM32RTC/issues/32,
-https://github.com/stm32duino/STM32RTC/pull/41), the date fields are lost upon a
-power cycle on the STM32F1. This is because the RTC on the STM32F1 is different
-than the RTC on other STM32 chips, and stores only a 32-bit integer counter. The
-HAL (hardware abstraction layer) code in the STM32duino is able not able to
-utilize this 32-bit counter to store the date fields, and instead stores them in
-SRAM which is lost during a power-loss.
+testing. I have done some rough testing on the STM32F103 (Blue Pill) and the
+STM32F411 (Black Pill) dev boards.
 
-I created the `Stm32F1Clock` class to fix this problem below.
+The `StmRtcClock` uses the `STM32RTC::getInstance()` singleton instance from the
+`STM32RTC` library which should be configured in the global
+`setup()` function like this (see
+[examples/HelloStmRtcClock](examples/HelloStmRtcClock)):
+
+```C++
+...
+#include <STM32RTC.h>
+#include <AceTimeClock.h>
+...
+using ace_time::clock::StmRtcClock;
+
+...
+StmRtcClock stmRtcClock;
+
+void setup() {
+  ...
+  // Configure the STM32RTC singleton instance
+  STM32RTC::getInstance().setClockSource(STM32RTC::LSE_CLOCK);
+  STM32RTC::getInstance().begin();
+  // STM32RTC::getInstance().begin(true /*reset*/); // use this to reset
+
+  stmRtcClock.setup();
+  ...
+}
+```
+
+The `STM32RTC::setClockSource()` supports 3 clock sources:
+
+* `STM32RTC::LSI_CLOCK` (default)
+    * low speed internal
+    * not accurate
+* `STM32RTC::LSE_CLOCK`
+    * low speed external
+    * requires a 32.768 kHz external crystal
+    * retains timekeeping during power-off through the VBat terminal
+* `STM32RTC::HSE_CLOCK`
+    * high speed external
+    * (I don't know much about this)
+
+The `STM32RTC::begin()` method without arguments configures the object without
+resetting the RTC hardware. By default, it uses the `STM32RTC::HOUR_24` flag to
+set the RTC chip into 24-hour format. This is required for AceTime which assumes
+that the `hour` component is in 24-hour format.
+
+An alternate version of `begin(bool reset)` takes a boolean flag which resets
+the RTC chip and clears any previous date-time values. This can be useful during
+development and debugging.
+
+Prior to STM32RTC v1.2.0, the STM32RTC library contained a bug on the STM32F1
+chip where the date components (year, month, day) were lost upon reset. See
+the following issues:
+
+* [STM32RTC#29](https://github.com/stm32duino/STM32RTC/issues/29),
+* [STM32RTC#32](https://github.com/stm32duino/STM32RTC/issues/32),
+* [STM32RTC#41](https://github.com/stm32duino/STM32RTC/pull/41),
+* [Arduino_Core_STM32#266](https://github.com/stm32duino/Arduino_Core_STM32/issues/266)
+
+I created the `Stm32F1Clock` class to fix this problem below. The bug was
+finally fixed in v1.2.0 with
+[STM32RTC#58](https://github.com/stm32duino/STM32RTC/pull/58) so the
+`Stm32F1Clock` class may no longer be necessary.
 
 <a name="Stm32F1ClockClass"></a>
 ### Stm32F1Clock Class
@@ -633,14 +694,29 @@ class Stm32F1Clock: public Clock {
 }
 ```
 
+The class is used like this:
+
+```C++
+...
+#include <AceTimeClock.h>
+...
+using ace_time::clock::Stm32F1Clock;
+
+...
+Stm32F1Clock stm32F1Clock;
+
+void setup() {
+  ...
+
+  stm32F1Clock.setup();
+  ...
+}
+```
+
 Underneath the covers, the `Stm32F1Clock` delegates its functionality to the
 `hw::Stm32F1Rtc` class. The `Stm32F1Rtc` class bypasses the HAL code for
-the STM32F1 because the RTC HAL layer for the STM32F1 has a bug which causes the
-date components to be lost after a power reset:
-
-* https://github.com/stm32duino/STM32RTC/issues/29
-* https://github.com/stm32duino/Arduino_Core_STM32/issues/266
-* https://github.com/stm32duino/STM32RTC/issues/32
+the STM32F1 to avoid a bug which causes the date components to be lost after a
+power reset. (See [StmRtcClockClass](#StmRtcClockClass) subsection above).
 
 Instead, the `hw::Stm32F1Rtc` class writes the AceTime epochSeconds directly
 into the 32-bit RTC counter on the STM32F1. More information can be found in the
@@ -654,10 +730,6 @@ accurate to better than 1 second per 48 hours. See for example:
 
 * https://github.com/rogerclarkmelbourne/Arduino_STM32/issues/572
 * https://www.stm32duino.com/viewtopic.php?t=143
-
-The `Stm32F1Clock` and `Stm32F1Rtc` classes are new for v1.7 and should be
-considered experimental. They seem to work great for me on my Blue Pill for what
-it is worth.
 
 <a name="EspSntpClockClass"></a>
 ### ESP SNTP Clock Class
@@ -978,7 +1050,9 @@ This class synchronizes to the `referenceClock` through the
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
+
+using ace_time::clock::DS3231Clock;
+using ace_time::clock::SystemClockLoop;
 ...
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
@@ -1018,15 +1092,17 @@ This class synchronizes to the `referenceClock` using an
 #include <Wire.h> // TwoWire, Wire
 #include <AceRoutine.h> // include this before <AceTimeClock.h>
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
-using namespace ace_routine;
+
+using ace_time::clock::DS3231Clock;
+using ace_time::clock::SystemClockCoroutine;
+using ace_routine::CoroutineScheduler;
 ...
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
 DS3231Clock<WireInterface> dsClock(Wire);
 
-SystemClock systemClock(dsClock, nullptr /*backup*/);
+SystemClockCoroutine systemClock(dsClock, nullptr /*backup*/);
 
 void setup() {
   ...
@@ -1172,7 +1248,8 @@ debugging.
 
 ```C++
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
+
+using ace_time::clock::SystemClockLoop;
 
 SystemClockLoop systemClock(nullptr /*reference*/, nullptr /*backup*/);
 ...
@@ -1203,7 +1280,9 @@ for I2C communication.
 #include <AceTimeClock.h>
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
-using namespace ace_time::clock;
+
+using ace_time::clock::SystemClockLoop;
+using ace_time::clock::DS3231Clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
@@ -1256,7 +1335,10 @@ let me know if my assumptions are incorrect.)
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
+
+using ace_time::clock::SystemClockLoop;
+using ace_time::clock::NtpClock;
+using ace_time::clock::DS3231Clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
@@ -1300,7 +1382,9 @@ clock sources, like this:
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
+
+using ace_time::clock::SystemClockLoop;
+using ace_time::clock::DS3231Clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);

@@ -1,6 +1,14 @@
 # Changelog
 
 * Unreleased
+    * Simplify `StmRtcClock` and `StmRtc` classes to use
+      `STM32RTC::getInstance()` directly.
+        * Move configuration of the `STM32RTC` singleton to the `STM32RTC`
+          object itself (e.g. configuring `LSE_CLOCK`, `HSE_CLOCK`).
+        * Update documentation to indicate that `STM32RTC` v1.2.0 fixes the bug
+          which caused the date components to be lost upon power reset.
+    * Incorporate `EpoxyMockSTM32RTC` mock library to allow `StmRtcClock` to be
+      compiled under EpoxyDuino in GitHub Actions.
 * v1.0.5 (2022-03-25)
     * Add a `uint16_t` template parameter to `CoroutineTemplate` for
       compatibility with AceRoutine v1.5.0.
