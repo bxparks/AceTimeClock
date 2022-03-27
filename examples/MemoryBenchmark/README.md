@@ -5,7 +5,7 @@ memory and static RAM sizes were recorded. The `FEATURE_BASELINE` selection is
 the baseline, and its memory usage  numbers are subtracted from the subsequent
 `FEATURE_*` memory usage.
 
-**Version**: AceTimeClock v1.0.5
+**Version**: AceTimeClock v1.1.0
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -32,7 +32,8 @@ ASCII table.
 
 ## Library Size Changes
 
-In v1.0.0:
+**v1.0.0**
+
 * Initial split from AceTime v1.7.5 for v1.8.0.
 * Convert `DS3231.h` into a template class for `<AceWire.h>`, replacing direct
   dependency on `<Wire.h>`.
@@ -48,7 +49,8 @@ In v1.0.0:
 * Add benchmarks for `SystemClockCoroutine` separately from `SystemClockLoop`.
 * Rename `SystemClock` label to `SystemClockLoop`.
 
-In v1.0.2:
+**v1.0.2**
+
 * Fix bad merge in README.md.
 * Create benchmarks for 3 variations of `DS3231Clock`: TwoWire, SimpleWire, and
   SimpleWireFast.
@@ -58,138 +60,167 @@ In v1.0.2:
       2200 bytes using `SimpleWireInterface` on AVR.
     * Saves 800-8800 bytes of flash on 32-bit processors.
 
+**v1.1.0**
+
+* Upgrade tool chains
+    * Arduino IDE from 1.8.16 to 1.8.19
+    * Arduino CLI from 0.19.2 to 0.20.2
+    * STM32duino from 2.0.0 to 2.2.0
+    * AVR Core from 1.8.3 to 1.8.4
+    * ESP32 Core from 1.0.6 to 2.0.2
+    * Teensyduino from 1.55 to 1.56
+* Add benchmark entries for:
+    * `StmRtcClock`
+    * `Stm32F1Clock`
+    * `NtpClock`
+    * `EspSntpClock`
+* ESP32
+    * `NtpClock` and `EspSntpClock` increases flash usage by ~400kB and
+      static RAM usage by ~20KB.
+    * Such a large increase is *not* seen on the ESP8266.
+    * Probably due to `<WiFi.h>`.
+* STM32
+    * Using `<STM32RTC.h>` through `StmRtcClock` consumes an extra ~4kB of flash
+      compared to using `Stm32F1Clock`.
+
 ## Arduino Nano
 
 * 16MHz ATmega328P
-* Arduino IDE 1.8.16, Arduino CLI 0.19.2
-* Arduino AVR Boards 1.8.3
+* Arduino IDE 1.8.19, Arduino CLI 0.20.2
+* Arduino AVR Boards 1.8.4
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               |    474/   11 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock<TwoWire>                   |   4688/  249 |  4214/  238 |
-| DS3231Clock<SimpleWire>                |   3030/   37 |  2556/   26 |
-| DS3231Clock<SimpleWireFast>            |   2482/   37 |  2008/   26 |
-|----------------------------------------+--------------+-------------|
-| SystemClockLoop                        |   1500/   29 |  1026/   18 |
-| SystemClockLoop+1 Basic zone           |   7028/  215 |  6554/  204 |
-| SystemClockLoop+1 Extended zone        |  10038/  249 |  9564/  238 |
-|----------------------------------------+--------------+-------------|
-| SystemClockCoroutine                   |   2264/   41 |  1790/   30 |
-| SystemClockCoroutine+1 Basic zone      |   7832/  227 |  7358/  216 |
-| SystemClockCoroutine+1 Extended zone   |  10842/  261 | 10368/  250 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               |    496/   17 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   |   4828/  259 |   4332/  242 |
+| DS3231Clock<SimpleWire>                |   3282/   49 |   2786/   32 |
+| DS3231Clock<SimpleWireFast>            |   2598/   43 |   2102/   26 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        |   1016/   72 |    520/   55 |
+| SystemClockLoop+1 Basic zone           |   6876/  262 |   6380/  245 |
+| SystemClockLoop+1 Extended zone        |  10318/  296 |   9822/  279 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   |   1820/  100 |   1324/   83 |
+| SystemClockCoroutine+1 Basic zone      |   7650/  290 |   7154/  273 |
+| SystemClockCoroutine+1 Extended zone   |  11092/  324 |  10596/  307 |
++----------------------------------------------------------------------+
 
 ```
 
 ## Sparkfun Pro Micro
 
 * 16 MHz ATmega32U4
-* Arduino IDE 1.8.16, Arduino CLI 0.19.2
+* Arduino IDE 1.8.19, Arduino CLI 0.20.2
 * SparkFun AVR Boards 1.1.13
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               |   3470/  153 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock<TwoWire>                   |   7674/  391 |  4204/  238 |
-| DS3231Clock<SimpleWire>                |   6144/  179 |  2674/   26 |
-| DS3231Clock<SimpleWireFast>            |   5478/  179 |  2008/   26 |
-|----------------------------------------+--------------+-------------|
-| SystemClockLoop                        |   4496/  171 |  1026/   18 |
-| SystemClockLoop+1 Basic zone           |  10022/  355 |  6552/  202 |
-| SystemClockLoop+1 Extended zone        |  13032/  389 |  9562/  236 |
-|----------------------------------------+--------------+-------------|
-| SystemClockCoroutine                   |   5260/  183 |  1790/   30 |
-| SystemClockCoroutine+1 Basic zone      |  10826/  367 |  7356/  214 |
-| SystemClockCoroutine+1 Extended zone   |  13836/  401 | 10366/  248 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               |   3490/  157 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   |   7818/  405 |   4328/  248 |
+| DS3231Clock<SimpleWire>                |   6358/  195 |   2868/   38 |
+| DS3231Clock<SimpleWireFast>            |   5560/  189 |   2070/   32 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        |   3972/  212 |    482/   55 |
+| SystemClockLoop+1 Basic zone           |   9830/  400 |   6340/  243 |
+| SystemClockLoop+1 Extended zone        |  13272/  434 |   9782/  277 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   |   4776/  240 |   1286/   83 |
+| SystemClockCoroutine+1 Basic zone      |  10604/  428 |   7114/  271 |
+| SystemClockCoroutine+1 Extended zone   |  14046/  462 |  10556/  305 |
++----------------------------------------------------------------------+
 
 ```
 
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3
-* Arduino IDE 1.8.16, Arduino CLI 0.19.2
-* STM32duino 2.0.0
+* Arduino IDE 1.8.19, Arduino CLI 0.20.2
+* STM32duino 2.2.0
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               |  21420/ 3536 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock<TwoWire>                   |  28448/ 3768 |  7028/  232 |
-| DS3231Clock<SimpleWire>                |  25048/ 3584 |  3628/   48 |
-|----------------------------------------+--------------+-------------|
-| SystemClockLoop                        |  27100/ 3672 |  5680/  136 |
-| SystemClockLoop+1 Basic zone           |  31136/ 3672 |  9716/  136 |
-| SystemClockLoop+1 Extended zone        |  32880/ 3672 | 11460/  136 |
-|----------------------------------------+--------------+-------------|
-| SystemClockCoroutine                   |  27568/ 3676 |  6148/  140 |
-| SystemClockCoroutine+1 Basic zone      |  31608/ 3676 | 10188/  140 |
-| SystemClockCoroutine+1 Extended zone   |  33356/ 3676 | 11936/  140 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               |  21892/ 3544 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   |  30412/ 3792 |   8520/  248 |
+| DS3231Clock<SimpleWire>                |  25956/ 3612 |   4064/   68 |
+|----------------------------------------+--------------+--------------|
+| StmRtcClock                            |  26456/ 3616 |   4564/   72 |
+| Stm32F1Clock                           |  22476/ 3580 |    584/   36 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        |  22332/ 3628 |    440/   84 |
+| SystemClockLoop+1 Basic zone           |  26596/ 3628 |   4704/   84 |
+| SystemClockLoop+1 Extended zone        |  28580/ 3628 |   6688/   84 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   |  22808/ 3660 |    916/  116 |
+| SystemClockCoroutine+1 Basic zone      |  27068/ 3660 |   5176/  116 |
+| SystemClockCoroutine+1 Extended zone   |  29052/ 3660 |   7160/  116 |
++----------------------------------------------------------------------+
 
 ```
-
-An entry of `-1` indicates that the memory usage exceeded the maximum of the
-microcontroller and the compiler did not generate the desired information.
 
 ## ESP8266
 
 * NodeMCU 1.0, 80MHz ESP8266
-* Arduino IDE 1.8.16, Arduino CLI 0.19.2
+* Arduino IDE 1.8.19, Arduino CLI 0.20.2
 * ESP8266 Boards 3.0.2
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               | 260089/27892 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock<TwoWire>                   | 266069/28452 |  5980/  560 |
-| DS3231Clock<SimpleWire>                | 264305/27980 |  4216/   88 |
-|----------------------------------------+--------------+-------------|
-| SystemClockLoop                        | 262905/27992 |  2816/  100 |
-| SystemClockLoop+1 Basic zone           | 268881/28552 |  8792/  660 |
-| SystemClockLoop+1 Extended zone        | 271025/28696 | 10936/  804 |
-|----------------------------------------+--------------+-------------|
-| SystemClockCoroutine                   | 263449/27992 |  3360/  100 |
-| SystemClockCoroutine+1 Basic zone      | 269425/28552 |  9336/  660 |
-| SystemClockCoroutine+1 Extended zone   | 271585/28696 | 11496/  804 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               | 260109/27896 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   | 269505/28556 |   9396/  660 |
+| DS3231Clock<SimpleWire>                | 267297/28172 |   7188/  276 |
+|----------------------------------------+--------------+--------------|
+| NtpClock                               | 269101/28212 |   8992/  316 |
+| EspSntpClock                           | 266601/28236 |   6492/  340 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        | 264809/28124 |   4700/  228 |
+| SystemClockLoop+1 Basic zone           | 271329/28684 |  11220/  788 |
+| SystemClockLoop+1 Extended zone        | 273873/28828 |  13764/  932 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   | 265353/28156 |   5244/  260 |
+| SystemClockCoroutine+1 Basic zone      | 271889/28716 |  11780/  820 |
+| SystemClockCoroutine+1 Extended zone   | 274433/28860 |  14324/  964 |
++----------------------------------------------------------------------+
 
 ```
 
 ## ESP32
 
 * ESP32-01 Dev Board, 240 MHz Tensilica LX6
-* Arduino IDE 1.8.16, Arduino CLI 0.19.2
-* ESP32 Boards 1.0.6
+* Arduino IDE 1.8.19, Arduino CLI 0.20.2
+* ESP32 Boards 2.0.2
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               | 197748/13084 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock<TwoWire>                   | 217554/14312 | 19806/ 1228 |
-| DS3231Clock<SimpleWire>                | 208762/13584 | 11014/  500 |
-|----------------------------------------+--------------+-------------|
-| SystemClockLoop                        | 206546/13424 |  8798/  340 |
-| SystemClockLoop+1 Basic zone           | 211470/13424 | 13722/  340 |
-| SystemClockLoop+1 Extended zone        | 213490/13424 | 15742/  340 |
-|----------------------------------------+--------------+-------------|
-| SystemClockCoroutine                   | 207158/13432 |  9410/  348 |
-| SystemClockCoroutine+1 Basic zone      | 212082/13432 | 14334/  348 |
-| SystemClockCoroutine+1 Extended zone   | 214090/13432 | 16342/  348 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               | 204513/16060 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   | 243921/17284 |  39408/ 1224 |
+| DS3231Clock<SimpleWire>                | 220449/16588 |  15936/  528 |
+|----------------------------------------+--------------+--------------|
+| NtpClock                               | 622433/37708 | 417920/21648 |
+| EspSntpClock                           | 635397/37592 | 430884/21532 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        | 216297/16452 |  11784/  392 |
+| SystemClockLoop+1 Basic zone           | 221601/16452 |  17088/  392 |
+| SystemClockLoop+1 Extended zone        | 223981/16452 |  19468/  392 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   | 216929/16484 |  12416/  424 |
+| SystemClockCoroutine+1 Basic zone      | 222229/16484 |  17716/  424 |
+| SystemClockCoroutine+1 Extended zone   | 224593/16484 |  20080/  424 |
++----------------------------------------------------------------------+
 
 ```
 
@@ -200,26 +231,26 @@ usage by objects.
 ## Teensy 3.2
 
 * 96 MHz ARM Cortex-M4
-* Arduino IDE 1.8.16, Arduino CLI 0.19.2
-* Teensyduino 1.55
+* Arduino IDE 1.8.19, Arduino CLI 0.20.2
+* Teensyduino 1.56
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               |  10184/ 4152 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock<TwoWire>                   |  14416/ 4820 |  4232/  668 |
-| DS3231Clock<SimpleWire>                |  12280/ 4152 |  2096/    0 |
-|----------------------------------------+--------------+-------------|
-| SystemClockLoop                        |  10392/ 4160 |   208/    8 |
-| SystemClockLoop+1 Basic zone           |  19704/ 4160 |  9520/    8 |
-| SystemClockLoop+1 Extended zone        |  23460/ 4160 | 13276/    8 |
-|----------------------------------------+--------------+-------------|
-| SystemClockCoroutine                   |  11600/ 4164 |  1416/   12 |
-| SystemClockCoroutine+1 Basic zone      |  20968/ 4164 | 10784/   12 |
-| SystemClockCoroutine+1 Extended zone   |  24724/ 4164 | 14540/   12 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               |  10200/ 4160 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   |  17456/ 4992 |   7256/  832 |
+| DS3231Clock<SimpleWire>                |  19192/ 4172 |   8992/   12 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        |  10976/ 4212 |    776/   52 |
+| SystemClockLoop+1 Basic zone           |  22440/ 4212 |  12240/   52 |
+| SystemClockLoop+1 Extended zone        |  25684/ 4212 |  15484/   52 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   |  11740/ 4244 |   1540/   84 |
+| SystemClockCoroutine+1 Basic zone      |  23164/ 4244 |  12964/   84 |
+| SystemClockCoroutine+1 Extended zone   |  26472/ 4244 |  16272/   84 |
++----------------------------------------------------------------------+
 
 ```
 

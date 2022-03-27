@@ -6,17 +6,20 @@
 # table that can be inserted into the README.md.
 
 BEGIN {
-  NUM_FEATURES = 9
   labels[0] = "Baseline"
   labels[1] = "DS3231Clock<TwoWire>"
   labels[2] = "DS3231Clock<SimpleWire>"
   labels[3] = "DS3231Clock<SimpleWireFast>"
-  labels[4] = "SystemClockLoop"
-  labels[5] = "SystemClockLoop+1 Basic zone"
-  labels[6] = "SystemClockLoop+1 Extended zone"
-  labels[7] = "SystemClockCoroutine"
-  labels[8] = "SystemClockCoroutine+1 Basic zone"
-  labels[9] = "SystemClockCoroutine+1 Extended zone"
+  labels[4] = "NtpClock"
+  labels[5] = "EspSntpClock"
+  labels[6] = "StmRtcClock"
+  labels[7] = "Stm32F1Clock"
+  labels[8] = "SystemClockLoop"
+  labels[9] = "SystemClockLoop+1 Basic zone"
+  labels[10] = "SystemClockLoop+1 Extended zone"
+  labels[11] = "SystemClockCoroutine"
+  labels[12] = "SystemClockCoroutine+1 Basic zone"
+  labels[13] = "SystemClockCoroutine+1 Extended zone"
   record_index = 0
 }
 {
@@ -25,9 +28,10 @@ BEGIN {
   record_index++
 }
 END {
+  NUM_ENTRIES = record_index
   base_flash = u[0]["flash"]
   base_ram = u[0]["ram"]
-  for (i = 0; i <= NUM_FEATURES; i++) {
+  for (i = 0; i < NUM_ENTRIES; i++) {
     if (u[i]["flash"] == -1) {
       u[i]["d_flash"] = -1
       u[i]["d_ram"] = -1
@@ -38,24 +42,26 @@ END {
   }
 
   printf(\
-    "+---------------------------------------------------------------------+\n")
+    "+----------------------------------------------------------------------+\n")
   printf(\
-    "| Functionality                          |  flash/  ram |       delta |\n")
+    "| Functionality                          |  flash/  ram |        delta |\n")
 
-  for (i = 0; i <= NUM_FEATURES; i++) {
+  for (i = 0; i < NUM_ENTRIES; i++) {
     if (u[i]["flash"] == "-1") continue
 
     name = labels[i]
     if (name ~ /^Baseline$/ \
         || name ~ /^DS3231Clock<TwoWire>$/ \
+        || name ~ /^NtpClock$/ \
+        || name ~ /^StmRtcClock$/ \
         || name ~ /^SystemClockLoop$/ \
         || name ~ /^SystemClockCoroutine$/) {
       printf(\
-        "|----------------------------------------+--------------+-------------|\n")
+        "|----------------------------------------+--------------+--------------|\n")
     }
-    printf("| %-38s | %6d/%5d | %5d/%5d |\n",
+    printf("| %-38s | %6d/%5d | %6d/%5d |\n",
         name, u[i]["flash"], u[i]["ram"], u[i]["d_flash"], u[i]["d_ram"])
   }
   printf(\
-    "+---------------------------------------------------------------------+\n")
+    "+----------------------------------------------------------------------+\n")
 }

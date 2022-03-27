@@ -3,7 +3,7 @@
 
 APP_NAME := MemoryBenchmark
 ARDUINO_LIBS := AceCommon AceRoutine AceWire AceSorting AceTime \
-	AceTimeClock AceRoutine EpoxyMockDigitalWriteFast
+	AceTimeClock AceRoutine EpoxyMockDigitalWriteFast EpoxyMockSTM32RTC
 MORE_CLEAN := more_clean
 include ../../../EpoxyDuino/EpoxyDuino.mk
 
