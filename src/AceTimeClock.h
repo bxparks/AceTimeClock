@@ -31,11 +31,10 @@
 #include "ace_time/clock/SystemClockLoop.h"
 #include "ace_time/clock/SystemClockCoroutine.h"
 
-#if defined(ARDUINO_ARCH_STM32)
+#if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)
 #include "ace_time/clock/StmRtcClock.h"
 #include "ace_time/clock/Stm32F1Clock.h"
-#endif // #if defined(ARDUINO_ARCH_STM32)
-
+#endif // #if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)
 
 // Version format: xxyyzz == "xx.yy.zz"
 #define ACE_TIME_CLOCK_VERSION 10005
