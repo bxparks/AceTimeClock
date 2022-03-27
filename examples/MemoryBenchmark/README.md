@@ -112,34 +112,6 @@ In v1.0.2:
 
 ```
 
-## SAMD21 M0 Mini
-
-* 48 MHz ARM Cortex-M0+
-* Arduino IDE 1.8.16, Arduino CLI 0.19.2
-* Sparkfun SAMD Boards 1.8.4
-
-```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               |  10064/    0 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock<TwoWire>                   |  12688/    0 |  2624/    0 |
-| DS3231Clock<SimpleWire>                |  11872/    0 |  1808/    0 |
-|----------------------------------------+--------------+-------------|
-| SystemClockLoop                        |  10760/    0 |   696/    0 |
-| SystemClockLoop+1 Basic zone           |  14916/    0 |  4852/    0 |
-| SystemClockLoop+1 Extended zone        |  16908/    0 |  6844/    0 |
-|----------------------------------------+--------------+-------------|
-| SystemClockCoroutine                   |  11288/    0 |  1224/    0 |
-| SystemClockCoroutine+1 Basic zone      |  15444/    0 |  5380/    0 |
-| SystemClockCoroutine+1 Extended zone   |  17436/    0 |  7372/    0 |
-+---------------------------------------------------------------------+
-
-```
-
-(SAMD compiler does not produce RAM usage numbers.)
-
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3

@@ -104,28 +104,6 @@ CPU:
 
 ```
 
-## SAMD21 M0 Mini
-
-* 48 MHz ARM Cortex-M0+
-* Arduino IDE 1.8.16, Arduino CLI 0.19.2
-* Sparkfun SAMD Core 1.8.4
-
-```
-Sizes of Objects:
-sizeof(DS3231Clock): 12
-sizeof(SystemClock): 36
-sizeof(SystemClockLoop): 52
-sizeof(SystemClockCoroutine): 72
-
-CPU:
-+--------------------------------------------------+----------+
-| Method                                           |   micros |
-|--------------------------------------------------+----------|
-| SystemClockLoop::loop()                          |    3.018 |
-+--------------------------------------------------+----------+
-
-```
-
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3
