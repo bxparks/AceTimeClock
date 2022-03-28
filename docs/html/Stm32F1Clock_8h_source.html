@@ -79,45 +79,66 @@ $(function() {
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef ACE_TIME_STM32_F1_CLOCK_H</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define ACE_TIME_STM32_F1_CLOCK_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_STM32)</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#if defined(STM32F1xx)</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// For EpoxyDuino, this class is simply stubbed out for testing purposes.</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#if defined(STM32F1xx) || defined(EPOXY_DUINO)</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;../hw/Stm32F1Rtc.h&quot;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;Clock.h&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">namespace </span>ace_time {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span>clock {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keyword">class </span>Stm32F1Clock: <span class="keyword">public</span> Clock {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">explicit</span> Stm32F1Clock() {}</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordtype">void</span> setup() {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      mStm32F1Rtc.begin();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    }</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    acetime_t getNow()<span class="keyword"> const override </span>{</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      <span class="keywordflow">return</span> mStm32F1Rtc.getTime();</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> setNow(acetime_t epochSeconds)<span class="keyword"> override </span>{</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keywordflow">if</span> (epochSeconds == kInvalidSeconds) <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      mStm32F1Rtc.setTime(epochSeconds);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keyword">mutable</span> hw::Stm32F1Rtc mStm32F1Rtc;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;};</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#if ! defined(EPOXY_DUINO)</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">  #include &quot;../hw/Stm32F1Rtc.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;Clock.h&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>ace_time {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>clock {</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="classace__time_1_1clock_1_1Stm32F1Clock.html">   69</a></span>&#160;<span class="keyword">class </span><a class="code" href="classace__time_1_1clock_1_1Stm32F1Clock.html">Stm32F1Clock</a>: <span class="keyword">public</span> <a class="code" href="classace__time_1_1clock_1_1Clock.html">Clock</a> {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classace__time_1_1clock_1_1Stm32F1Clock.html">Stm32F1Clock</a>() {}</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="classace__time_1_1clock_1_1Stm32F1Clock.html#a25ea1875f56aa617e5a25cac2312b5c5">   74</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classace__time_1_1clock_1_1Stm32F1Clock.html#a25ea1875f56aa617e5a25cac2312b5c5">setup</a>() {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor">    #if ! defined(EPOXY_DUINO)</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      mStm32F1Rtc.begin();</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="preprocessor">    #endif</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="classace__time_1_1clock_1_1Stm32F1Clock.html#a6f544153491c504cb0225376c6ad58f1">   80</a></span>&#160;    acetime_t <a class="code" href="classace__time_1_1clock_1_1Stm32F1Clock.html#a6f544153491c504cb0225376c6ad58f1">getNow</a>()<span class="keyword"> const override </span>{</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">    #if defined(EPOXY_DUINO)</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      <span class="keywordflow">return</span> mEpochSeconds;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">    #else</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      <span class="keywordflow">return</span> mStm32F1Rtc.getTime();</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">    #endif</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;} <span class="comment">// clock</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;} <span class="comment">// ace_time</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#endif // #if defined(STM32F1xx)</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">#endif // #if defined(ARDUINO_ARCH_STM32)</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">#endif // #ifndef ACE_TIME_STM32F1_CLOCK_H</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classace__time_1_1clock_1_1Stm32F1Clock.html#a7aa4e4480772fa6698215131c1880459">   88</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classace__time_1_1clock_1_1Stm32F1Clock.html#a7aa4e4480772fa6698215131c1880459">setNow</a>(acetime_t epochSeconds)<span class="keyword"> override </span>{</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keywordflow">if</span> (epochSeconds == <a class="code" href="classace__time_1_1clock_1_1Clock.html#ae4fb852c09fbb9e37cc5764787dbf094">kInvalidSeconds</a>) <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">    #if defined(EPOXY_DUINO)</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      mEpochSeconds = epochSeconds;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="preprocessor">    #else</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      mStm32F1Rtc.setTime(epochSeconds);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="preprocessor">    #endif</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor">  #if defined(EPOXY_DUINO)</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    uint32_t mEpochSeconds;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor">  #else</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">mutable</span> hw::Stm32F1Rtc mStm32F1Rtc;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">  #endif</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;};</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;} <span class="comment">// clock</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;} <span class="comment">// ace_time</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="preprocessor">#endif // #if defined(STM32F1xx) || defined(EPOXY_DUINO)</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#endif // #ifndef ACE_TIME_STM32F1_CLOCK_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclassace__time_1_1clock_1_1Stm32F1Clock_html_a7aa4e4480772fa6698215131c1880459"><div class="ttname"><a href="classace__time_1_1clock_1_1Stm32F1Clock.html#a7aa4e4480772fa6698215131c1880459">ace_time::clock::Stm32F1Clock::setNow</a></div><div class="ttdeci">void setNow(acetime_t epochSeconds) override</div><div class="ttdoc">Set the time to the indicated seconds.</div><div class="ttdef"><b>Definition:</b> <a href="Stm32F1Clock_8h_source.html#l00088">Stm32F1Clock.h:88</a></div></div>
+<div class="ttc" id="aclassace__time_1_1clock_1_1Stm32F1Clock_html"><div class="ttname"><a href="classace__time_1_1clock_1_1Stm32F1Clock.html">ace_time::clock::Stm32F1Clock</a></div><div class="ttdoc">An implementation of Clock that is specialized for the LSE_CLOCK (Low Speed External clock) on the ST...</div><div class="ttdef"><b>Definition:</b> <a href="Stm32F1Clock_8h_source.html#l00069">Stm32F1Clock.h:69</a></div></div>
+<div class="ttc" id="aclassace__time_1_1clock_1_1Clock_html"><div class="ttname"><a href="classace__time_1_1clock_1_1Clock.html">ace_time::clock::Clock</a></div><div class="ttdoc">Abstract base class for objects that provide and store time.</div><div class="ttdef"><b>Definition:</b> <a href="Clock_8h_source.html#l00019">Clock.h:19</a></div></div>
+<div class="ttc" id="aclassace__time_1_1clock_1_1Clock_html_ae4fb852c09fbb9e37cc5764787dbf094"><div class="ttname"><a href="classace__time_1_1clock_1_1Clock.html#ae4fb852c09fbb9e37cc5764787dbf094">ace_time::clock::Clock::kInvalidSeconds</a></div><div class="ttdeci">static const acetime_t kInvalidSeconds</div><div class="ttdoc">Error value returned by getNow() and other methods when this object is not yet initialized.</div><div class="ttdef"><b>Definition:</b> <a href="Clock_8h_source.html#l00025">Clock.h:25</a></div></div>
+<div class="ttc" id="aclassace__time_1_1clock_1_1Stm32F1Clock_html_a6f544153491c504cb0225376c6ad58f1"><div class="ttname"><a href="classace__time_1_1clock_1_1Stm32F1Clock.html#a6f544153491c504cb0225376c6ad58f1">ace_time::clock::Stm32F1Clock::getNow</a></div><div class="ttdeci">acetime_t getNow() const override</div><div class="ttdoc">Return the number of seconds since the AceTime epoch (2000-01-01T00:00:00Z).</div><div class="ttdef"><b>Definition:</b> <a href="Stm32F1Clock_8h_source.html#l00080">Stm32F1Clock.h:80</a></div></div>
+<div class="ttc" id="aclassace__time_1_1clock_1_1Stm32F1Clock_html_a25ea1875f56aa617e5a25cac2312b5c5"><div class="ttname"><a href="classace__time_1_1clock_1_1Stm32F1Clock.html#a25ea1875f56aa617e5a25cac2312b5c5">ace_time::clock::Stm32F1Clock::setup</a></div><div class="ttdeci">void setup()</div><div class="ttdoc">Configure the clock.</div><div class="ttdef"><b>Definition:</b> <a href="Stm32F1Clock_8h_source.html#l00074">Stm32F1Clock.h:74</a></div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
