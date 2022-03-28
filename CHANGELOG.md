@@ -1,7 +1,7 @@
 # Changelog
 
 * Unreleased
-* v1.1.0 (2022-03-27)
+* v1.1.0 (2022-03-28)
     * Simplify `StmRtcClock` and `StmRtc` classes to use
       `STM32RTC::getInstance()` directly.
         * Move configuration of the `STM32RTC` singleton to the `STM32RTC`
@@ -13,6 +13,10 @@
       `StmRtcClock` to be compiled in GitHub Actions.
     * Add benchmarks for `StmRtcClock`, `Stm32F1Clock`, `NtpClock`, and
       `EspSntpClock` into [MemoryBenchmark](examples/MemoryBenchmark).
+    * Simplify and refactor NTP examples to be more consistent.
+        * `examples/HelloNtpClock`
+        * `examples/HelloNtpClockLazy`
+        * `examples/HelloEspSntpClock`
     * Upgrade tool chains
         * Arduino IDE from 1.8.16 to 1.8.19
         * Arduino CLI from 0.19.2 to 0.20.2
