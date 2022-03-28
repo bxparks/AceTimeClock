@@ -47,7 +47,7 @@ in the future.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.0.5 (2022-03-25)
+**Version**: v1.1.0 (2022-03-27)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
@@ -108,6 +108,7 @@ automatically install AceTimeClock and its dependent libraries:
 * AceTimeClock (https://github.com/bxparks/AceTimeClock)
 * AceTime (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
+* AceSorting (https://github.com/bxparks/AceSorting)
 * AceWire (https://github.com/bxparks/AceWire)
 * AceRoutine (https://github.com/bxparks/AceRoutine)
 
@@ -147,6 +148,7 @@ libraries at a minimum:
 * AceTimeClock (https://github.com/bxparks/AceTimeClock)
 * AceTime v1.8.0 or later (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
+* AceSorting (https://github.com/bxparks/AceSorting)
 
 The following libraries are optional because they are needed only by specific
 classes and only if the client application uses them. For convenience, they are
@@ -188,11 +190,13 @@ This is the example code for using the `SystemClock` taken from
 #include <Arduino.h>
 #include <AceTime.h>
 #include <AceTimeClock.h>
+
 using ace_time::acetime_t;
 using ace_time::ZonedDateTime;
-using ace_time::zonedb;
+using ace_time::TimeZone;
 using ace_time::BasicZoneProcessor;
-using namespace ace_time::clock;
+using ace_time::zonedb::kZoneAmerica_Los_Angeles;
+using ace_time::clock::SystemClockLoop;
 
 // ZoneProcessor instances should be created statically at initialization time.
 static BasicZoneProcessor pacificProcessor;
@@ -254,13 +258,17 @@ then printing the system time every 2 seconds:
 The following programs are provided in the `examples/` directory:
 
 * [HelloSystemClockLoop](examples/HelloSystemClockLoop/)
-    * demo program of `SystemClock`
+    * demo of `SystemClock` using a manual loop
 * [HelloSystemClockCoroutine](examples/HelloSystemClockCoroutine/)
     * same as `HelloSystemClockLoop` but using AceRoutine coroutines
 * [HelloDS3231Clock](examples/HelloDS3231Clock/)
-    * demo program of `DS3231Clock<T>` template class using `<AceWire.h>`
+    * demo of `DS3231Clock<T>` template class using `<AceWire.h>`
 * [HelloNtpClock](examples/HelloNtpClock/)
-    * demo program of `NtpClock`
+    * demo of `NtpClock` on ESP8266 and ESP32
+* [HelloEspSntpClock](examples/HelloEspSntpClock/)
+    * demo of `EspSntpClock` on ESP8266 and ESP32
+* [HelloStmRtcClock](examples/HelloStmRtcClock/)
+    * demo of `StmRtcClock` on STM32 boards (STM32F1 and STM32F4 tested)
 * Benchmarks
     * [AutoBenchmark](examples/AutoBenchmark/)
         * perform CPU and memory benchmarking of various methods and print a
@@ -319,11 +327,12 @@ and the diamond-line means "is-aggregation-of":
 .----------- Clock
 |            ^    ^
 |            |     \
-|            |      NtpClock --------> WiFi, ESP8266WiFi
 |            |      DS3231Clock -----> hw::DS3231
+|            |      EspSntpClock ----> time()
+|            |      NtpClock --------> WiFi, ESP8266WiFi
 |            |      StmRtcClock -----> hw::StmRtc
 |            |      Stm32F1Clock ----> hw::Stm32F1Rtc
-|            |      UnixClock -------> time()
+|            |      UnixClock -------> configTime(), time()
 |            |
 `------<> SystemClock
            ^       ^
@@ -335,6 +344,7 @@ These are arranged in the following C++ namespaces:
 
 * `ace_time::clock::Clock`
     * `ace_time::clock::DS3231Clock`
+    * `ace_time::clock::EspSntpClock`
     * `ace_time::clock::NtpClock`
     * `ace_time::clock::StmRtcClock`
     * `ace_time::clock::Stm32F1Clock`
@@ -354,7 +364,8 @@ This is an abstract class which provides 3 functionalities:
 
 * `setNow(acetime_t now)`: set the current time
 * `acetime_ getNow()`: get current time (blocking)
-* `sendRequest()`, `isResponseReady()`, `readResponse()`: get current time (non-blocking)
+* `sendRequest()`, `isResponseReady()`, `readResponse()`: get current time
+  (non-blocking)
 
 ```C++
 namespace ace_time {
@@ -440,8 +451,10 @@ be established. Here is a sample of how it can be used:
 
 ```C++
 #include <AceTimeClock.h>
-using namespace ace_time;
-using namespace ace_time::clock;
+
+using ace_time::acetime_t;
+using ace_time::OffsetDateTime;
+using ace_time::clock::NtpClock;
 
 const char SSID[] = ...; // Warning: don't store SSID in GitHub
 const char PASSWORD[] = ...; // Warning: don't store passwd in GitHub
@@ -519,16 +532,17 @@ AceTime Epoch by converting the UTC date and time components to `acetime_t`
 into either an `OffsetDateTime` or a `ZonedDateTime` as needed.
 
 The `DS3231Clock::setup()` should be called from the global `setup()`
-function to initialize the object. Here is a sample that:
+function to initialize the object. Here is a sample of that:
 
 ```C++
 #include <Arduino.h>
 #include <AceTimeClock.h>
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
-using ace_time::acetime_t
+
+using ace_time::acetime_t;
 using ace_time::OffsetDateTime;
-using namespace ace_time::clock;
+using ace_time::clock::DS3231Clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
@@ -590,18 +604,71 @@ class StmRtcClock: public Clock {
 ```
 
 This class is relatively new (added in v1.4) and may require more extensive
-testing across various STM32 boards. It has one known problem on the STM32F1
-chip, used by the popular "Blue Pill" boards. According to a few bug reports
-(https://github.com/stm32duino/STM32RTC/issues/29,
-https://github.com/stm32duino/STM32RTC/issues/32,
-https://github.com/stm32duino/STM32RTC/pull/41), the date fields are lost upon a
-power cycle on the STM32F1. This is because the RTC on the STM32F1 is different
-than the RTC on other STM32 chips, and stores only a 32-bit integer counter. The
-HAL (hardware abstraction layer) code in the STM32duino is able not able to
-utilize this 32-bit counter to store the date fields, and instead stores them in
-SRAM which is lost during a power-loss.
+testing. I have done some rough testing on the STM32F103 (Blue Pill) and the
+STM32F411 (Black Pill) dev boards.
 
-I created the `Stm32F1Clock` class to fix this problem below.
+The `StmRtcClock` uses the `STM32RTC::getInstance()` singleton instance from the
+`STM32RTC` library which should be configured in the global
+`setup()` function like this (see
+[examples/HelloStmRtcClock](examples/HelloStmRtcClock)):
+
+```C++
+...
+#include <STM32RTC.h>
+#include <AceTimeClock.h>
+...
+using ace_time::clock::StmRtcClock;
+
+...
+StmRtcClock stmRtcClock;
+
+void setup() {
+  ...
+  // Configure the STM32RTC singleton instance
+  STM32RTC::getInstance().setClockSource(STM32RTC::LSE_CLOCK);
+  STM32RTC::getInstance().begin();
+  // STM32RTC::getInstance().begin(true /*reset*/); // use this to reset
+
+  stmRtcClock.setup();
+  ...
+}
+```
+
+The `STM32RTC::setClockSource()` supports 3 clock sources:
+
+* `STM32RTC::LSI_CLOCK` (default)
+    * low speed internal
+    * not accurate
+* `STM32RTC::LSE_CLOCK`
+    * low speed external
+    * requires a 32.768 kHz external crystal
+    * retains timekeeping during power-off through the VBat terminal
+* `STM32RTC::HSE_CLOCK`
+    * high speed external
+    * (I don't know much about this)
+
+The `STM32RTC::begin()` method without arguments configures the object without
+resetting the RTC hardware. By default, it uses the `STM32RTC::HOUR_24` flag to
+set the RTC chip into 24-hour format. This is required for AceTime which assumes
+that the `hour` component is in 24-hour format.
+
+An alternate version of `begin(bool reset)` takes a boolean flag which resets
+the RTC chip and clears any previous date-time values. This can be useful during
+development and debugging.
+
+Prior to STM32RTC v1.2.0, the STM32RTC library contained a bug on the STM32F1
+chip where the date components (year, month, day) were lost upon reset. See
+the following issues:
+
+* [STM32RTC#29](https://github.com/stm32duino/STM32RTC/issues/29),
+* [STM32RTC#32](https://github.com/stm32duino/STM32RTC/issues/32),
+* [STM32RTC#41](https://github.com/stm32duino/STM32RTC/pull/41),
+* [Arduino_Core_STM32#266](https://github.com/stm32duino/Arduino_Core_STM32/issues/266)
+
+I created the `Stm32F1Clock` class to fix this problem below. The bug was
+finally fixed in STM32RTC v1.2.0 with
+[STM32RTC#58](https://github.com/stm32duino/STM32RTC/pull/58) so the
+`Stm32F1Clock` class may no longer be necessary.
 
 <a name="Stm32F1ClockClass"></a>
 ### Stm32F1Clock Class
@@ -633,14 +700,29 @@ class Stm32F1Clock: public Clock {
 }
 ```
 
+The class is used like this:
+
+```C++
+...
+#include <AceTimeClock.h>
+...
+using ace_time::clock::Stm32F1Clock;
+
+...
+Stm32F1Clock stm32F1Clock;
+
+void setup() {
+  ...
+
+  stm32F1Clock.setup();
+  ...
+}
+```
+
 Underneath the covers, the `Stm32F1Clock` delegates its functionality to the
 `hw::Stm32F1Rtc` class. The `Stm32F1Rtc` class bypasses the HAL code for
-the STM32F1 because the RTC HAL layer for the STM32F1 has a bug which causes the
-date components to be lost after a power reset:
-
-* https://github.com/stm32duino/STM32RTC/issues/29
-* https://github.com/stm32duino/Arduino_Core_STM32/issues/266
-* https://github.com/stm32duino/STM32RTC/issues/32
+the STM32F1 to avoid a bug which causes the date components to be lost after a
+power reset. (See [StmRtcClockClass](#StmRtcClockClass) subsection above).
 
 Instead, the `hw::Stm32F1Rtc` class writes the AceTime epochSeconds directly
 into the 32-bit RTC counter on the STM32F1. More information can be found in the
@@ -654,10 +736,6 @@ accurate to better than 1 second per 48 hours. See for example:
 
 * https://github.com/rogerclarkmelbourne/Arduino_STM32/issues/572
 * https://www.stm32duino.com/viewtopic.php?t=143
-
-The `Stm32F1Clock` and `Stm32F1Rtc` classes are new for v1.7 and should be
-considered experimental. They seem to work great for me on my Blue Pill for what
-it is worth.
 
 <a name="EspSntpClockClass"></a>
 ### ESP SNTP Clock Class
@@ -978,7 +1056,9 @@ This class synchronizes to the `referenceClock` through the
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
+
+using ace_time::clock::DS3231Clock;
+using ace_time::clock::SystemClockLoop;
 ...
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
@@ -1018,15 +1098,17 @@ This class synchronizes to the `referenceClock` using an
 #include <Wire.h> // TwoWire, Wire
 #include <AceRoutine.h> // include this before <AceTimeClock.h>
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
-using namespace ace_routine;
+
+using ace_time::clock::DS3231Clock;
+using ace_time::clock::SystemClockCoroutine;
+using ace_routine::CoroutineScheduler;
 ...
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
 DS3231Clock<WireInterface> dsClock(Wire);
 
-SystemClock systemClock(dsClock, nullptr /*backup*/);
+SystemClockCoroutine systemClock(dsClock, nullptr /*backup*/);
 
 void setup() {
   ...
@@ -1172,7 +1254,8 @@ debugging.
 
 ```C++
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
+
+using ace_time::clock::SystemClockLoop;
 
 SystemClockLoop systemClock(nullptr /*reference*/, nullptr /*backup*/);
 ...
@@ -1203,7 +1286,9 @@ for I2C communication.
 #include <AceTimeClock.h>
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
-using namespace ace_time::clock;
+
+using ace_time::clock::SystemClockLoop;
+using ace_time::clock::DS3231Clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
@@ -1256,7 +1341,10 @@ let me know if my assumptions are incorrect.)
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
+
+using ace_time::clock::SystemClockLoop;
+using ace_time::clock::NtpClock;
+using ace_time::clock::DS3231Clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
@@ -1300,7 +1388,9 @@ clock sources, like this:
 #include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
 #include <AceTimeClock.h>
-using namespace ace_time::clock;
+
+using ace_time::clock::SystemClockLoop;
+using ace_time::clock::DS3231Clock;
 
 using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
 WireInterface wireInterface(Wire);
@@ -1369,14 +1459,26 @@ sizeof(SystemClockLoop): 41
 sizeof(SystemClockCoroutine): 52
 ```
 
-**32-bit processors**
+**STM32: 32-bit processors**
+
+```
+sizeof(DS3231Clock): 12
+sizeof(StmRtcClock): 8
+sizeof(Stm32F1Clock): 8
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 80
+```
+
+**ESP8266/ESP32: 32-bit processors**
 
 ```
 sizeof(DS3231Clock): 12
 sizeof(NtpClock): 92
+sizeof(EspSntpClock): 4
 sizeof(SystemClock): 36
 sizeof(SystemClockLoop): 52
-sizeof(SystemClockCoroutine): 72
+sizeof(SystemClockCoroutine): 80
 ```
 
 <a name="FlashAndStaticMemory"></a>
@@ -1386,40 +1488,50 @@ sizeof(SystemClockCoroutine): 72
 size of the library for various microcontrollers (Arduino Nano to ESP32). Here
 are 2 samples:
 
-Arduino Nano
+**Arduino Nano**
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               |    474/   11 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock                            |   4108/  150 |  3634/  139 |
-| SystemClockLoop                        |   2692/  142 |  2218/  131 |
-| SystemClockLoop+1 Basic zone           |   8220/  328 |  7746/  317 |
-| SystemClockLoop+1 Extended zone        |  11230/  362 | 10756/  351 |
-| SystemClockCoroutine                   |   3456/  154 |  2982/  143 |
-| SystemClockCoroutine+1 Basic zone      |   9024/  340 |  8550/  329 |
-| SystemClockCoroutine+1 Extended zone   |  12034/  374 | 11560/  363 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               |    496/   17 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   |   4828/  259 |   4332/  242 |
+| DS3231Clock<SimpleWire>                |   3282/   49 |   2786/   32 |
+| DS3231Clock<SimpleWireFast>            |   2598/   43 |   2102/   26 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        |   1016/   72 |    520/   55 |
+| SystemClockLoop+1 Basic zone           |   6876/  262 |   6380/  245 |
+| SystemClockLoop+1 Extended zone        |  10318/  296 |   9822/  279 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   |   1820/  100 |   1324/   83 |
+| SystemClockCoroutine+1 Basic zone      |   7650/  290 |   7154/  273 |
+| SystemClockCoroutine+1 Extended zone   |  11092/  324 |  10596/  307 |
++----------------------------------------------------------------------+
 ```
 
-ESP8266:
+**ESP8266**
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               | 260089/27892 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock                            | 265161/28452 |  5072/  560 |
-| SystemClockLoop                        | 263761/28448 |  3672/  556 |
-| SystemClockLoop+1 Basic zone           | 269737/29024 |  9648/ 1132 |
-| SystemClockLoop+1 Extended zone        | 271881/29168 | 11792/ 1276 |
-| SystemClockCoroutine                   | 264305/28448 |  4216/  556 |
-| SystemClockCoroutine+1 Basic zone      | 270297/29024 | 10208/ 1132 |
-| SystemClockCoroutine+1 Extended zone   | 272441/29168 | 12352/ 1276 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               | 260109/27896 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   | 269505/28556 |   9396/  660 |
+| DS3231Clock<SimpleWire>                | 267297/28172 |   7188/  276 |
+|----------------------------------------+--------------+--------------|
+| NtpClock                               | 269101/28212 |   8992/  316 |
+| EspSntpClock                           | 266601/28236 |   6492/  340 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        | 264809/28124 |   4700/  228 |
+| SystemClockLoop+1 Basic zone           | 271329/28684 |  11220/  788 |
+| SystemClockLoop+1 Extended zone        | 273873/28828 |  13764/  932 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   | 265353/28156 |   5244/  260 |
+| SystemClockCoroutine+1 Basic zone      | 271889/28716 |  11780/  820 |
+| SystemClockCoroutine+1 Extended zone   | 274433/28860 |  14324/  964 |
++----------------------------------------------------------------------+
 ```
 
 This library does not perform dynamic allocation of memory so that it can be
@@ -1443,24 +1555,28 @@ debouncing and event dispatching provided by the AceButton
 CPU time consume by various features of the classes in this library. Two samples
 are shown below:
 
-Arduino Nano
+**Arduino Nano**
 
 ```
-+--------------------------------------------------+----------+
-| Method                                           |   micros |
-|--------------------------------------------------+----------|
-| SystemClockLoop                                  |    9.031 |
-+--------------------------------------------------+----------+
++------------------------------------+-------------+----------+
+| Method                             | micros/iter |     diff |
+|------------------------------------+-------------+----------|
+| EmptyLoop                          |       1.106 |    0.000 |
+|------------------------------------+-------------+----------|
+| SystemClockLoop                    |       9.011 |    7.905 |
++------------------------------------+-------------+----------+
 ```
 
-ESP8266
+**ESP8266**
 
 ```
-+--------------------------------------------------+----------+
-| Method                                           |   micros |
-|--------------------------------------------------+----------|
-| SystemClockLoop                                  |    9.582 |
-+--------------------------------------------------+----------+
++------------------------------------+-------------+----------+
+| Method                             | micros/iter |     diff |
+|------------------------------------+-------------+----------|
+| EmptyLoop                          |       0.139 |    0.000 |
+|------------------------------------+-------------+----------|
+| SystemClockLoop                    |       9.584 |    9.445 |
++------------------------------------+-------------+----------+
 ```
 
 <a name="SystemRequirements"></a>
@@ -1469,7 +1585,9 @@ ESP8266
 <a name="Hardware"></a>
 ### Hardware
 
-This library has Tier 1 support on the following boards:
+**Tier 1: Fully supported**
+
+These boards are tested on each release:
 
 * Arduino Nano (16 MHz ATmega328P)
 * SparkFun Pro Micro (16 MHz ATmega32U4)
@@ -1480,15 +1598,33 @@ This library has Tier 1 support on the following boards:
 * ESP32 dev board (ESP-WROOM-32 module, 240 MHz dual core Tensilica LX6)
 * Teensy 3.2 (96 MHz ARM Cortex-M4)
 
-Tier 2 support can be expected on the following boards, mostly because I don't
-test these as often:
+**Tier 2: Should work**
+
+These boards should work but I don't test them as often:
 
 * ATtiny85 (8 MHz ATtiny85)
 * Arduino Pro Mini (16 MHz ATmega328P)
 * Mini Mega 2560 (Arduino Mega 2560 compatible, 16 MHz ATmega2560)
 * Teensy LC (48 MHz ARM Cortex-M0+)
+* STM32F411 Black Pill (STM32F411CEU6, 100 MHz ARM Cortex-M4)
 
-The following boards are *not* supported:
+**Tier 3: May work, but not supported**
+
+* SAMD21 M0 Mini (48 MHz ARM Cortex-M0+)
+    * Arduino-branded SAMD21 boards use the ArduinoCore-API, so are explicitly
+      blacklisted. See below.
+    * Other 3rd party SAMD21 boards *may* work using the SparkFun SAMD core.
+    * However, as of SparkFun SAMD Core v1.8.6 and Arduino IDE 1.8.19, I can no
+      longer upload binaries to these 3rd party boards due to errors.
+    * Therefore, third party SAMD21 boards are now in this new Tier 3 category.
+    * The AceTime library may work on these boards, but I can no longer support
+      them.
+
+**Tier Blacklisted**
+
+The following boards are *not* supported and are explicitly blacklisted to allow
+the compiler to print useful error messages instead of hundreds of lines of
+compiler errors:
 
 * Any platform using the ArduinoCore-API
   (https://github.com/arduino/ArduinoCore-api), such as:
@@ -1502,17 +1638,17 @@ The following boards are *not* supported:
 
 This library was developed and tested using:
 
-* [Arduino IDE 1.8.16](https://www.arduino.cc/en/Main/Software)
-* [Arduino CLI 0.19.2](https://arduino.github.io/arduino-cli)
+* [Arduino IDE 1.8.19](https://www.arduino.cc/en/Main/Software)
+* [Arduino CLI 0.20.2](https://arduino.github.io/arduino-cli)
 * [SpenceKonde ATTinyCore 1.5.2](https://github.com/SpenceKonde/ATTinyCore)
-* [Arduino AVR Boards 1.8.3](https://github.com/arduino/ArduinoCore-avr)
+* [Arduino AVR Boards 1.8.4](https://github.com/arduino/ArduinoCore-avr)
 * [Arduino SAMD Boards 1.8.9](https://github.com/arduino/ArduinoCore-samd)
 * [SparkFun AVR Boards 1.1.13](https://github.com/sparkfun/Arduino_Boards)
 * [SparkFun SAMD Boards 1.8.4](https://github.com/sparkfun/Arduino_Boards)
-* [STM32duino 2.0.0](https://github.com/stm32duino/Arduino_Core_STM32)
+* [STM32duino 2.2.0](https://github.com/stm32duino/Arduino_Core_STM32)
 * [ESP8266 Arduino 3.0.2](https://github.com/esp8266/Arduino)
-* [ESP32 Arduino 1.0.6](https://github.com/espressif/arduino-esp32)
-* [Teensyduino 1.55](https://www.pjrc.com/teensy/td_download.html)
+* [ESP32 Arduino 2.0.2](https://github.com/espressif/arduino-esp32)
+* [Teensyduino 1.56](https://www.pjrc.com/teensy/td_download.html)
 
 This library is *not* compatible with:
 

@@ -1,0 +1,4 @@
+<map id="ace_time::clock::StmRtcClock" name="ace_time::clock::StmRtcClock">
+<area shape="rect" id="node1" title="An implementation of Clock that uses an STM32 RTC chip using the STM32RTC library." alt="" coords="5,80,220,107"/>
+<area shape="rect" id="node2" href="$classace__time_1_1clock_1_1Clock.html" title="Abstract base class for objects that provide and store time." alt="" coords="29,5,197,32"/>
+</map>

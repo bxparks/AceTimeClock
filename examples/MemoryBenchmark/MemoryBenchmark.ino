@@ -9,12 +9,16 @@
 #define FEATURE_DS3231_CLOCK_TWO_WIRE 1
 #define FEATURE_DS3231_CLOCK_SIMPLE_WIRE 2
 #define FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST 3
-#define FEATURE_SYSTEM_CLOCK_LOOP 4
-#define FEATURE_SYSTEM_CLOCK_LOOP_AND_BASIC_TIME_ZONE 5
-#define FEATURE_SYSTEM_CLOCK_LOOP_AND_EXTENDED_TIME_ZONE 6
-#define FEATURE_SYSTEM_CLOCK_COROUTINE 7
-#define FEATURE_SYSTEM_CLOCK_COROUTINE_AND_BASIC_TIME_ZONE 8
-#define FEATURE_SYSTEM_CLOCK_COROUTINE_AND_EXTENDED_TIME_ZONE 9
+#define FEATURE_NTP_CLOCK 4
+#define FEATURE_ESP_SNTP_CLOCK 5
+#define FEATURE_STM_RTC_CLOCK 6
+#define FEATURE_STM32F1_CLOCK 7
+#define FEATURE_SYSTEM_CLOCK_LOOP 8
+#define FEATURE_SYSTEM_CLOCK_LOOP_AND_BASIC_TIME_ZONE 9
+#define FEATURE_SYSTEM_CLOCK_LOOP_AND_EXTENDED_TIME_ZONE 10
+#define FEATURE_SYSTEM_CLOCK_COROUTINE 11
+#define FEATURE_SYSTEM_CLOCK_COROUTINE_AND_BASIC_TIME_ZONE 12
+#define FEATURE_SYSTEM_CLOCK_COROUTINE_AND_EXTENDED_TIME_ZONE 13
 
 // Select one of the FEATURE_* parameter and compile. Then look at the flash
 // and RAM usage, compared to FEATURE_BASELINE usage to determine how much
@@ -33,17 +37,32 @@
 #if FEATURE == FEATURE_DS3231_CLOCK_TWO_WIRE \
     || FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE \
     || FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST
+
   #include <AceWire.h> // TwoWireInterface, SimpleWireInterface, etc.
+  #if FEATURE == FEATURE_DS3231_CLOCK_TWO_WIRE
+    #include <Wire.h> // TwoWire, Wire
+  #elif FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST
+    #include <digitalWriteFast.h>
+    #include <ace_wire/SimpleWireFastInterface.h>
+  #endif
+
+#elif FEATURE == FEATURE_NTP_CLOCK || FEATURE == FEATURE_ESP_SNTP_CLOCK
+  #if defined(ESP8266)
+    #include <ESP8266WiFi.h>
+  #elif defined(ESP32)
+    #include <WiFi.h>
+  #endif
+
+#elif FEATURE == FEATURE_STM_RTC_CLOCK
+  #if defined(EPOXY_DUINO)
+    #include <EpoxyMockSTM32RTC.h>
+  #elif defined(ARDUINO_ARCH_STM32)
+    #include <STM32RTC.h>
+  #endif
 #endif
 
-#if FEATURE == FEATURE_DS3231_CLOCK_TWO_WIRE
-  #include <Wire.h> // TwoWire, Wire
-#endif
-
-#if FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST
-  #include <digitalWriteFast.h>
-  #include <ace_wire/SimpleWireFastInterface.h>
-#endif
+static const char SSID[] = "randomssid";
+static const char PASSWORD[] = "randompassword";
 
 // Set this variable to prevent the compiler optimizer from removing the code
 // being tested when it determines that it does nothing.
@@ -52,6 +71,72 @@ volatile int guard;
 // Use this instead of a constant to prevent the compiler from calculating
 // certain values (e.g. toEpochSeconds()) at compile-time.
 volatile int16_t year = 2019;
+
+// Use this to prevent compiler optimization.
+volatile uint32_t randomNow = 342348943;
+
+// Configure static allocations, which will be tracked as static RAM usage.
+#if FEATURE == FEATURE_DS3231_CLOCK_TWO_WIRE
+  using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
+  WireInterface wireInterface(Wire);
+  DS3231Clock<WireInterface> dsClock(wireInterface);
+
+#elif FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE
+  static const uint8_t DELAY_MICROS = 4;
+  using WireInterface = ace_wire::SimpleWireInterface;
+  WireInterface wireInterface(SDA, SCL, DELAY_MICROS);
+  DS3231Clock<WireInterface> dsClock(wireInterface);
+
+#elif FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST
+  #if ! defined(ARDUINO_ARCH_AVR) && ! defined(EPOXY_DUINO)
+    #error Unsupported FEATURE on this platform
+  #endif
+
+  static const uint8_t DELAY_MICROS = 4;
+  using WireInterface = ace_wire::SimpleWireFastInterface<
+      SDA, SCL, DELAY_MICROS>;
+  WireInterface wireInterface;
+  DS3231Clock<WireInterface> dsClock(wireInterface);
+
+#elif FEATURE == FEATURE_NTP_CLOCK
+  #if (defined(ESP8266) || defined(ESP32))
+    NtpClock ntpClock;
+  #endif
+
+#elif FEATURE == FEATURE_ESP_SNTP_CLOCK
+  #if defined(ESP8266) || defined(ESP32)
+    EspSntpClock sntpClock;
+  #endif
+
+#elif FEATURE == FEATURE_STM_RTC_CLOCK
+  #if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)
+    StmRtcClock stmRtcClock;
+  #endif
+
+#elif FEATURE == FEATURE_STM32F1_CLOCK
+  #if defined(ARDUINO_ARCH_STM32)
+    Stm32F1Clock stmClock;
+  #endif
+
+#elif FEATURE == FEATURE_SYSTEM_CLOCK_LOOP
+  SystemClockLoop systemClock(nullptr, nullptr);
+
+#elif FEATURE == FEATURE_SYSTEM_CLOCK_LOOP_AND_BASIC_TIME_ZONE
+  SystemClockLoop systemClock(nullptr, nullptr);
+
+#elif FEATURE == FEATURE_SYSTEM_CLOCK_LOOP_AND_EXTENDED_TIME_ZONE
+  SystemClockLoop systemClock(nullptr, nullptr);
+
+#elif FEATURE == FEATURE_SYSTEM_CLOCK_COROUTINE
+  SystemClockCoroutine systemClock(nullptr, nullptr);
+
+#elif FEATURE == FEATURE_SYSTEM_CLOCK_COROUTINE_AND_BASIC_TIME_ZONE
+  SystemClockCoroutine systemClock(nullptr, nullptr);
+
+#elif FEATURE == FEATURE_SYSTEM_CLOCK_COROUTINE_AND_EXTENDED_TIME_ZONE
+  SystemClockCoroutine systemClock(nullptr, nullptr);
+
+#endif
 
 // TeensyDuino seems to pull in malloc() and free() when a class with virtual
 // functions is used polymorphically. This causes the memory consumption of
@@ -78,76 +163,128 @@ void setup() {
 #endif
 
 #if FEATURE == FEATURE_BASELINE
-  guard = 0;
+  guard = randomNow;
 
 #elif FEATURE == FEATURE_DS3231_CLOCK_TWO_WIRE
-  using WireInterface = ace_wire::TwoWireInterface<TwoWire>;
-  WireInterface wireInterface(Wire);
-  DS3231Clock<WireInterface> dsClock(wireInterface);
+  Wire.begin();
+  wireInterface.begin();
+  dsClock.setup();
   acetime_t now = dsClock.getNow();
-  guard ^= now;
+  guard = now;
 
 #elif FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE
-  static const uint8_t DELAY_MICROS = 4;
-  using WireInterface = ace_wire::SimpleWireInterface;
-  WireInterface wireInterface(SDA, SCL, DELAY_MICROS);
-  DS3231Clock<WireInterface> dsClock(wireInterface);
+  wireInterface.begin();
+  dsClock.setup();
   acetime_t now = dsClock.getNow();
-  guard ^= now;
+  guard = now;
 
 #elif FEATURE == FEATURE_DS3231_CLOCK_SIMPLE_WIRE_FAST
   #if ! defined(ARDUINO_ARCH_AVR) && ! defined(EPOXY_DUINO)
     #error Unsupported FEATURE on this platform
   #endif
 
-  static const uint8_t DELAY_MICROS = 4;
-  using WireInterface = ace_wire::SimpleWireFastInterface<
-      SDA, SCL, DELAY_MICROS>;
-  WireInterface wireInterface;
-  DS3231Clock<WireInterface> dsClock(wireInterface);
+  wireInterface.begin();
+  dsClock.setup();
   acetime_t now = dsClock.getNow();
-  guard ^= now;
+  guard = now;
+
+#elif FEATURE == FEATURE_ESP_SNTP_CLOCK
+  #if defined(ESP8266) || defined(ESP32)
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(SSID, PASSWORD);
+    sntpClock.setup();
+    acetime_t now = sntpClock.getNow();
+    guard = now;
+  #elif defined(EPOXY_DUINO)
+    // nothing
+  #else
+    #error Unsupported FEATURE on this platform
+  #endif
+
+#elif FEATURE == FEATURE_STM_RTC_CLOCK
+  #if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)
+    STM32RTC::getInstance().setClockSource(STM32RTC::HSE_CLOCK);
+    STM32RTC::getInstance().begin(true /*reset*/);
+    stmRtcClock.setup();
+    acetime_t now = stmRtcClock.getNow();
+    guard = now;
+  #else
+    #error Unsupported FEATURE on this platform
+  #endif
+
+#elif FEATURE == FEATURE_STM32F1_CLOCK
+  #if defined(ARDUINO_ARCH_STM32)
+    stmClock.setup();
+    acetime_t now = stmClock.getNow();
+    guard = now;
+  #elif defined(EPOXY_DUINO)
+    // nothing
+  #else
+    #error Unsupported FEATURE on this platform
+  #endif
+
+#elif FEATURE == FEATURE_NTP_CLOCK
+  #if (defined(ESP8266) || defined(ESP32))
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(SSID, PASSWORD);
+    ntpClock.setup();
+    acetime_t now = ntpClock.getNow();
+    guard = now;
+  #elif defined(EPOXY_DUINO)
+    // nothing
+  #else
+    #error Unsupported FEATURE on this platform
+  #endif
+
+#elif FEATURE == FEATURE_ESP_SNTP_CLOCK
+  #if defined(ESP8266) || defined(ESP32)
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(SSID, PASSWORD);
+    clock.setup();
+    acetime_t now = ntpClock.getNow();
+    guard = now;
+  #else
+    #error Unsupported FEATURE on this platform
+  #endif
 
 #elif FEATURE == FEATURE_SYSTEM_CLOCK_LOOP
-  SystemClockLoop systemClock(nullptr, nullptr);
   systemClock.setup();
-  systemClock.setNow(random(65000));
+  systemClock.setNow(randomNow);
   acetime_t now = systemClock.getNow();
-  guard ^= now;
+  guard = now;
+
 #elif FEATURE == FEATURE_SYSTEM_CLOCK_LOOP_AND_BASIC_TIME_ZONE
-  SystemClockLoop systemClock(nullptr, nullptr);
   systemClock.setup();
-  systemClock.setNow(random(65000));
+  systemClock.setNow(randomNow);
   acetime_t now = systemClock.getNow();
   BasicZoneProcessor processor;
   auto tz = TimeZone::forZoneInfo(&zonedb::kZoneAmerica_Los_Angeles,
       &processor);
   auto dt = ZonedDateTime::forEpochSeconds(now, tz);
   acetime_t epochSeconds = dt.toEpochSeconds();
-  guard ^= epochSeconds;
+  guard = epochSeconds;
+
 #elif FEATURE == FEATURE_SYSTEM_CLOCK_LOOP_AND_EXTENDED_TIME_ZONE
-  SystemClockLoop systemClock(nullptr, nullptr);
   systemClock.setup();
-  systemClock.setNow(random(65000));
+  systemClock.setNow(randomNow);
   acetime_t now = systemClock.getNow();
   ExtendedZoneProcessor processor;
   auto tz = TimeZone::forZoneInfo(&zonedbx::kZoneAmerica_Los_Angeles,
       &processor);
   auto dt = ZonedDateTime::forEpochSeconds(now, tz);
   acetime_t epochSeconds = dt.toEpochSeconds();
-  guard ^= epochSeconds;
+  guard = epochSeconds;
 
 #elif FEATURE == FEATURE_SYSTEM_CLOCK_COROUTINE
-  SystemClockCoroutine systemClock(nullptr, nullptr);
   systemClock.setup();
-  systemClock.setNow(random(65000));
+  systemClock.setNow(randomNow);
   systemClock.runCoroutine();
   acetime_t now = systemClock.getNow();
-  guard ^= now;
+  guard = now;
+
 #elif FEATURE == FEATURE_SYSTEM_CLOCK_COROUTINE_AND_BASIC_TIME_ZONE
-  SystemClockCoroutine systemClock(nullptr, nullptr);
   systemClock.setup();
-  systemClock.setNow(random(65000));
+  systemClock.setNow(randomNow);
   systemClock.runCoroutine();
   acetime_t now = systemClock.getNow();
   BasicZoneProcessor processor;
@@ -155,11 +292,11 @@ void setup() {
       &processor);
   auto dt = ZonedDateTime::forEpochSeconds(now, tz);
   acetime_t epochSeconds = dt.toEpochSeconds();
-  guard ^= epochSeconds;
+  guard = epochSeconds;
+
 #elif FEATURE == FEATURE_SYSTEM_CLOCK_COROUTINE_AND_EXTENDED_TIME_ZONE
-  SystemClockCoroutine systemClock(nullptr, nullptr);
   systemClock.setup();
-  systemClock.setNow(random(65000));
+  systemClock.setNow(randomNow);
   systemClock.runCoroutine();
   acetime_t now = systemClock.getNow();
   ExtendedZoneProcessor processor;
@@ -167,7 +304,7 @@ void setup() {
       &processor);
   auto dt = ZonedDateTime::forEpochSeconds(now, tz);
   acetime_t epochSeconds = dt.toEpochSeconds();
-  guard ^= epochSeconds;
+  guard = epochSeconds;
 
 #else
   #error Unknown FEATURE

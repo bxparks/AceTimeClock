@@ -19,7 +19,7 @@ const uint32_t COUNT = 5000;
 #elif defined(ARDUINO_ARCH_STM32)
 const uint32_t COUNT = 10000;
 #elif defined(ESP8266)
-const uint32_t COUNT = 10000;
+const uint32_t COUNT = 5000;
 #elif defined(ESP32)
 const uint32_t COUNT = 20000;
 #elif defined(TEENSYDUINO)
@@ -37,31 +37,20 @@ const uint32_t COUNT = 10000;
 // from optimizing out the code that's being tested. Each disableOptimization()
 // method should perform 6 XOR operations to cancel each other out when
 // subtracted.
-volatile uint8_t guard;
-
-void disableOptimization(uint32_t value) {
-  guard ^= value & 0xff;
-  guard ^= (value >> 8) & 0xff;
-  guard ^= (value >> 16) & 0xff;
-  guard ^= (value >> 24) & 0xff;
-}
-
-// Print nanos as micros with 3 decimal places.
-static void printMicrosPerIteration(uint32_t nanos) {
-  ace_common::printUint32AsFloat3To(SERIAL_PORT_MONITOR, nanos);
-}
-
-//-----------------------------------------------------------------------------
+volatile uint32_t guard;
 
 FakeClock fakeClock;
 
-SystemClockLoop systemClockLoop(&fakeClock, nullptr);
+void printResult(const __FlashStringHelper* label, uint32_t elapsedMicros) {
+  SERIAL_PORT_MONITOR.print(label);
+  SERIAL_PORT_MONITOR.print(' ');
+  uint32_t elapsedNanos = elapsedMicros * 1000 / COUNT;
+  ace_common::printUint32AsFloat3To(SERIAL_PORT_MONITOR, elapsedNanos);
+  SERIAL_PORT_MONITOR.println();
+}
 
-/**
- * Call SystemClockLoop::loop() COUNT number of times and return the total
- * number of micros elapsed.
- */
-uint32_t runSystemClockLoop() {
+//-----------------------------------------------------------------------------
+void runEmptyLoop(const __FlashStringHelper* label) {
   fakeClock.isResponseReady(true);
 
   yield();
@@ -74,7 +63,39 @@ uint32_t runSystemClockLoop() {
     // estimate of how much long SystemClockLoop::loop() takes.
     if (internal == 1000) {
       uint32_t now = fakeClock.getNow();
-      disableOptimization(now);
+      guard = now;
+      fakeClock.setNow(now + 1);
+      internal = 0;
+    }
+    internal++;
+  }
+  uint32_t elapsedMicros = micros() - startMicros;
+  yield();
+  printResult(label, elapsedMicros);
+}
+
+//-----------------------------------------------------------------------------
+
+SystemClockLoop systemClockLoop(&fakeClock, nullptr);
+
+/**
+ * Call SystemClockLoop::loop() COUNT number of times and return the total
+ * number of micros elapsed.
+ */
+void runSystemClockLoop(const __FlashStringHelper* label) {
+  fakeClock.isResponseReady(true);
+
+  yield();
+  uint32_t count = COUNT;
+  uint16_t internal = 0;
+  uint32_t startMicros = micros();
+  while (count--) {
+    // Simulate the FakeClock incrementing by 1 second every 1000 iterations.
+    // It's much faster than real time, but should be good enough to get a rough
+    // estimate of how much long SystemClockLoop::loop() takes.
+    if (internal == 1000) {
+      uint32_t now = fakeClock.getNow();
+      guard = now;
       fakeClock.setNow(now + 1);
       internal = 0;
     }
@@ -84,13 +105,12 @@ uint32_t runSystemClockLoop() {
   }
   uint32_t elapsedMicros = micros() - startMicros;
   yield();
-
-  return elapsedMicros;
+  printResult(label, elapsedMicros);
 }
 
+//-----------------------------------------------------------------------------
+
 void runBenchmarks() {
-  uint32_t elapsedNanos = runSystemClockLoop() * 1000 / COUNT;
-  SERIAL_PORT_MONITOR.print(F("SystemClockLoop::loop() "));
-  printMicrosPerIteration(elapsedNanos);
-  SERIAL_PORT_MONITOR.println();
+  runEmptyLoop(F("EmptyLoop"));
+  runSystemClockLoop(F("SystemClockLoop"));
 }

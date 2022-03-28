@@ -34,6 +34,17 @@ void setup() {
   #if defined(ESP8266) || defined(ESP32)
     SERIAL_PORT_MONITOR.print(F("sizeof(NtpClock): "));
     SERIAL_PORT_MONITOR.println(sizeof(NtpClock));
+
+    SERIAL_PORT_MONITOR.print(F("sizeof(EspSntpClock): "));
+    SERIAL_PORT_MONITOR.println(sizeof(EspSntpClock));
+
+  #elif defined(ARDUINO_ARCH_STM32)
+    SERIAL_PORT_MONITOR.print(F("sizeof(StmRtcClock): "));
+    SERIAL_PORT_MONITOR.println(sizeof(StmRtcClock));
+
+    SERIAL_PORT_MONITOR.print(F("sizeof(Stm32F1Clock): "));
+    SERIAL_PORT_MONITOR.println(sizeof(Stm32F1Clock));
+
   #endif
 #endif
 

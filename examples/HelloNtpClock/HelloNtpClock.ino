@@ -12,11 +12,15 @@
 #endif
 
 #include <Arduino.h>
-#include <AceTimeClock.h>
 #include <AceTime.h>
+#include <AceTimeClock.h>
 
-using namespace ace_time;
-using namespace ace_time::clock;
+using ace_time::acetime_t;
+using ace_time::TimeZone;
+using ace_time::BasicZoneProcessor;
+using ace_time::ZonedDateTime;
+using ace_time::zonedb::kZoneEurope_Paris;
+using ace_time::clock::NtpClock;
 
 // ESP32 does not define SERIAL_PORT_MONITOR
 #ifndef SERIAL_PORT_MONITOR
@@ -32,7 +36,8 @@ static const char SSID[] = WIFI_SSID;
 static const char PASSWORD[] = WIFI_PASSWORD;
 
 static BasicZoneProcessor parisProcessor;
-static NtpClock ntpClock, ntpClock2;
+static NtpClock ntpClock;
+static NtpClock ntpClock2;
 
 void setup() {
   delay(1000);
@@ -40,44 +45,47 @@ void setup() {
   while (!SERIAL_PORT_MONITOR); // Wait until Serial is ready - Leonardo/Micro
   SERIAL_PORT_MONITOR.println();
 
-  auto parisTz = TimeZone::forZoneInfo(
-      &zonedb::kZoneEurope_Paris, &parisProcessor);
-  acetime_t nowSeconds;
+  auto parisTz = TimeZone::forZoneInfo(&kZoneEurope_Paris, &parisProcessor);
 
   // Example of setting up clock without Wi-Fi configured in advance by
   // passing the SSID and PASSWORD into setup().
-  SERIAL_PORT_MONITOR.println(
-      F("+++ NTP clock 1: no Wi-Fi configured in advance +++"));
+  SERIAL_PORT_MONITOR.println(F("==== clock 1: Wi-Fi configured by NtpClock"));
   ntpClock.setup(SSID, PASSWORD);
   if (!ntpClock.isSetup()) {
     SERIAL_PORT_MONITOR.println(F("WiFi connection failed... try again."));
     return;
   }
-  nowSeconds = ntpClock.getNow();
-  SERIAL_PORT_MONITOR.print(F("Now Seconds: "));
-  SERIAL_PORT_MONITOR.println(nowSeconds);
-  auto parisTime = ZonedDateTime::forEpochSeconds(nowSeconds, parisTz);
-  SERIAL_PORT_MONITOR.print(F("=== Paris Time: "));
-  parisTime.printTo(SERIAL_PORT_MONITOR);
-  SERIAL_PORT_MONITOR.println();
+  {
+    acetime_t nowSeconds = ntpClock.getNow();
+    SERIAL_PORT_MONITOR.print(F("Now Seconds: "));
+    SERIAL_PORT_MONITOR.println(nowSeconds);
+
+    auto parisTime = ZonedDateTime::forEpochSeconds(nowSeconds, parisTz);
+    SERIAL_PORT_MONITOR.print(F("Paris Time: "));
+    parisTime.printTo(SERIAL_PORT_MONITOR);
+    SERIAL_PORT_MONITOR.println();
+  }
 
   // Example of setting up clock with Wi-Fi already configured in advance by
   // calling the no-argument setup().
-  delay(1000);
-  SERIAL_PORT_MONITOR.println(
-      F("+++ NTP clock 2: Wi-Fi configured in advance +++"));
+  SERIAL_PORT_MONITOR.println(F("==== clock 2: Wi-Fi configured in advance"));
   ntpClock2.setup();
   if (!ntpClock2.isSetup()) {
     SERIAL_PORT_MONITOR.println(F("Something went wrong."));
     return;
   }
-  nowSeconds = ntpClock2.getNow();
-  SERIAL_PORT_MONITOR.print(F("Now Seconds: "));
-  SERIAL_PORT_MONITOR.println(nowSeconds);
-  parisTime = ZonedDateTime::forEpochSeconds(nowSeconds, parisTz);
-  SERIAL_PORT_MONITOR.print(F("=== Paris Time: "));
-  parisTime.printTo(SERIAL_PORT_MONITOR);
-  SERIAL_PORT_MONITOR.println();
+  {
+    acetime_t nowSeconds = ntpClock2.getNow();
+    SERIAL_PORT_MONITOR.print(F("Now Seconds: "));
+    SERIAL_PORT_MONITOR.println(nowSeconds);
+
+    auto parisTime = ZonedDateTime::forEpochSeconds(nowSeconds, parisTz);
+    SERIAL_PORT_MONITOR.print(F("Paris Time: "));
+    parisTime.printTo(SERIAL_PORT_MONITOR);
+    SERIAL_PORT_MONITOR.println();
+  }
+
+  SERIAL_PORT_MONITOR.println(F("Done!"));
 }
 
 void loop() {}

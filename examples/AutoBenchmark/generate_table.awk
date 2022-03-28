@@ -49,15 +49,26 @@ END {
     print s[i]
   }
 
+  # Calculate the diff from baseline
+  baseline = u[0]["micros"]
+  for (i = 0; i < TOTAL_BENCHMARKS; i++) {
+    u[i]["diff"] = u[i]["micros"] - baseline
+  }
 
   print ""
   print "CPU:"
 
-  printf("+--------------------------------------------------+----------+\n")
-  printf("| Method                                           |   micros |\n")
-  printf("|--------------------------------------------------+----------|\n")
+  printf("+------------------------------------+-------------+----------+\n")
+  printf("| Method                             | micros/iter |     diff |\n")
   for (i = 0; i < TOTAL_BENCHMARKS; i++) {
-    printf("| %-48s | %8.3f |\n", u[i]["name"], u[i]["micros"])
+    name = u[i]["name"]
+    if (name ~ /^EmptyLoop$/ \
+        || name ~ /^SystemClockLoop$/ \
+    ) {
+      printf(\
+        "|------------------------------------+-------------+----------|\n")
+    }
+    printf("| %-34s |    %8.3f | %8.3f |\n", name, u[i]["micros"], u[i]["diff"])
   }
-  printf("+--------------------------------------------------+----------+\n")
+  printf("+------------------------------------+-------------+----------+\n")
 }
