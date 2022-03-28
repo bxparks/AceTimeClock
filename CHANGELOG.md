@@ -24,6 +24,7 @@
         * AVR Core from 1.8.3 to 1.8.4
         * ESP32 Core from 1.0.6 to 2.0.2
         * Teensyduino from 1.55 to 1.56
+    * Add initial supporting and testing of a STM32F411 dev board.
 * v1.0.5 (2022-03-25)
     * Add a `uint16_t` template parameter to `CoroutineTemplate` for
       compatibility with AceRoutine v1.5.0.
