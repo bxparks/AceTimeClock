@@ -13,16 +13,18 @@ companion library.
 The following clock sources are supported:
 
 * the built-in `millis()` timer clock
-* an [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) server
 * a [DS3231 RTC](https://www.maximintegrated.com/en/products/analog/real-time-clocks/DS3231.html)
 chip
 * the generic [STM32 RTC Clock](https://github.com/stm32duino/STM32RTC)
 * the special [STM32F1 RTC Clock](https://github.com/stm32duino/STM32RTC/issues/29)
-* the SNTP client on ESP8266 and ESP32 platforms (the documentation for this is
-  almost non-existent, try https://www.esp8266.com/viewtopic.php?p=75141
-  and expanding the internet search from there)
-* a Unix `time()` clock (when using
-  [EpoxyDuino](https://github.com/bxparks/EpoxyDuino))
+* an [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) server
+  using a hand-crafted NTP client
+* the SNTP client on ESP8266 and ESP32 platforms
+    * the documentation for this is almost non-existent
+    * try https://www.esp8266.com/viewtopic.php?p=75141 and expanding the
+      internet search from there
+* a Unix `time()` clock
+    * when using [EpoxyDuino](https://github.com/bxparks/EpoxyDuino)
 
 A special version of the `Clock` class called the `SystemClock` provides an
 auto-incrementing "epoch seconds" that can be access very quickly and cheaply
@@ -67,10 +69,10 @@ This library can be an alternative to the Arduino Time
     * [Headers](#Headers)
     * [Class Hierarchy](#ClassHierarchy)
     * [Clock Class](#ClockClass)
-    * [NtpClock Class](#NtpClockClass)
     * [DS3231Clock Class](#DS3231ClockClass)
     * [StmRtcClock Class](#StmRtcClockClass)
     * [Stm32F1Clock Class](#Stm32F1ClockClass)
+    * [NtpClock Class](#NtpClockClass)
     * [EspSntpClock Class](#EspSntpClockClass)
     * [UnixClock Class](#UnixClockClass)
     * [SystemClock Class](#SystemClockClass)
@@ -404,89 +406,6 @@ needed.
 The `acetime_t` value from `getNow()` can be converted into the desired time
 zone using the `ZonedDateTime` and `TimeZone` classes from the AceTime library.
 
-<a name="NtpClockClass"></a>
-## NtpClock Class
-
-The `NtpClock` class is available on the ESP8266 and ESP32 which have builtin
-WiFi capability. (I have not tested the code on the Arduino WiFi shield because
-I don't have that hardware.) This class uses an NTP client to fetch the current
-time from the specified NTP server. The constructor takes 3 parameters which
-have default values so they are optional.
-
-The class declaration looks like this:
-
-```C++
-namespace ace_time {
-namespace clock {
-
-class NtpClock: public Clock {
-  public:
-    explicit NtpClock(
-        const char* server = kNtpServerName,
-        uint16_t localPort = kLocalPort,
-        uint16_t requestTimeout = kRequestTimeout);
-
-    void setup(const char* ssid, const char* password);
-    bool isSetup() const;
-    const char* getServer() const;
-
-    acetime_t getNow() const override;
-
-    void sendRequest() const override;
-    bool isResponseReady() const override;
-    acetime_t readResponse() const override;
-};
-
-}
-}
-```
-
-The constructor takes the name of the NTP server. The default value is
-`kNtpServerName` which is `us.pool.ntp.org`. The default `kLocalPort` is set to
-8888. And the default `kRequestTimeout` is 1000 milliseconds.
-
-You need to call the `setup()` with the `ssid` and `password` of the WiFi
-connection. The method will time out after 5 seconds if the connection cannot
-be established. Here is a sample of how it can be used:
-
-```C++
-#include <AceTimeClock.h>
-
-using ace_time::acetime_t;
-using ace_time::OffsetDateTime;
-using ace_time::clock::NtpClock;
-
-const char SSID[] = ...; // Warning: don't store SSID in GitHub
-const char PASSWORD[] = ...; // Warning: don't store passwd in GitHub
-
-NtpClock ntpClock;
-
-void setup() {
-  Serial.begin(115200);
-  while(!Serial); // needed for Leonardo/Micro
-  ...
-  ntpClock.setup(SSID, PASSWORD);
-  if (ntpClock.isSetup()) {
-    Serial.println("WiFi connection failed... try again.");
-    ...
-  }
-}
-
-// Print the NTP time every 10 seconds, in UTC-08:00 time zone.
-void loop() {
-  acetime_t nowSeconds = ntpClock.getNow();
-  // convert epochSeconds to UTC-08:00
-  OffsetDateTime odt = OffsetDateTime::forEpochSeconds(
-      nowSeconds, TimeOffset::forHours(-8));
-  odt.printTo(Serial);
-  delay(10000); // wait 10 seconds
-}
-```
-
-**Security Warning**: You should avoid committing your SSID and PASSWORD into a
-public repository like GitHub because they will become public to anyone. Even if
-you delete the commit, they can be retrieved from the git history.
-
 <a name="DS3231ClockClass"></a>
 ### DS3231Clock Class
 
@@ -568,6 +487,9 @@ void loop() {
 }
 ```
 
+See [examples/HelloDS3231Clock](examples/HelloDS3231Clock/) for details on how
+to configure and use this class.
+
 It has been claimed that the DS1307 and DS3232 RTC chips have exactly the same
 interface as DS3231 when accessing the time and date functionality. I don't have
 these chips so I cannot confirm that. Contact @Naguissa
@@ -633,6 +555,9 @@ void setup() {
   ...
 }
 ```
+
+See [examples/HelloStmRtcClock](examples/HelloStmRtcClock) for more details
+about how to configure and use this class.
 
 The `STM32RTC::setClockSource()` supports 3 clock sources:
 
@@ -719,6 +644,9 @@ void setup() {
 }
 ```
 
+See [examples/HelloStm32F1Clock](examples/HelloStm32F1Clock) for more details
+about how to configure and use this class.
+
 Underneath the covers, the `Stm32F1Clock` delegates its functionality to the
 `hw::Stm32F1Rtc` class. The `Stm32F1Rtc` class bypasses the HAL code for
 the STM32F1 to avoid a bug which causes the date components to be lost after a
@@ -736,6 +664,92 @@ accurate to better than 1 second per 48 hours. See for example:
 
 * https://github.com/rogerclarkmelbourne/Arduino_STM32/issues/572
 * https://www.stm32duino.com/viewtopic.php?t=143
+
+<a name="NtpClockClass"></a>
+## NtpClock Class
+
+The `NtpClock` class is available on the ESP8266 and ESP32 which have builtin
+WiFi capability. (I have not tested the code on the Arduino WiFi shield because
+I don't have that hardware.) This class uses an NTP client to fetch the current
+time from the specified NTP server. The constructor takes 3 parameters which
+have default values so they are optional.
+
+The class declaration looks like this:
+
+```C++
+namespace ace_time {
+namespace clock {
+
+class NtpClock: public Clock {
+  public:
+    explicit NtpClock(
+        const char* server = kNtpServerName,
+        uint16_t localPort = kLocalPort,
+        uint16_t requestTimeout = kRequestTimeout);
+
+    void setup(const char* ssid, const char* password);
+    bool isSetup() const;
+    const char* getServer() const;
+
+    acetime_t getNow() const override;
+
+    void sendRequest() const override;
+    bool isResponseReady() const override;
+    acetime_t readResponse() const override;
+};
+
+}
+}
+```
+
+The constructor takes the name of the NTP server. The default value is
+`kNtpServerName` which is `us.pool.ntp.org`. The default `kLocalPort` is set to
+8888. And the default `kRequestTimeout` is 1000 milliseconds.
+
+You need to call the `setup()` with the `ssid` and `password` of the WiFi
+connection. The method will time out after 5 seconds if the connection cannot
+be established. Here is a sample of how it can be used:
+
+```C++
+#include <AceTimeClock.h>
+
+using ace_time::acetime_t;
+using ace_time::OffsetDateTime;
+using ace_time::clock::NtpClock;
+
+const char SSID[] = ...; // Warning: don't store SSID in GitHub
+const char PASSWORD[] = ...; // Warning: don't store passwd in GitHub
+
+NtpClock ntpClock;
+
+void setup() {
+  Serial.begin(115200);
+  while(!Serial); // needed for Leonardo/Micro
+  ...
+  ntpClock.setup(SSID, PASSWORD);
+  if (ntpClock.isSetup()) {
+    Serial.println("WiFi connection failed... try again.");
+    ...
+  }
+}
+
+// Print the NTP time every 10 seconds, in UTC-08:00 time zone.
+void loop() {
+  acetime_t nowSeconds = ntpClock.getNow();
+  // convert epochSeconds to UTC-08:00
+  OffsetDateTime odt = OffsetDateTime::forEpochSeconds(
+      nowSeconds, TimeOffset::forHours(-8));
+  odt.printTo(Serial);
+  delay(10000); // wait 10 seconds
+}
+```
+
+See [examples/HelloNtpClock](examples/HelloNtpClock) to see how this class is
+configured.
+
+**Security Warning**: You should avoid committing your SSID and PASSWORD into a
+public repository like GitHub because they will become public to anyone. Even if
+you delete the commit, they can be retrieved from the git history.
 
 <a name="EspSntpClockClass"></a>
 ### ESP SNTP Clock Class
@@ -766,7 +780,9 @@ class EspSntpClock: public Clock {
 }
 ```
 
-The class depends on the `WiFi` stack to be configured elsewhere.
+The class depends on the `WiFi` stack to be configured elsewhere. See
+[examples/HelloEspSntpClock](examples/HelloEspSntpClock) for more details about
+how configure and use this class.
 
 The `EspSntpClock::setup()` function calls the `configTime()` function provided
 by the ESP8266 and ESP32 platforms, with the timezone set to UTC (STD offset and
@@ -784,10 +800,9 @@ this
 [NTP-TZ-DST](https://github.com/esp8266/Arduino/tree/master/libraries/esp8266/examples/NTP-TZ-DST)
 example file.
 
-See also the
-[AceTime/examples/EspTime](https://github.com/bxparks/AceTime/tree/develop/examples/EspTime)
-app from the AceTime project which shows how to integrate the ESP SNTP service
-with AceTime directly without going through this class.
+**Note**: You use the ESP SNTP service with the AceTime library directly without
+going through the `EspSntpClock` class. See
+[AceTime/examples/EspTime](https://github.com/bxparks/AceTime/tree/develop/examples/EspTime).
 
 <a name="UnixClockClass"></a>
 ### UnixClock Class
