@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['ntpclock_97',['NtpClock',['../classace__time_1_1clock_1_1NtpClock.html#a05433c1de230ee9e7b4b36a6c9f49e04',1,'ace_time::clock::NtpClock']]]
+  ['ntpclock_107',['NtpClock',['../classace__time_1_1clock_1_1NtpClock.html#a6e55c40705df3b56e885d4dcfde062cc',1,'ace_time::clock::NtpClock']]]
 ];

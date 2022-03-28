@@ -8,8 +8,7 @@
 #ifndef ACE_TIME_STM_RTC_CLOCK_H
 #define ACE_TIME_STM_RTC_CLOCK_H
 
-#if ! defined(EPOXY_DUINO)
-#if defined(ARDUINO_ARCH_STM32)
+#if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)
 
 #include <stdint.h>
 #include <AceTime.h> // LocalDateTime
@@ -21,14 +20,17 @@ namespace ace_time {
 namespace clock {
 
 /**
- * An implementation of Clock that uses a STM32 RTC chip using the
- * ace_time::hw::StmRtc class that provides a hardware abstraction layer to the
- * STM32RTC clock.
+ * An implementation of Clock that uses an STM32 RTC chip using the
+ * [STM32RTC](https://github.com/stm32duino/STM32RTC) library. The STM32RTC
+ * singleton object should be configured using `STM32RTC::getInstance()` in the
+ * global `setup()` function.
  */
 class StmRtcClock: public Clock {
   public:
-    explicit StmRtcClock() {}
+    /** Constructor. */
+    explicit StmRtcClock() = default;
 
+    /** Setup does nothing. Defined for API consistency with other Clocks. */
     void setup() {}
 
     acetime_t getNow() const override {
@@ -76,6 +78,5 @@ class StmRtcClock: public Clock {
 } // hw
 } // ace_time
 
-#endif // #if defined(ARDUINO_ARCH_STM32)
-#endif // #if ! defined(EPOXY_DUINO)
+#endif // #if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)
 #endif // #ifndef ACE_TIME_STM_RTC_CLOCK_H

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">AceTimeClock
-   &#160;<span id="projectnumber">1.0.5</span>
+   &#160;<span id="projectnumber">1.1.0</span>
    </div>
    <div id="projectbrief">Clock classes for Arduino that can synchronize from an NTP server or an RTC chip</div>
   </td>
@@ -101,10 +101,10 @@ Collaboration diagram for ace_time::clock::NtpClock:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a05433c1de230ee9e7b4b36a6c9f49e04"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a05433c1de230ee9e7b4b36a6c9f49e04">NtpClock</a> (const char *server=<a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a282fa5d05aba3d8d7959ecf2602cc70b">kNtpServerName</a>, uint16_t localPort=<a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a23ba1065b516b1e37b154b86d36357ad">kLocalPort</a>, uint16_t requestTimeout=<a class="el" href="classace__time_1_1clock_1_1NtpClock.html#ae8ee51f3f5394f7da1519e3f70a3af24">kRequestTimeout</a>)</td></tr>
-<tr class="memdesc:a05433c1de230ee9e7b4b36a6c9f49e04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classace__time_1_1clock_1_1NtpClock.html#a05433c1de230ee9e7b4b36a6c9f49e04">More...</a><br /></td></tr>
-<tr class="separator:a05433c1de230ee9e7b4b36a6c9f49e04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f5c3c95e63ff869b93f9a8682fbe787"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a1f5c3c95e63ff869b93f9a8682fbe787">setup</a> (const char *ssid=nullptr, const char *password=nullptr, uint16_t connectTimeoutMillis=kConnectTimeoutMillis)</td></tr>
+<tr class="memitem:a6e55c40705df3b56e885d4dcfde062cc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a6e55c40705df3b56e885d4dcfde062cc">NtpClock</a> (const char *server=<a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a282fa5d05aba3d8d7959ecf2602cc70b">kNtpServerName</a>, uint16_t localPort=<a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a23ba1065b516b1e37b154b86d36357ad">kLocalPort</a>, uint16_t requestTimeout=<a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a61fef20ad2d92f7141f0f82b52ed9366">kRequestTimeoutMillis</a>)</td></tr>
+<tr class="memdesc:a6e55c40705df3b56e885d4dcfde062cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classace__time_1_1clock_1_1NtpClock.html#a6e55c40705df3b56e885d4dcfde062cc">More...</a><br /></td></tr>
+<tr class="separator:a6e55c40705df3b56e885d4dcfde062cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f5c3c95e63ff869b93f9a8682fbe787"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a1f5c3c95e63ff869b93f9a8682fbe787">setup</a> (const char *ssid=nullptr, const char *password=nullptr, uint16_t connectTimeoutMillis=<a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a47881db1fde24a38df4b411ed4c84333">kConnectTimeoutMillis</a>)</td></tr>
 <tr class="memdesc:a1f5c3c95e63ff869b93f9a8682fbe787"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set up the WiFi connection using the given ssid and password, and prepare the UDP connection.  <a href="classace__time_1_1clock_1_1NtpClock.html#a1f5c3c95e63ff869b93f9a8682fbe787">More...</a><br /></td></tr>
 <tr class="separator:a1f5c3c95e63ff869b93f9a8682fbe787"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04dbe54fc274819097e77110992b34c1"><td class="memItemLeft" align="right" valign="top"><a id="a04dbe54fc274819097e77110992b34c1"></a>
@@ -151,10 +151,17 @@ static const char&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 static const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a23ba1065b516b1e37b154b86d36357ad">kLocalPort</a> = 2390</td></tr>
 <tr class="memdesc:a23ba1065b516b1e37b154b86d36357ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default port used for UDP packets. <br /></td></tr>
 <tr class="separator:a23ba1065b516b1e37b154b86d36357ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8ee51f3f5394f7da1519e3f70a3af24"><td class="memItemLeft" align="right" valign="top"><a id="ae8ee51f3f5394f7da1519e3f70a3af24"></a>
-static const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#ae8ee51f3f5394f7da1519e3f70a3af24">kRequestTimeout</a> = 1000</td></tr>
-<tr class="memdesc:ae8ee51f3f5394f7da1519e3f70a3af24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request time out milliseconds. <br /></td></tr>
+<tr class="memitem:a61fef20ad2d92f7141f0f82b52ed9366"><td class="memItemLeft" align="right" valign="top"><a id="a61fef20ad2d92f7141f0f82b52ed9366"></a>
+static const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a61fef20ad2d92f7141f0f82b52ed9366">kRequestTimeoutMillis</a> = 1000</td></tr>
+<tr class="memdesc:a61fef20ad2d92f7141f0f82b52ed9366"><td class="mdescLeft">&#160;</td><td class="mdescRight">Request time out milliseconds. <br /></td></tr>
+<tr class="separator:a61fef20ad2d92f7141f0f82b52ed9366"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8ee51f3f5394f7da1519e3f70a3af24"><td class="memItemLeft" align="right" valign="top">static const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#ae8ee51f3f5394f7da1519e3f70a3af24">kRequestTimeout</a> = <a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a61fef20ad2d92f7141f0f82b52ed9366">kRequestTimeoutMillis</a></td></tr>
+<tr class="memdesc:ae8ee51f3f5394f7da1519e3f70a3af24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deprecated.  <a href="classace__time_1_1clock_1_1NtpClock.html#ae8ee51f3f5394f7da1519e3f70a3af24">More...</a><br /></td></tr>
 <tr class="separator:ae8ee51f3f5394f7da1519e3f70a3af24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47881db1fde24a38df4b411ed4c84333"><td class="memItemLeft" align="right" valign="top"><a id="a47881db1fde24a38df4b411ed4c84333"></a>
+static const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a47881db1fde24a38df4b411ed4c84333">kConnectTimeoutMillis</a> = 10000</td></tr>
+<tr class="memdesc:a47881db1fde24a38df4b411ed4c84333"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of millis to wait during connect before timing out. <br /></td></tr>
+<tr class="separator:a47881db1fde24a38df4b411ed4c84333"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_attribs_classace__time_1_1clock_1_1Clock"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classace__time_1_1clock_1_1Clock')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classace__time_1_1clock_1_1Clock.html">ace_time::clock::Clock</a></td></tr>
 <tr class="memitem:ae4fb852c09fbb9e37cc5764787dbf094 inherit pub_static_attribs_classace__time_1_1clock_1_1Clock"><td class="memItemLeft" align="right" valign="top"><a id="ae4fb852c09fbb9e37cc5764787dbf094"></a>
 static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1Clock.html#ae4fb852c09fbb9e37cc5764787dbf094">kInvalidSeconds</a> = LocalTime::kInvalidSeconds</td></tr>
@@ -170,8 +177,8 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
 
 <p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00048">48</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a05433c1de230ee9e7b4b36a6c9f49e04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a05433c1de230ee9e7b4b36a6c9f49e04">&#9670;&nbsp;</a></span>NtpClock()</h2>
+<a id="a6e55c40705df3b56e885d4dcfde062cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e55c40705df3b56e885d4dcfde062cc">&#9670;&nbsp;</a></span>NtpClock()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -195,7 +202,7 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>requestTimeout</em> = <code><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#ae8ee51f3f5394f7da1519e3f70a3af24">kRequestTimeout</a></code>&#160;</td>
+          <td class="paramname"><em>requestTimeout</em> = <code><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a61fef20ad2d92f7141f0f82b52ed9366">kRequestTimeoutMillis</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -220,7 +227,7 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00065">65</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00071">71</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
 
 </div>
 </div>
@@ -286,7 +293,7 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
 
 <p>Reimplemented from <a class="el" href="classace__time_1_1clock_1_1Clock.html#acb014777a376ad582151486b64db67fc">ace_time::clock::Clock</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="NtpClock_8cpp_source.html#l00124">124</a> of file <a class="el" href="NtpClock_8cpp_source.html">NtpClock.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="NtpClock_8cpp_source.html#l00123">123</a> of file <a class="el" href="NtpClock_8cpp_source.html">NtpClock.cpp</a>.</p>
 
 </div>
 </div>
@@ -312,7 +319,7 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>connectTimeoutMillis</em> = <code>kConnectTimeoutMillis</code>&#160;</td>
+          <td class="paramname"><em>connectTimeoutMillis</em> = <code><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a47881db1fde24a38df4b411ed4c84333">kConnectTimeoutMillis</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -334,6 +341,34 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="NtpClock_8cpp_source.html#l00021">21</a> of file <a class="el" href="NtpClock_8cpp_source.html">NtpClock.cpp</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="ae8ee51f3f5394f7da1519e3f70a3af24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8ee51f3f5394f7da1519e3f70a3af24">&#9670;&nbsp;</a></span>kRequestTimeout</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint16_t ace_time::clock::NtpClock::kRequestTimeout = <a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a61fef20ad2d92f7141f0f82b52ed9366">kRequestTimeoutMillis</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Deprecated. </p>
+<p>Use kRequestTimeoutMillis instead. </p>
+
+<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00060">60</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
 
 </div>
 </div>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['hardwaredatetime_69',['HardwareDateTime',['../structace__time_1_1hw_1_1HardwareDateTime.html',1,'ace_time::hw']]],
-  ['hardwaretemperature_70',['HardwareTemperature',['../structace__time_1_1hw_1_1HardwareTemperature.html',1,'ace_time::hw']]]
+  ['hardwaredatetime_75',['HardwareDateTime',['../structace__time_1_1hw_1_1HardwareDateTime.html',1,'ace_time::hw']]],
+  ['hardwaretemperature_76',['HardwareTemperature',['../structace__time_1_1hw_1_1HardwareTemperature.html',1,'ace_time::hw']]]
 ];

@@ -11,8 +11,12 @@
 #include <Arduino.h>
 #include <AceTimeClock.h>
 
-using namespace ace_time;
-using namespace ace_time::clock;
+using ace_time::acetime_t;
+using ace_time::ZonedDateTime;
+using ace_time::TimeZone;
+using ace_time::BasicZoneProcessor;
+using ace_time::zonedb::kZoneAmerica_Los_Angeles;
+using ace_time::clock::SystemClockLoop;
 
 // ESP32 does not define SERIAL_PORT_MONITOR
 #ifndef SERIAL_PORT_MONITOR
@@ -28,7 +32,7 @@ void printCurrentTime() {
   acetime_t now = systemClock.getNow();
 
   // Create Pacific Time and print.
-  auto pacificTz = TimeZone::forZoneInfo(&zonedb::kZoneAmerica_Los_Angeles,
+  auto pacificTz = TimeZone::forZoneInfo(&kZoneAmerica_Los_Angeles,
       &pacificProcessor);
   auto pacificTime = ZonedDateTime::forEpochSeconds(now, pacificTz);
   pacificTime.printTo(SERIAL_PORT_MONITOR);
@@ -47,7 +51,7 @@ void setup() {
   systemClock.setup();
 
   // Creating timezones is cheap, so we can create them on the fly as needed.
-  auto pacificTz = TimeZone::forZoneInfo(&zonedb::kZoneAmerica_Los_Angeles,
+  auto pacificTz = TimeZone::forZoneInfo(&kZoneAmerica_Los_Angeles,
       &pacificProcessor);
 
   // Set the SystemClock using these components.

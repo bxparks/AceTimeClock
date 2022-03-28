@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">AceTimeClock
-   &#160;<span id="projectnumber">1.0.5</span>
+   &#160;<span id="projectnumber">1.1.0</span>
    </div>
    <div id="projectbrief">Clock classes for Arduino that can synchronize from an NTP server or an RTC chip</div>
   </td>
@@ -79,38 +79,36 @@ $(function() {
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#ifndef ACE_TIME_HW_STM_RTC_H</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#define ACE_TIME_HW_STM_RTC_H</span></div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#if ! defined(EPOXY_DUINO)</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_STM32)</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;STM32RTC.h&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="keyword">namespace </span>ace_time {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="keyword">namespace </span>hw {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">class </span>HardwareDateTime;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">class </span>StmRtc {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">explicit</span> StmRtc();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">void</span> readDateTime(HardwareDateTime* dateTime) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">void</span> setDateTime(<span class="keyword">const</span> HardwareDateTime&amp; dateTime) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordtype">bool</span> isTimeSet() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span>ace_time {</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="keyword">namespace </span>hw {</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160; </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">class </span>HardwareDateTime;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classace__time_1_1hw_1_1StmRtc.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="classace__time_1_1hw_1_1StmRtc.html">StmRtc</a> {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">explicit</span> <a class="code" href="classace__time_1_1hw_1_1StmRtc.html#abdda5a73d7d361ef47d5d9877f0bcc42">StmRtc</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classace__time_1_1hw_1_1StmRtc.html#aec152e30f6dbcb1547c3436c5a17fde3">readDateTime</a>(<a class="code" href="structace__time_1_1hw_1_1HardwareDateTime.html">HardwareDateTime</a>* dateTime) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classace__time_1_1hw_1_1StmRtc.html#a04bc4099820d02aea9451ef9cf6726a7">setDateTime</a>(<span class="keyword">const</span> <a class="code" href="structace__time_1_1hw_1_1HardwareDateTime.html">HardwareDateTime</a>&amp; dateTime) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classace__time_1_1hw_1_1StmRtc.html#a70e194e8b4ae438be0756433574b780e">isTimeSet</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    STM32RTC* mRtc;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;};</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;} <span class="comment">// hw</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;} <span class="comment">// ace_time</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#endif //  #if defined(ARDUINO_ARCH_STM32)</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#endif //  #if ! defined(EPOXY_DUINO)</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">#endif //  #ifndef ACE_TIME_HW_STM_RTC_H</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;} <span class="comment">// hw</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;} <span class="comment">// ace_time</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif //  #if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#endif //  #ifndef ACE_TIME_HW_STM_RTC_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclassace__time_1_1hw_1_1StmRtc_html"><div class="ttname"><a href="classace__time_1_1hw_1_1StmRtc.html">ace_time::hw::StmRtc</a></div><div class="ttdoc">A class that reads and writes HardwareDateTime from an STM32 RTC chip using the STM32RTC library.</div><div class="ttdef"><b>Definition:</b> <a href="StmRtc_8h_source.html#l00027">StmRtc.h:27</a></div></div>
+<div class="ttc" id="aclassace__time_1_1hw_1_1StmRtc_html_a70e194e8b4ae438be0756433574b780e"><div class="ttname"><a href="classace__time_1_1hw_1_1StmRtc.html#a70e194e8b4ae438be0756433574b780e">ace_time::hw::StmRtc::isTimeSet</a></div><div class="ttdeci">bool isTimeSet() const</div><div class="ttdoc">Return true if the RTC is available and the time is set.</div><div class="ttdef"><b>Definition:</b> <a href="StmRtc_8cpp_source.html#l00055">StmRtc.cpp:55</a></div></div>
+<div class="ttc" id="aclassace__time_1_1hw_1_1StmRtc_html_a04bc4099820d02aea9451ef9cf6726a7"><div class="ttname"><a href="classace__time_1_1hw_1_1StmRtc.html#a04bc4099820d02aea9451ef9cf6726a7">ace_time::hw::StmRtc::setDateTime</a></div><div class="ttdeci">void setDateTime(const HardwareDateTime &amp;dateTime) const</div><div class="ttdoc">Set the STM with the HardwareDateTime values.</div><div class="ttdef"><b>Definition:</b> <a href="StmRtc_8cpp_source.html#l00049">StmRtc.cpp:49</a></div></div>
+<div class="ttc" id="aclassace__time_1_1hw_1_1StmRtc_html_aec152e30f6dbcb1547c3436c5a17fde3"><div class="ttname"><a href="classace__time_1_1hw_1_1StmRtc.html#aec152e30f6dbcb1547c3436c5a17fde3">ace_time::hw::StmRtc::readDateTime</a></div><div class="ttdeci">void readDateTime(HardwareDateTime *dateTime) const</div><div class="ttdoc">Read the time into the HardwareDateTime object.</div><div class="ttdef"><b>Definition:</b> <a href="StmRtc_8cpp_source.html#l00019">StmRtc.cpp:19</a></div></div>
+<div class="ttc" id="aclassace__time_1_1hw_1_1StmRtc_html_abdda5a73d7d361ef47d5d9877f0bcc42"><div class="ttname"><a href="classace__time_1_1hw_1_1StmRtc.html#abdda5a73d7d361ef47d5d9877f0bcc42">ace_time::hw::StmRtc::StmRtc</a></div><div class="ttdeci">StmRtc()=default</div><div class="ttdoc">Constructor.</div></div>
+<div class="ttc" id="astructace__time_1_1hw_1_1HardwareDateTime_html"><div class="ttname"><a href="structace__time_1_1hw_1_1HardwareDateTime.html">ace_time::hw::HardwareDateTime</a></div><div class="ttdoc">The date (year, month, day) and time (hour, minute, second) fields supported by the DS3231 RTC chip.</div><div class="ttdef"><b>Definition:</b> <a href="HardwareDateTime_8h_source.html#l00019">HardwareDateTime.h:19</a></div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

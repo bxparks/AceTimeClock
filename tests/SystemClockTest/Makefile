@@ -2,5 +2,6 @@
 # Makefile to compile and run Arduino programs natively on Linux or MacOS.
 
 APP_NAME := SystemClockTest
-ARDUINO_LIBS := AUnit AceCommon AceRoutine AceSorting AceTime AceTimeClock
+ARDUINO_LIBS := AUnit AceCommon AceRoutine AceSorting AceTime AceTimeClock \
+	EpoxyMockSTM32RTC
 include ../../../EpoxyDuino/EpoxyDuino.mk

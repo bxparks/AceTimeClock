@@ -1,6 +1,29 @@
 # Changelog
 
 * Unreleased
+* v1.1.0 (2022-03-28)
+    * Simplify `StmRtcClock` and `StmRtc` classes to use
+      `STM32RTC::getInstance()` directly.
+        * Move configuration of the `STM32RTC` singleton to the `STM32RTC`
+          object itself (e.g. configuring `LSE_CLOCK`, `HSE_CLOCK`).
+        * Update [README.md documentation](README.md#StmRtcClockClass) to
+          indicate that `STM32RTC` v1.2.0 fixes the bug which caused the date
+          components to be lost upon power reset.
+    * Incorporate `EpoxyMockSTM32RTC` mock library from EpoxyDuino to allow
+      `StmRtcClock` to be compiled in GitHub Actions.
+    * Add benchmarks for `StmRtcClock`, `Stm32F1Clock`, `NtpClock`, and
+      `EspSntpClock` into [MemoryBenchmark](examples/MemoryBenchmark).
+    * Simplify and refactor NTP examples to be more consistent.
+        * `examples/HelloNtpClock`
+        * `examples/HelloNtpClockLazy`
+        * `examples/HelloEspSntpClock`
+    * Upgrade tool chains
+        * Arduino IDE from 1.8.16 to 1.8.19
+        * Arduino CLI from 0.19.2 to 0.20.2
+        * STM32duino from 2.0.0 to 2.2.0
+        * AVR Core from 1.8.3 to 1.8.4
+        * ESP32 Core from 1.0.6 to 2.0.2
+        * Teensyduino from 1.55 to 1.56
 * v1.0.5 (2022-03-25)
     * Add a `uint16_t` template parameter to `CoroutineTemplate` for
       compatibility with AceRoutine v1.5.0.

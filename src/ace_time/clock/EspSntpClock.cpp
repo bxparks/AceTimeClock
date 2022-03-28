@@ -30,7 +30,7 @@ bool EspSntpClock::setup(const char* ntpServer, uint32_t timeoutMillis) {
 
     uint32_t elapsedMillis = millis() - startMillis;
     if (elapsedMillis >= timeoutMillis) {
-      Serial.println(" Failed!");
+      Serial.println(F(" Failed!"));
       return false;
     }
 

@@ -54,7 +54,13 @@ class NtpClock: public Clock {
     static const uint16_t kLocalPort = 2390;
 
     /** Request time out milliseconds. */
-    static const uint16_t kRequestTimeout = 1000;
+    static const uint16_t kRequestTimeoutMillis = 1000;
+
+    /** Deprecated. Use kRequestTimeoutMillis instead. */
+    static const uint16_t kRequestTimeout = kRequestTimeoutMillis;
+
+    /** Number of millis to wait during connect before timing out. */
+    static const uint16_t kConnectTimeoutMillis = 10000;
 
     /**
      * Constructor.
@@ -65,7 +71,7 @@ class NtpClock: public Clock {
     explicit NtpClock(
             const char* server = kNtpServerName,
             uint16_t localPort = kLocalPort,
-            uint16_t requestTimeout = kRequestTimeout):
+            uint16_t requestTimeout = kRequestTimeoutMillis):
         mServer(server),
         mLocalPort(localPort),
         mRequestTimeout(requestTimeout) {}
@@ -108,9 +114,6 @@ class NtpClock: public Clock {
      * AceTime epoch (2000-01-01T00:00:00Z).
      */
     static const uint32_t kSecondsSinceNtpEpoch = 3155673600;
-
-    /** Number of millis to wait during connect before timing out. */
-    static const uint16_t kConnectTimeoutMillis = 10000;
 
     /** Send an NTP request to the time server at the given address. */
     void sendNtpPacket(const IPAddress& address) const;

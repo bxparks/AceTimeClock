@@ -6,11 +6,13 @@
 #ifndef ACE_TIME_STM32_F1_CLOCK_H
 #define ACE_TIME_STM32_F1_CLOCK_H
 
-#if defined(ARDUINO_ARCH_STM32)
-#if defined(STM32F1xx)
+// For EpoxyDuino, this class is simply stubbed out for testing purposes.
+#if defined(STM32F1xx) || defined(EPOXY_DUINO)
 
 #include <stdint.h>
-#include "../hw/Stm32F1Rtc.h"
+#if ! defined(EPOXY_DUINO)
+  #include "../hw/Stm32F1Rtc.h"
+#endif
 #include "Clock.h"
 
 namespace ace_time {
@@ -68,27 +70,41 @@ class Stm32F1Clock: public Clock {
   public:
     explicit Stm32F1Clock() {}
 
+    /** Configure the clock. */
     void setup() {
+    #if ! defined(EPOXY_DUINO)
       mStm32F1Rtc.begin();
+    #endif
     }
 
     acetime_t getNow() const override {
+    #if defined(EPOXY_DUINO)
+      return mEpochSeconds;
+    #else
       return mStm32F1Rtc.getTime();
+    #endif
     }
 
     void setNow(acetime_t epochSeconds) override {
       if (epochSeconds == kInvalidSeconds) return;
+    #if defined(EPOXY_DUINO)
+      mEpochSeconds = epochSeconds;
+    #else
       mStm32F1Rtc.setTime(epochSeconds);
+    #endif
     }
 
   private:
+  #if defined(EPOXY_DUINO)
+    uint32_t mEpochSeconds;
+  #else
     mutable hw::Stm32F1Rtc mStm32F1Rtc;
+  #endif
 };
 
 } // clock
 } // ace_time
 
-#endif // #if defined(STM32F1xx)
-#endif // #if defined(ARDUINO_ARCH_STM32)
+#endif // #if defined(STM32F1xx) || defined(EPOXY_DUINO)
 
 #endif // #ifndef ACE_TIME_STM32F1_CLOCK_H
