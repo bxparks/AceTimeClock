@@ -594,10 +594,8 @@ the following issues:
 * [STM32RTC#41](https://github.com/stm32duino/STM32RTC/pull/41),
 * [Arduino_Core_STM32#266](https://github.com/stm32duino/Arduino_Core_STM32/issues/266)
 
-I created the `Stm32F1Clock` class to fix this problem below. The bug was
-finally fixed in STM32RTC v1.2.0 with
-[STM32RTC#58](https://github.com/stm32duino/STM32RTC/pull/58) so the
-`Stm32F1Clock` class may no longer be necessary.
+The bug was fixed with
+[STM32RTC#58](https://github.com/stm32duino/STM32RTC/pull/58).
 
 <a name="Stm32F1ClockClass"></a>
 ### Stm32F1Clock Class
@@ -668,6 +666,13 @@ accurate to better than 1 second per 48 hours. See for example:
 
 * https://github.com/rogerclarkmelbourne/Arduino_STM32/issues/572
 * https://www.stm32duino.com/viewtopic.php?t=143
+
+I created the `Stm32F1Clock` class to fix this problem below. With the bug fixed
+in STM32RTC v1.2.0, the `Stm32F1Clock` class may no longer be necessary.
+However, [MemoryBenchmark](examples/MemoryBenchmark) shows that the
+`Stm32F1Clock` class is 4kB smaller than `StmRtcClock` by avoiding the
+dependency to the `STM32RTC` library. So if flash memory is tight, then the
+`Stm32F1Clock` may still be worth using.
 
 <a name="NtpClockClass"></a>
 ## NtpClock Class
