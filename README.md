@@ -47,7 +47,7 @@ in the future.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.0.5 (2022-03-25)
+**Version**: v1.1.0 (2022-03-27)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
@@ -108,6 +108,7 @@ automatically install AceTimeClock and its dependent libraries:
 * AceTimeClock (https://github.com/bxparks/AceTimeClock)
 * AceTime (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
+* AceSorting (https://github.com/bxparks/AceSorting)
 * AceWire (https://github.com/bxparks/AceWire)
 * AceRoutine (https://github.com/bxparks/AceRoutine)
 
@@ -147,6 +148,7 @@ libraries at a minimum:
 * AceTimeClock (https://github.com/bxparks/AceTimeClock)
 * AceTime v1.8.0 or later (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
+* AceSorting (https://github.com/bxparks/AceSorting)
 
 The following libraries are optional because they are needed only by specific
 classes and only if the client application uses them. For convenience, they are
@@ -664,7 +666,7 @@ the following issues:
 * [Arduino_Core_STM32#266](https://github.com/stm32duino/Arduino_Core_STM32/issues/266)
 
 I created the `Stm32F1Clock` class to fix this problem below. The bug was
-finally fixed in v1.2.0 with
+finally fixed in STM32RTC v1.2.0 with
 [STM32RTC#58](https://github.com/stm32duino/STM32RTC/pull/58) so the
 `Stm32F1Clock` class may no longer be necessary.
 
@@ -1457,14 +1459,26 @@ sizeof(SystemClockLoop): 41
 sizeof(SystemClockCoroutine): 52
 ```
 
-**32-bit processors**
+**STM32: 32-bit processors**
+
+```
+sizeof(DS3231Clock): 12
+sizeof(StmRtcClock): 8
+sizeof(Stm32F1Clock): 8
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 80
+```
+
+**ESP8266/ESP32: 32-bit processors**
 
 ```
 sizeof(DS3231Clock): 12
 sizeof(NtpClock): 92
+sizeof(EspSntpClock): 4
 sizeof(SystemClock): 36
 sizeof(SystemClockLoop): 52
-sizeof(SystemClockCoroutine): 72
+sizeof(SystemClockCoroutine): 80
 ```
 
 <a name="FlashAndStaticMemory"></a>
@@ -1474,40 +1488,50 @@ sizeof(SystemClockCoroutine): 72
 size of the library for various microcontrollers (Arduino Nano to ESP32). Here
 are 2 samples:
 
-Arduino Nano
+**Arduino Nano**
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               |    474/   11 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock                            |   4108/  150 |  3634/  139 |
-| SystemClockLoop                        |   2692/  142 |  2218/  131 |
-| SystemClockLoop+1 Basic zone           |   8220/  328 |  7746/  317 |
-| SystemClockLoop+1 Extended zone        |  11230/  362 | 10756/  351 |
-| SystemClockCoroutine                   |   3456/  154 |  2982/  143 |
-| SystemClockCoroutine+1 Basic zone      |   9024/  340 |  8550/  329 |
-| SystemClockCoroutine+1 Extended zone   |  12034/  374 | 11560/  363 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               |    496/   17 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   |   4828/  259 |   4332/  242 |
+| DS3231Clock<SimpleWire>                |   3282/   49 |   2786/   32 |
+| DS3231Clock<SimpleWireFast>            |   2598/   43 |   2102/   26 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        |   1016/   72 |    520/   55 |
+| SystemClockLoop+1 Basic zone           |   6876/  262 |   6380/  245 |
+| SystemClockLoop+1 Extended zone        |  10318/  296 |   9822/  279 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   |   1820/  100 |   1324/   83 |
+| SystemClockCoroutine+1 Basic zone      |   7650/  290 |   7154/  273 |
+| SystemClockCoroutine+1 Extended zone   |  11092/  324 |  10596/  307 |
++----------------------------------------------------------------------+
 ```
 
-ESP8266:
+**ESP8266**
 
 ```
-+---------------------------------------------------------------------+
-| Functionality                          |  flash/  ram |       delta |
-|----------------------------------------+--------------+-------------|
-| Baseline                               | 260089/27892 |     0/    0 |
-|----------------------------------------+--------------+-------------|
-| DS3231Clock                            | 265161/28452 |  5072/  560 |
-| SystemClockLoop                        | 263761/28448 |  3672/  556 |
-| SystemClockLoop+1 Basic zone           | 269737/29024 |  9648/ 1132 |
-| SystemClockLoop+1 Extended zone        | 271881/29168 | 11792/ 1276 |
-| SystemClockCoroutine                   | 264305/28448 |  4216/  556 |
-| SystemClockCoroutine+1 Basic zone      | 270297/29024 | 10208/ 1132 |
-| SystemClockCoroutine+1 Extended zone   | 272441/29168 | 12352/ 1276 |
-+---------------------------------------------------------------------+
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               | 260109/27896 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   | 269505/28556 |   9396/  660 |
+| DS3231Clock<SimpleWire>                | 267297/28172 |   7188/  276 |
+|----------------------------------------+--------------+--------------|
+| NtpClock                               | 269101/28212 |   8992/  316 |
+| EspSntpClock                           | 266601/28236 |   6492/  340 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        | 264809/28124 |   4700/  228 |
+| SystemClockLoop+1 Basic zone           | 271329/28684 |  11220/  788 |
+| SystemClockLoop+1 Extended zone        | 273873/28828 |  13764/  932 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   | 265353/28156 |   5244/  260 |
+| SystemClockCoroutine+1 Basic zone      | 271889/28716 |  11780/  820 |
+| SystemClockCoroutine+1 Extended zone   | 274433/28860 |  14324/  964 |
++----------------------------------------------------------------------+
 ```
 
 This library does not perform dynamic allocation of memory so that it can be
@@ -1531,24 +1555,28 @@ debouncing and event dispatching provided by the AceButton
 CPU time consume by various features of the classes in this library. Two samples
 are shown below:
 
-Arduino Nano
+**Arduino Nano**
 
 ```
-+--------------------------------------------------+----------+
-| Method                                           |   micros |
-|--------------------------------------------------+----------|
-| SystemClockLoop                                  |    9.031 |
-+--------------------------------------------------+----------+
++------------------------------------+-------------+----------+
+| Method                             | micros/iter |     diff |
+|------------------------------------+-------------+----------|
+| EmptyLoop                          |       1.106 |    0.000 |
+|------------------------------------+-------------+----------|
+| SystemClockLoop                    |       9.011 |    7.905 |
++------------------------------------+-------------+----------+
 ```
 
-ESP8266
+**ESP8266**
 
 ```
-+--------------------------------------------------+----------+
-| Method                                           |   micros |
-|--------------------------------------------------+----------|
-| SystemClockLoop                                  |    9.582 |
-+--------------------------------------------------+----------+
++------------------------------------+-------------+----------+
+| Method                             | micros/iter |     diff |
+|------------------------------------+-------------+----------|
+| EmptyLoop                          |       0.139 |    0.000 |
+|------------------------------------+-------------+----------|
+| SystemClockLoop                    |       9.584 |    9.445 |
++------------------------------------+-------------+----------+
 ```
 
 <a name="SystemRequirements"></a>
@@ -1610,17 +1638,17 @@ compiler errors:
 
 This library was developed and tested using:
 
-* [Arduino IDE 1.8.16](https://www.arduino.cc/en/Main/Software)
-* [Arduino CLI 0.19.2](https://arduino.github.io/arduino-cli)
+* [Arduino IDE 1.8.19](https://www.arduino.cc/en/Main/Software)
+* [Arduino CLI 0.20.2](https://arduino.github.io/arduino-cli)
 * [SpenceKonde ATTinyCore 1.5.2](https://github.com/SpenceKonde/ATTinyCore)
-* [Arduino AVR Boards 1.8.3](https://github.com/arduino/ArduinoCore-avr)
+* [Arduino AVR Boards 1.8.4](https://github.com/arduino/ArduinoCore-avr)
 * [Arduino SAMD Boards 1.8.9](https://github.com/arduino/ArduinoCore-samd)
 * [SparkFun AVR Boards 1.1.13](https://github.com/sparkfun/Arduino_Boards)
 * [SparkFun SAMD Boards 1.8.4](https://github.com/sparkfun/Arduino_Boards)
-* [STM32duino 2.0.0](https://github.com/stm32duino/Arduino_Core_STM32)
+* [STM32duino 2.2.0](https://github.com/stm32duino/Arduino_Core_STM32)
 * [ESP8266 Arduino 3.0.2](https://github.com/esp8266/Arduino)
-* [ESP32 Arduino 1.0.6](https://github.com/espressif/arduino-esp32)
-* [Teensyduino 1.55](https://www.pjrc.com/teensy/td_download.html)
+* [ESP32 Arduino 2.0.2](https://github.com/espressif/arduino-esp32)
+* [Teensyduino 1.56](https://www.pjrc.com/teensy/td_download.html)
 
 This library is *not* compatible with:
 
