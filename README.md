@@ -267,6 +267,9 @@ The following programs are provided in the `examples/` directory:
     * demo of `DS3231Clock<T>` template class using `<AceWire.h>`
 * [HelloNtpClock](examples/HelloNtpClock/)
     * demo of `NtpClock` on ESP8266 and ESP32
+* [HelloNtpClockLazy](examples/HelloNtpClockLazy/)
+    * same as HelloNtpClock, but using `NtpClock::setup()` to configure the
+      WiFi stack
 * [HelloEspSntpClock](examples/HelloEspSntpClock/)
     * demo of `EspSntpClock` on ESP8266 and ESP32
 * [HelloStmRtcClock](examples/HelloStmRtcClock/)
@@ -692,12 +695,20 @@ namespace clock {
 
 class NtpClock: public Clock {
   public:
+    static const uint16_t kConnectTimeoutMillis = 10000;
+    static const uint16_t kRequestTimeoutMillis = 1000;
+
+  public:
     explicit NtpClock(
         const char* server = kNtpServerName,
         uint16_t localPort = kLocalPort,
-        uint16_t requestTimeout = kRequestTimeout);
+        uint16_t requestTimeout = kRequestTimeoutMillis);
 
-    void setup(const char* ssid, const char* password);
+    void setup(
+        const char* ssid = nullptr,
+        const char* password = nullptr,
+        uint16_t connectTimeoutMillis = kConnectTimeoutMillis);
+
     bool isSetup() const;
     const char* getServer() const;
 
@@ -716,9 +727,15 @@ The constructor takes the name of the NTP server. The default value is
 `kNtpServerName` which is `us.pool.ntp.org`. The default `kLocalPort` is set to
 8888. And the default `kRequestTimeout` is 1000 milliseconds.
 
-You need to call the `setup()` with the `ssid` and `password` of the WiFi
-connection. The method will time out after 5 seconds if the connection cannot
-be established. Here is a sample of how it can be used:
+The `setup()` must be called before this class is used. If the `ssid` and
+`password` of the WiFi connection is provided, it will attempt to configure the
+ESP8266 and ESP32 WiFi stack. If `ssid` is a `nullptr`, the WiFi stack must be
+configured separately. This feature was originally provided as a convenience,
+but I now recommend that the WiFi stack be configured separately outside of the
+`NtpClock::setup()` function. The functionality remains in `NtpClock::setup()`
+for backwards compatibility.
+
+Here is a sample of how it can be used:
 
 ```C++
 #include <AceTimeClock.h>
@@ -729,33 +746,47 @@ using ace_time::clock::NtpClock;
 
 const char SSID[] = ...; // Warning: don't store SSID in GitHub
 const char PASSWORD[] = ...; // Warning: don't store passwd in GitHub
+static const unsigned long WIFI_TIMEOUT_MILLIS = 15000;
 
 NtpClock ntpClock;
+
+void setupWiFi(
+    const char* ssid,
+    const char* password,
+    unsigned long rebootTimeoutMillis)
+{
+  // See example/HelloNtpClock/ for an implementation
+}
 
 void setup() {
   Serial.begin(115200);
   while(!Serial); // needed for Leonardo/Micro
   ...
-  ntpClock.setup(SSID, PASSWORD);
+
+  setupWiFi(SSID, PASSWORD, WIFI_TIMEOUT_MILLIS);
+
+  ntpClock.setup();
   if (ntpClock.isSetup()) {
-    Serial.println("WiFi connection failed... try again.");
-    ...
+    Serial.println("Connection failed... try again.");
+    return;
   }
 }
 
-// Print the NTP time every 10 seconds, in UTC-08:00 time zone.
+// Print the NTP time every 5 seconds, in UTC-08:00 time zone.
 void loop() {
   acetime_t nowSeconds = ntpClock.getNow();
   // convert epochSeconds to UTC-08:00
   OffsetDateTime odt = OffsetDateTime::forEpochSeconds(
       nowSeconds, TimeOffset::forHours(-8));
   odt.printTo(Serial);
-  delay(10000); // wait 10 seconds
+  delay(5000); // wait 5 seconds
 }
 ```
 
-See [examples/HelloNtpClock](examples/HelloNtpClock) to see how this class is
-configured.
+See the following examples for more details:
+
+* [examples/HelloNtpClock](examples/HelloNtpClock)
+* [examples/HelloNtpClockLazy](examples/HelloNtpClockLazy)
 
 **Security Warning**: You should avoid committing your SSID and PASSWORD into a
 public repository like GitHub because they will become public to anyone. Even if

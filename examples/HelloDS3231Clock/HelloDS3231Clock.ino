@@ -9,12 +9,16 @@
  */
 
 #include <Arduino.h>
-#include <AceTimeClock.h>
-#include <AceWire.h>
+#include <AceTime.h> // TimeZone, LocalDateTime
+#include <AceTimeClock.h> // DS3231Clock
+#include <AceWire.h> // TwoWireInterface
 #include <Wire.h> // TwoWire, Wire
 
-using namespace ace_time;
-using namespace ace_time::clock;
+using ace_time::acetime_t;
+using ace_time::TimeZone;
+using ace_time::LocalDateTime;
+using ace_time::clock::DS3231Clock;
+using ace_time::zonedb::kZoneAmerica_Los_Angeles;
 
 // ESP32 does not define SERIAL_PORT_MONITOR
 #ifndef SERIAL_PORT_MONITOR

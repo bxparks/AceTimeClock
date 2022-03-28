@@ -1,7 +1,14 @@
 /*
  * A program to demonstrate the use of EspSntpClock.
- *
  * Tested on ESP8266 and ESP32.
+ *
+ * Should print the following:
+ *
+ * Connecting to WiFi........ Done.
+ * Configuring SNTP.. Done.
+ * Now Seconds: 701798545; Paris Time: 2022-03-28T18:02:25+02:00[Europe/Paris]
+ * Now Seconds: 701798550; Paris Time: 2022-03-28T18:02:30+02:00[Europe/Paris]
+ * ...
  */
 
 #if !defined(ESP32) && !defined(ESP8266)
@@ -50,7 +57,7 @@ void setupWiFi(
 {
   SERIAL_PORT_MONITOR.print(F("Connecting to WiFi"));
   WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  WiFi.begin(ssid, password);
 
   unsigned long startMillis = millis();
   while (true) {
@@ -90,10 +97,13 @@ void setup() {
 
   setupWiFi(SSID, PASSWORD, REBOOT_TIMEOUT_MILLIS);
   sntpClock.setup();
+}
 
+void loop() {
   acetime_t nowSeconds = sntpClock.getNow();
   SERIAL_PORT_MONITOR.print(F("Now Seconds: "));
-  SERIAL_PORT_MONITOR.println(nowSeconds);
+  SERIAL_PORT_MONITOR.print(nowSeconds);
+  SERIAL_PORT_MONITOR.print("; ");
 
   auto parisTz = TimeZone::forZoneInfo(&kZoneEurope_Paris, &parisProcessor);
   auto parisTime = ZonedDateTime::forEpochSeconds(nowSeconds, parisTz);
@@ -101,7 +111,5 @@ void setup() {
   parisTime.printTo(SERIAL_PORT_MONITOR);
   SERIAL_PORT_MONITOR.println();
 
-  SERIAL_PORT_MONITOR.println(F("Done!"));
+  delay(5000);
 }
-
-void loop() {}

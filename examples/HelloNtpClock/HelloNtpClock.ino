@@ -1,8 +1,14 @@
 /*
  * A program to demonstrate the NtpClock class where the WiFi stack is
  * configured manually before calling NtpClock::setup().
- *
  * Tested on ESP8266 and ESP32.
+ *
+ * Should print the following:
+ *
+ * Connecting to WiFi.............. Done.
+ * Now Seconds: 701797848; Paris Time: 2022-03-28T17:50:48+02:00[Europe/Paris]
+ * Now Seconds: 701797853; Paris Time: 2022-03-28T17:50:53+02:00[Europe/Paris]
+ * ...
  */
 
 #if !defined(ESP32) && !defined(ESP8266)
@@ -95,10 +101,13 @@ void setup() {
     SERIAL_PORT_MONITOR.println(F("Something went wrong."));
     return;
   }
+}
 
+void loop() {
   acetime_t nowSeconds = ntpClock.getNow();
   SERIAL_PORT_MONITOR.print(F("Now Seconds: "));
-  SERIAL_PORT_MONITOR.println(nowSeconds);
+  SERIAL_PORT_MONITOR.print(nowSeconds);
+  SERIAL_PORT_MONITOR.print("; ");
 
   auto parisTz = TimeZone::forZoneInfo(&kZoneEurope_Paris, &parisProcessor);
   auto parisTime = ZonedDateTime::forEpochSeconds(nowSeconds, parisTz);
@@ -106,7 +115,5 @@ void setup() {
   parisTime.printTo(SERIAL_PORT_MONITOR);
   SERIAL_PORT_MONITOR.println();
 
-  SERIAL_PORT_MONITOR.println(F("Done!"));
+  delay(5000);
 }
-
-void loop() {}
