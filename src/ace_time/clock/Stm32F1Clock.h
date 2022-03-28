@@ -70,6 +70,7 @@ class Stm32F1Clock: public Clock {
   public:
     explicit Stm32F1Clock() {}
 
+    /** Configure the clock. */
     void setup() {
     #if ! defined(EPOXY_DUINO)
       mStm32F1Rtc.begin();
