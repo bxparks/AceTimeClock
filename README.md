@@ -337,11 +337,11 @@ and the diamond-line means "is-aggregation-of":
 |            ^    ^
 |            |     \
 |            |      DS3231Clock -----> hw::DS3231
-|            |      EspSntpClock ----> time()
+|            |      EspSntpClock ----> configTime(), time()
 |            |      NtpClock --------> WiFi, ESP8266WiFi
 |            |      StmRtcClock -----> hw::StmRtc
 |            |      Stm32F1Clock ----> hw::Stm32F1Rtc
-|            |      UnixClock -------> configTime(), time()
+|            |      UnixClock -------> time()
 |            |
 `------<> SystemClock
            ^       ^
