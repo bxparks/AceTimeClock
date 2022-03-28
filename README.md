@@ -667,12 +667,13 @@ accurate to better than 1 second per 48 hours. See for example:
 * https://github.com/rogerclarkmelbourne/Arduino_STM32/issues/572
 * https://www.stm32duino.com/viewtopic.php?t=143
 
-I created the `Stm32F1Clock` class to fix this problem below. With the bug fixed
-in STM32RTC v1.2.0, the `Stm32F1Clock` class may no longer be necessary.
-However, [MemoryBenchmark](examples/MemoryBenchmark) shows that the
-`Stm32F1Clock` class is 4kB smaller than `StmRtcClock` by avoiding the
-dependency to the `STM32RTC` library. So if flash memory is tight, then the
-`Stm32F1Clock` may still be worth using.
+I created the `Stm32F1Clock` class to work around the loss of date upon power
+reset with the STM32RTC library for the STM32F1 boards. With the bug fixed in
+STM32RTC v1.2.0, the `Stm32F1Clock` class may no longer be necessary. However,
+[MemoryBenchmark](examples/MemoryBenchmark) shows that the `Stm32F1Clock` class
+is 4kB smaller than `StmRtcClock` by avoiding the dependency to the `STM32RTC`
+library. So if flash memory is tight, then the `Stm32F1Clock` may still be worth
+using.
 
 <a name="NtpClockClass"></a>
 ## NtpClock Class
