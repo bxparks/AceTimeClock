@@ -1,9 +1,11 @@
 SIZEOF
 sizeof(DS3231Clock): 12
 sizeof(NtpClock): 92
+sizeof(EspSntpClock): 4
 sizeof(SystemClock): 36
 sizeof(SystemClockLoop): 52
-sizeof(SystemClockCoroutine): 72
+sizeof(SystemClockCoroutine): 80
 BENCHMARKS
-SystemClockLoop::loop() 9.582
+EmptyLoop 0.139
+SystemClockLoop 9.584
 END
