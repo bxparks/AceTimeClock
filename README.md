@@ -672,7 +672,7 @@ about how to configure and use this class.
 I also recommend that nothing should be connected to the PC14 and PC15 pins of
 the Blue Pill board, not even the male header pins. The male header pins changed
 the capacitance of the oscillator circuit enough to cause my `LSE_CLOCK` to run
-5-10% too slow. Removing the pins fixed the problem, giving me a clock That is
+5-10% too slow. Removing the pins fixed the problem, giving me a clock that is
 accurate to better than 1 second per 48 hours. See for example:
 
 * https://github.com/rogerclarkmelbourne/Arduino_STM32/issues/572
