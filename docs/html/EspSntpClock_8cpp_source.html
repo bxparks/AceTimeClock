@@ -103,7 +103,7 @@ $(function() {
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    uint32_t elapsedMillis = millis() - startMillis;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordflow">if</span> (elapsedMillis &gt;= timeoutMillis) {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;      Serial.println(<span class="stringliteral">&quot; Failed!&quot;</span>);</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;      Serial.println(F(<span class="stringliteral">&quot; Failed!&quot;</span>));</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
