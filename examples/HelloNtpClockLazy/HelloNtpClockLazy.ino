@@ -1,6 +1,6 @@
 /*
- * A program to demonstrate the NtpClock class where the WiFi stack is
- * configured manually before calling NtpClock::setup().
+ * A program to demonstrate the NtpClock where the NtpClock::setup() is used to
+ * setup the WiFi stack for convenience.
  *
  * Tested on ESP8266 and ESP32.
  */
@@ -12,11 +12,6 @@
 #include <Arduino.h>
 #include <AceTime.h>
 #include <AceTimeClock.h>
-#if defined(ESP8266)
-  #include <ESP8266WiFi.h>
-#else
-  #include <WiFi.h>
-#endif
 
 using ace_time::acetime_t;
 using ace_time::TimeZone;
@@ -38,50 +33,10 @@ using ace_time::clock::NtpClock;
 // source repository.
 static const char SSID[] = WIFI_SSID;
 static const char PASSWORD[] = WIFI_PASSWORD;
-// Number of millis to wait for WiFi connection before doing a software reboot.
-static const unsigned long REBOOT_TIMEOUT_MILLIS = 15000;
+static const unsigned long WIFI_TIMEOUT_MILLIS = 15000;
 
 static BasicZoneProcessor parisProcessor;
 static NtpClock ntpClock;
-
-void setupWiFi(
-    const char* ssid,
-    const char* password,
-    unsigned long rebootTimeoutMillis)
-{
-  SERIAL_PORT_MONITOR.print(F("Connecting to WiFi"));
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-
-  unsigned long startMillis = millis();
-  while (true) {
-    SERIAL_PORT_MONITOR.print('.');
-    if (WiFi.status() == WL_CONNECTED) {
-      SERIAL_PORT_MONITOR.println(F(" Done."));
-      break;
-    }
-
-    unsigned long nowMillis = millis();
-    if ((unsigned long) (nowMillis - startMillis) >= rebootTimeoutMillis) {
-    #if defined(ESP8266)
-      SERIAL_PORT_MONITOR.println(F("FAILED! Rebooting.."));
-      delay(1000);
-      ESP.reset();
-    #elif defined(ESP32)
-      SERIAL_PORT_MONITOR.println(F("FAILED! Rebooting.."));
-      delay(1000);
-      ESP.restart();
-    #else
-      SERIAL_PORT_MONITOR.println(
-          F("FAILED! But cannot reboot.. continuing.."));
-      delay(1000);
-      startMillis = nowMillis;
-    #endif
-    }
-
-    delay(500);
-  }
-}
 
 void setup() {
   delay(1000);
@@ -89,10 +44,10 @@ void setup() {
   while (!SERIAL_PORT_MONITOR); // Wait until Serial is ready - Leonardo/Micro
   SERIAL_PORT_MONITOR.println();
 
-  setupWiFi(SSID, PASSWORD, REBOOT_TIMEOUT_MILLIS);
-  ntpClock.setup();
+  // Tell NtpClock::setup() to setup the WiFi as well for convenience.
+  ntpClock.setup(SSID, PASSWORD, WIFI_TIMEOUT_MILLIS);
   if (!ntpClock.isSetup()) {
-    SERIAL_PORT_MONITOR.println(F("Something went wrong."));
+    SERIAL_PORT_MONITOR.println(F("WiFi connection failed... try again."));
     return;
   }
 

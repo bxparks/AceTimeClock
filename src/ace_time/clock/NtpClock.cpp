@@ -87,8 +87,7 @@ void NtpClock::sendRequest() const {
   #endif
 
   // Get a random server from the pool. Unfortunately, hostByName() is a
-  // blocking is a blocking call. So if the DNS resolver goes flaky,
-  // everything stops.
+  // blocking call. So if the DNS resolver goes flaky, everything stops.
   //
   // TODO: Change to a non-blocking NTP library.
   // TODO: check return value of hostByName() for errors

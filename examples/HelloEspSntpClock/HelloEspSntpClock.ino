@@ -43,31 +43,36 @@ static const unsigned long REBOOT_TIMEOUT_MILLIS = 15000;
 static BasicZoneProcessor parisProcessor;
 static EspSntpClock sntpClock;
 
-void setupWiFi() {
-  Serial.print(F("Connecting to WiFi"));
+void setupWiFi(
+    const char* ssid,
+    const char* password,
+    unsigned long rebootTimeoutMillis)
+{
+  SERIAL_PORT_MONITOR.print(F("Connecting to WiFi"));
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   unsigned long startMillis = millis();
   while (true) {
-    Serial.print('.');
+    SERIAL_PORT_MONITOR.print('.');
     if (WiFi.status() == WL_CONNECTED) {
-      Serial.println(F(" Done."));
+      SERIAL_PORT_MONITOR.println(F(" Done."));
       break;
     }
 
     unsigned long nowMillis = millis();
-    if ((unsigned long) (nowMillis - startMillis) >= REBOOT_TIMEOUT_MILLIS) {
+    if ((unsigned long) (nowMillis - startMillis) >= rebootTimeoutMillis) {
     #if defined(ESP8266)
-      Serial.println(F("FAILED! Rebooting.."));
+      SERIAL_PORT_MONITOR.println(F("FAILED! Rebooting.."));
       delay(1000);
       ESP.reset();
     #elif defined(ESP32)
-      Serial.println(F("FAILED! Rebooting.."));
+      SERIAL_PORT_MONITOR.println(F("FAILED! Rebooting.."));
       delay(1000);
       ESP.restart();
     #else
-      Serial.println(F("FAILED! But cannot reboot.. continuing.."));
+      SERIAL_PORT_MONITOR.println(
+          F("FAILED! But cannot reboot.. continuing.."));
       delay(1000);
       startMillis = nowMillis;
     #endif
@@ -83,7 +88,7 @@ void setup() {
   while (!SERIAL_PORT_MONITOR); // Wait until Serial is ready - Leonardo/Micro
   SERIAL_PORT_MONITOR.println();
 
-  setupWiFi();
+  setupWiFi(SSID, PASSWORD, REBOOT_TIMEOUT_MILLIS);
   sntpClock.setup();
 
   acetime_t nowSeconds = sntpClock.getNow();
