@@ -270,7 +270,11 @@ The following programs are provided in the `examples/` directory:
 * [HelloEspSntpClock](examples/HelloEspSntpClock/)
     * demo of `EspSntpClock` on ESP8266 and ESP32
 * [HelloStmRtcClock](examples/HelloStmRtcClock/)
-    * demo of `StmRtcClock` on STM32 boards (STM32F1 and STM32F4 tested)
+    * demo of `StmRtcClock` using the `STM32RTC`library
+    * STM32F1 and STM32F4 tested
+* [HelloStm32F1Clock](examples/HelloStm32F1Clock/)
+    * demo of `Stm32F1Clock` for STM32F1 boards
+    * STM32F1 Blue Pill tested
 * Benchmarks
     * [AutoBenchmark](examples/AutoBenchmark/)
         * perform CPU and memory benchmarking of various methods and print a
