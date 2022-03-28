@@ -605,11 +605,28 @@ The bug was fixed with
 
 The `Stm32F1Clock` is a class that is specifically designed to work on an
 STM32F1 chip, and specifically using the `LSE_CLOCK` mode (low speed external).
-The "Blue Pill" board already contains this external crystal chip attached to
-pins PC14 and PC15. The `LSE_CLOCK` mode uses external crystal to drive the
-internal 32-bit RTC counter, and has the nice property of being the only clock
-that works while the chip is powered off, as long as a battery or super
-capacitor is attached to the `VBat` terminal.
+The purpose of this class is to avoid the bug in the STM32RTC library that
+caused the date components to be lost after a power reset. (See the
+[StmRtcClockClass](#StmRtcClockClass) subsection above).
+
+The `Stm32F1Clock` class bypasses the STM32RTC library and the HAL code for the
+STM32F1. Instead, the `hw::Stm32F1Rtc` class writes the AceTime epochSeconds
+directly into the 32-bit RTC counter on the STM32F1. Technical details can be
+found in the [docstring for
+Stm32F1Clock](https://github.com/bxparks/AceTimeClock/blob/develop/src/ace_time/clock/Stm32F1Clock.h).
+
+The power reset bug was fixed in STM32RTC v1.2.0, so the `Stm32F1Clock` class
+may no longer be necessary. However, [MemoryBenchmark](examples/MemoryBenchmark)
+shows that the `Stm32F1Clock` class is 4kB smaller than `StmRtcClock`. So if
+flash memory is tight, then the `Stm32F1Clock` may still be worth using.
+
+The "Blue Pill" board already contains an external 32.768 kHz crystal chip
+attached to pins PC14 and PC15. The `LSE_CLOCK` mode uses external crystal to
+drive the internal 32-bit RTC counter, and has the nice property of being the
+only clock that works while the chip is powered off, as long as a battery or
+super capacitor is attached to the `VBat` terminal.
+
+The `Stm32F1Clock` class looks like this:
 
 ```C++
 namespace ace_time {
@@ -630,7 +647,7 @@ class Stm32F1Clock: public Clock {
 }
 ```
 
-The class is used like this:
+The class is configured and used like this:
 
 ```C++
 ...
@@ -652,15 +669,6 @@ void setup() {
 See [examples/HelloStm32F1Clock](examples/HelloStm32F1Clock) for more details
 about how to configure and use this class.
 
-Underneath the covers, the `Stm32F1Clock` delegates its functionality to the
-`hw::Stm32F1Rtc` class. The `Stm32F1Rtc` class bypasses the HAL code for
-the STM32F1 to avoid a bug which causes the date components to be lost after a
-power reset. (See [StmRtcClockClass](#StmRtcClockClass) subsection above).
-
-Instead, the `hw::Stm32F1Rtc` class writes the AceTime epochSeconds directly
-into the 32-bit RTC counter on the STM32F1. More information can be found in the
-class docstring on Doxygen (TBD: Add direct link after regenerating the docs.)
-
 I also recommend that nothing should be connected to the PC14 and PC15 pins of
 the Blue Pill board, not even the male header pins. The male header pins changed
 the capacitance of the oscillator circuit enough to cause my `LSE_CLOCK` to run
@@ -669,14 +677,6 @@ accurate to better than 1 second per 48 hours. See for example:
 
 * https://github.com/rogerclarkmelbourne/Arduino_STM32/issues/572
 * https://www.stm32duino.com/viewtopic.php?t=143
-
-I created the `Stm32F1Clock` class to work around the loss of date upon power
-reset with the STM32RTC library for the STM32F1 boards. With the bug fixed in
-STM32RTC v1.2.0, the `Stm32F1Clock` class may no longer be necessary. However,
-[MemoryBenchmark](examples/MemoryBenchmark) shows that the `Stm32F1Clock` class
-is 4kB smaller than `StmRtcClock` by avoiding the dependency to the `STM32RTC`
-library. So if flash memory is tight, then the `Stm32F1Clock` may still be worth
-using.
 
 <a name="NtpClockClass"></a>
 ## NtpClock Class
