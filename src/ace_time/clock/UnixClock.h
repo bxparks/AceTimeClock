@@ -26,7 +26,8 @@ class UnixClock: public Clock {
     void setup() {}
 
     acetime_t getNow() const override {
-      return time(nullptr) - LocalDate::kSecondsSinceUnixEpoch;
+      return time(nullptr)
+          - LocalDate::daysToCurrentEpochFromUnixEpoch() * (int64_t) 86400;
     }
 };
 

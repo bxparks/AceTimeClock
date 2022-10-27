@@ -58,7 +58,7 @@ class StmRtcClock: public Clock {
      */
     static LocalDateTime toDateTime(const hw::HardwareDateTime& dt) {
       return LocalDateTime::forComponents(
-          dt.year + LocalDate::kEpochYear, dt.month, dt.day,
+          dt.year + hw::HardwareDateTime::kBaseYear, dt.month, dt.day,
           dt.hour, dt.minute, dt.second);
     }
 
@@ -68,8 +68,14 @@ class StmRtcClock: public Clock {
      * as UTC time. Only 2 digits are supported by the year field.
      */
     static hw::HardwareDateTime toHardwareDateTime(const LocalDateTime& dt) {
-      return hw::HardwareDateTime{(uint8_t) dt.yearTiny(), dt.month(),
-          dt.day(), dt.hour(), dt.minute(), dt.second(), dt.dayOfWeek()};
+      return hw::HardwareDateTime{
+          (uint8_t) (dt.year() - hw::HardwareDateTime::kBaseYear),
+          dt.month(),
+          dt.day(),
+          dt.hour(),
+          dt.minute(),
+          dt.second(),
+          dt.dayOfWeek()};
     }
 
     const hw::StmRtc mStmRtc;
