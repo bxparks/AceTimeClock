@@ -1,6 +1,14 @@
 # Changelog
 
 * Unreleased
+* v1.2.0 (2022-11-04)
+    * Replace `LocalDate::kEpochYear` with `HardwareDateTime::kBaseYear`
+      since AceTime current epoch is no longer a constant and AceTime no longer
+      uses a 2-digit year offset internally.
+    * Replace `LocalDate::kSecondsSinceUnixEpoch` with
+      `Epoch::secondsToCurrentEpochFromUnixEpoch64()` since AceTime current
+      epoch is no longer constant.
+    * There should be no visible breakage of the client-facing API.
 * v1.1.0 (2022-03-28)
     * Simplify `StmRtcClock` and `StmRtc` classes to use
       `STM32RTC::getInstance()` directly.
