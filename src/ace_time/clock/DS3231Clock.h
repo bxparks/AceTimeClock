@@ -51,8 +51,12 @@ class DS3231Clock : public Clock {
      */
     static LocalDateTime toDateTime(const hw::HardwareDateTime& dt) {
       return LocalDateTime::forComponents(
-          dt.year + LocalDate::kEpochYear, dt.month, dt.day,
-          dt.hour, dt.minute, dt.second);
+          dt.year + hw::HardwareDateTime::kBaseYear,
+          dt.month,
+          dt.day,
+          dt.hour,
+          dt.minute,
+          dt.second);
     }
 
     /**
@@ -62,8 +66,14 @@ class DS3231Clock : public Clock {
      * DS3231 so the year is assumed to be between 2000 and 2099.
      */
     static hw::HardwareDateTime toHardwareDateTime(const LocalDateTime& dt) {
-      return hw::HardwareDateTime{(uint8_t) dt.yearTiny(), dt.month(),
-          dt.day(), dt.hour(), dt.minute(), dt.second(), dt.dayOfWeek()};
+      return hw::HardwareDateTime{
+          (uint8_t) (dt.year() - hw::HardwareDateTime::kBaseYear),
+          dt.month(),
+          dt.day(),
+          dt.hour(),
+          dt.minute(),
+          dt.second(),
+          dt.dayOfWeek()};
     }
 
   private:
