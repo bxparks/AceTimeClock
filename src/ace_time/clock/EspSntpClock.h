@@ -48,7 +48,8 @@ class EspSntpClock: public Clock {
         uint32_t timeoutMillis = kDefaultTimeoutMillis);
 
     acetime_t getNow() const override {
-      return time(nullptr) - LocalDate::kSecondsSinceUnixEpoch;
+      return time(nullptr)
+        - LocalDate::secondsToCurrentEpochFromUnixEpoch64();
     }
 };
 

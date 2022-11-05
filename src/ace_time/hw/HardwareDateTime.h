@@ -17,6 +17,9 @@ namespace hw {
  * by the DS3231 RTC chip.
  */
 struct HardwareDateTime {
+  /** Base year of the DS3231 chip. */
+  static const int16_t kBaseYear = 2000;
+
   /** Print HardwareDateTime to 'printer'. */
   void printTo(Print& printer) const;
 
