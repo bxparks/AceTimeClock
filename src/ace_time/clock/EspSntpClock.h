@@ -49,7 +49,7 @@ class EspSntpClock: public Clock {
 
     acetime_t getNow() const override {
       return time(nullptr)
-        - LocalDate::secondsToCurrentEpochFromUnixEpoch64();
+        - Epoch::secondsToCurrentEpochFromUnixEpoch64();
     }
 };
 

@@ -1,6 +1,9 @@
 # Changelog
 
 * Unreleased
+    * Fix incorrect reference to
+     `LocalDate::secondsToCurrentEpochFromUnixEpoch64` instead of
+     `Epoch::secondsToCurrentEpochFromUnixEpoch64`.
 * v1.2.0 (2022-11-04)
     * Replace `LocalDate::kEpochYear` with `HardwareDateTime::kBaseYear`
       since AceTime current epoch is no longer a constant and AceTime no longer
