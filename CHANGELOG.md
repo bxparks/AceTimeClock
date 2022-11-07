@@ -1,6 +1,13 @@
 # Changelog
 
 * Unreleased
+* v1.2.1 (2022-11-06)
+    * Fix incorrect reference to
+     `LocalDate::secondsToCurrentEpochFromUnixEpoch64` instead of
+     `Epoch::secondsToCurrentEpochFromUnixEpoch64`.
+    * Enable GitHub Actions for ESP8266 examples (HelloEspSntpClock,
+      HelloNtpClock, HelloNtpClockLazy) to catch compiler errors.
+        * Depends on EpoxyDuino v1.4.0, and hsaturn/EspMock v0.1.
 * v1.2.0 (2022-11-04)
     * Replace `LocalDate::kEpochYear` with `HardwareDateTime::kBaseYear`
       since AceTime current epoch is no longer a constant and AceTime no longer

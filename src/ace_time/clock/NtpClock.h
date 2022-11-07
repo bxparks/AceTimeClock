@@ -6,10 +6,10 @@
 #ifndef ACE_TIME_NTP_CLOCK_H
 #define ACE_TIME_NTP_CLOCK_H
 
-#if defined(ESP8266) || defined(ESP32)
+#if defined(ESP8266) || defined(ESP32) || defined(EPOXY_CORE_ESP8266)
 
 #include <stdint.h>
-#if defined(ESP8266)
+#if defined(ESP8266) || defined(EPOXY_CORE_ESP8266)
   #include <ESP8266WiFi.h>
 #else
   #include <WiFi.h>
@@ -132,6 +132,6 @@ class NtpClock: public Clock {
 }
 }
 
-#endif // defined(ESP8266) || defined(ESP32)
+#endif
 
 #endif

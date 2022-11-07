@@ -11,14 +11,14 @@
  * ...
  */
 
-#if !defined(ESP32) && !defined(ESP8266)
+#if !defined(ESP32) && !defined(ESP8266) && !defined(EPOXY_CORE_ESP8266)
   #error This sketch works only for the ESP8266 and ESP32
 #endif
 
 #include <Arduino.h>
 #include <AceTime.h>
 #include <AceTimeClock.h>
-#if defined(ESP8266)
+#if defined(ESP8266) || defined(EPOXY_CORE_ESP8266)
   #include <ESP8266WiFi.h>
 #else
   #include <WiFi.h>
@@ -36,13 +36,19 @@ using ace_time::clock::EspSntpClock;
 #define SERIAL_PORT_MONITOR Serial
 #endif
 
-// Replace WIFI_SSID and WIFI_PASSWORD with your WiFi SSID and password.
-// (I have a wrapper script that replaces these with the the correct values.
-// You will have to replace them manually.)
-// WARNING: For security, do NOT commit your ssid and password into a public
-// source repository.
+// Define your WiFi SSID and password.
+// 1) The Arduino IDE has no support for defining C preprocessor macros, so you
+// have to manually define them here. (WARNING: For security, do NOT commit your
+// ssid and password into a public source repository.)
+// 2) The auniter.sh script from the AUniter project allows the WIFI_SSID and
+// WIFI_PASSWORD macros to be defined on the command line or from a config file.
+#if defined(AUNITER)
 static const char SSID[] = WIFI_SSID;
 static const char PASSWORD[] = WIFI_PASSWORD;
+#else
+static const char SSID[] = "your wifi ssid";
+static const char PASSWORD[] = "your wifi passord";
+#endif
 
 // Number of millis to wait for WiFi connection before doing a software reboot.
 static const unsigned long REBOOT_TIMEOUT_MILLIS = 15000;

@@ -49,7 +49,7 @@ in the future.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.2.0 (2022-11-04)
+**Version**: v1.2.1 (2022-11-06)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
@@ -174,6 +174,7 @@ machine, you need:
 
 * AUnit (https://github.com/bxparks/AUnit)
 * EpoxyDuino (https://github.com/bxparks/EpoxyDuino)
+* EspMock (https://github.com/hsaturn/EspMock)
 
 <a name="Documentation"></a>
 ## Documentation
