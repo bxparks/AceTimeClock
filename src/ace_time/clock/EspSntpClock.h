@@ -6,7 +6,7 @@
 #ifndef ACE_TIME_ESP_SNTP_CLOCK_H
 #define ACE_TIME_ESP_SNTP_CLOCK_H
 
-#if defined(ESP8266) || defined(ESP32)
+#if defined(ESP8266) || defined(ESP32) || defined(EPOXY_CORE_ESP8266)
 
 #include <time.h> // time()
 #include <AceTime.h> // LocalDate

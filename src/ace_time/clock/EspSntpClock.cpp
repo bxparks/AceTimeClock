@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "EspSntpClock.h"
 
-#if defined(ESP8266) || defined(ESP32)
+#if defined(ESP8266) || defined(ESP32) || defined(EPOXY_CORE_ESP8266)
 
 namespace ace_time {
 namespace clock {

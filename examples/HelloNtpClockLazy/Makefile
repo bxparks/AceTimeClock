@@ -1,0 +1,10 @@
+# See https://github.com/bxparks/EpoxyDuino for documentation about this
+# Makefile to compile and run Arduino programs natively on Linux or MacOS.
+
+APP_NAME := HelloNtpClockLazy
+ARDUINO_LIBS := AceCommon AceSorting AceTime AceTimeClock AceRoutine \
+	ESP8266WiFi EpoxyMockSTM32RTC
+ARDUINO_LIB_DIRS := $(abspath ../../..) $(abspath ../../../EspMock/libraries)
+EPOXY_CORE := EPOXY_CORE_ESP8266
+MORE_CLEAN := more_clean
+include ../../../EpoxyDuino/EpoxyDuino.mk
