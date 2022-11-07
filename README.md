@@ -174,6 +174,7 @@ machine, you need:
 
 * AUnit (https://github.com/bxparks/AUnit)
 * EpoxyDuino (https://github.com/bxparks/EpoxyDuino)
+* EspMock (https://github.com/hsaturn/EspMock)
 
 <a name="Documentation"></a>
 ## Documentation
