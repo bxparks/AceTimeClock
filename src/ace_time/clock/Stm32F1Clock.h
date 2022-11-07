@@ -62,9 +62,9 @@ namespace clock {
  * which holds a single status bit to indicate whether or not the underlying RTC
  * counter has been initialized to a valid time. The selection of the `DR1`
  * register, instead of any of the other 9-10 backup registers, is currently
- * hardcoded in `Stm32F1Rtc.h`. If that causes a conflict with something else,
- * let me know, because this is fixable. We can make that a configurable
- * parameter in the Stm32F1Rtc::begin() method.
+ * hardcoded in the `RTC_INIT_REG` macro in `Stm32F1Rtc.h`. If that causes a
+ * conflict with something else, let me know, because this is fixable. We can
+ * make that a configurable parameter in the Stm32F1Rtc::begin() method.
  */
 class Stm32F1Clock: public Clock {
   public:
