@@ -24,6 +24,19 @@ namespace clock {
  * [STM32RTC](https://github.com/stm32duino/STM32RTC) library. The STM32RTC
  * singleton object should be configured using `STM32RTC::getInstance()` in the
  * global `setup()` function.
+ *
+ * AceTime v2 allows the epoch year of the library to be adjustable by the
+ * client application, from the year 2000 until the year 10000. Unfortunately,
+ * the STM32 hardware supported by this class (through the dependent STM32RTC
+ * library) uses a 2-digit year offset from the year 2000. This will break in
+ * the year 2100 unless a software fix can be created to work around that
+ * limitation.
+ *
+ * Ironically, the STM32F1 chip has a more limited RTC functionality in the
+ * hardware but that limitation actually works to its advantage so that the F1
+ * can be fully compatible with AceTime to its limit of the year 10000 if
+ * Stm32F1Clock class is used instead of this class. (See notes in
+ * Stm32F1Clock.h).
  */
 class StmRtcClock: public Clock {
   public:
