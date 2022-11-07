@@ -10,7 +10,9 @@ ESP8266_EXAMPLES := HelloEspSntpClock HelloNtpClock HelloNtpClockLazy
 
 # The two sets of example apps must be compiled sequentially to prevent one set
 # from interfering with the other. Various object files need to be compiled
-# with different preprocessor macros.
+# with different preprocessor macros. This calls 'make clean' at the very end
+# so that targets that come after the EPOXY_CORE_ESP8266 examples to revert
+# back to EPOXY_CORE__AVR.
 all:
 	$(MAKE) clean
 	set -e; \
@@ -23,7 +25,8 @@ all:
 	for i in $(ESP8266_EXAMPLES); do \
 		echo '==== Making:' $$i; \
 		$(MAKE) -C $$i; \
-	done
+	done; \
+	$(MAKE) clean
 
 clean:
 	set -e; \
