@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* v1.2.1 (2022-11-06)
     * Fix incorrect reference to
      `LocalDate::secondsToCurrentEpochFromUnixEpoch64` instead of
      `Epoch::secondsToCurrentEpochFromUnixEpoch64`.
