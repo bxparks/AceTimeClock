@@ -1567,17 +1567,17 @@ are 2 samples:
 |----------------------------------------+--------------+--------------|
 | Baseline                               |    496/   17 |      0/    0 |
 |----------------------------------------+--------------+--------------|
-| DS3231Clock<TwoWire>                   |   4828/  259 |   4332/  242 |
-| DS3231Clock<SimpleWire>                |   3282/   49 |   2786/   32 |
-| DS3231Clock<SimpleWireFast>            |   2598/   43 |   2102/   26 |
+| DS3231Clock<TwoWire>                   |   4958/  259 |   4462/  242 |
+| DS3231Clock<SimpleWire>                |   3412/   49 |   2916/   32 |
+| DS3231Clock<SimpleWireFast>            |   2742/   43 |   2246/   26 |
 |----------------------------------------+--------------+--------------|
 | SystemClockLoop                        |   1016/   72 |    520/   55 |
-| SystemClockLoop+1 Basic zone           |   6876/  262 |   6380/  245 |
-| SystemClockLoop+1 Extended zone        |  10318/  296 |   9822/  279 |
+| SystemClockLoop+1 Basic zone           |   7102/  262 |   6606/  245 |
+| SystemClockLoop+1 Extended zone        |  10702/  296 |  10206/  279 |
 |----------------------------------------+--------------+--------------|
 | SystemClockCoroutine                   |   1820/  100 |   1324/   83 |
-| SystemClockCoroutine+1 Basic zone      |   7650/  290 |   7154/  273 |
-| SystemClockCoroutine+1 Extended zone   |  11092/  324 |  10596/  307 |
+| SystemClockCoroutine+1 Basic zone      |   7876/  290 |   7380/  273 |
+| SystemClockCoroutine+1 Extended zone   |  11476/  324 |  10980/  307 |
 +----------------------------------------------------------------------+
 ```
 
@@ -1589,19 +1589,19 @@ are 2 samples:
 |----------------------------------------+--------------+--------------|
 | Baseline                               | 260109/27896 |      0/    0 |
 |----------------------------------------+--------------+--------------|
-| DS3231Clock<TwoWire>                   | 269505/28556 |   9396/  660 |
-| DS3231Clock<SimpleWire>                | 267297/28172 |   7188/  276 |
+| DS3231Clock<TwoWire>                   | 269573/28560 |   9464/  664 |
+| DS3231Clock<SimpleWire>                | 267365/28176 |   7256/  280 |
 |----------------------------------------+--------------+--------------|
-| NtpClock                               | 269101/28212 |   8992/  316 |
-| EspSntpClock                           | 266601/28236 |   6492/  340 |
+| NtpClock                               | 269137/28216 |   9028/  320 |
+| EspSntpClock                           | 266637/28240 |   6528/  344 |
 |----------------------------------------+--------------+--------------|
 | SystemClockLoop                        | 264809/28124 |   4700/  228 |
-| SystemClockLoop+1 Basic zone           | 271329/28684 |  11220/  788 |
-| SystemClockLoop+1 Extended zone        | 273873/28828 |  13764/  932 |
+| SystemClockLoop+1 Basic zone           | 271365/28688 |  11256/  792 |
+| SystemClockLoop+1 Extended zone        | 273957/28832 |  13848/  936 |
 |----------------------------------------+--------------+--------------|
 | SystemClockCoroutine                   | 265353/28156 |   5244/  260 |
-| SystemClockCoroutine+1 Basic zone      | 271889/28716 |  11780/  820 |
-| SystemClockCoroutine+1 Extended zone   | 274433/28860 |  14324/  964 |
+| SystemClockCoroutine+1 Basic zone      | 271925/28720 |  11816/  824 |
+| SystemClockCoroutine+1 Extended zone   | 274517/28864 |  14408/  968 |
 +----------------------------------------------------------------------+
 ```
 
