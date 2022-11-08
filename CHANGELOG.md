@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* v1.2.2 (2022-11-08)
     * Fix `NtpClock` to handle the `uint32_t` overflow of NTP seconds, with the
       first one occuring just after 2036-02-07 06:28:15 UTC.
     * Review and document the range of validity of the `getNow()` seconds of
