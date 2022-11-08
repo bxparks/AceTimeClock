@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">AceTimeClock
-   &#160;<span id="projectnumber">1.2.1</span>
+   &#160;<span id="projectnumber">1.2.2</span>
    </div>
    <div id="projectbrief">Clock classes for Arduino that can synchronize from an NTP server or an RTC chip</div>
   </td>
@@ -168,11 +168,12 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
 
 <p>Return the number of seconds since the AceTime epoch (2000-01-01T00:00:00Z). </p>
 <p>Returns kInvalidSeconds if an error has occured.</p>
-<p>This is a blocking call. Some clocks (e.g. NTP client) this may take many seconds. On those clocks, use the asynchronous methods (<a class="el" href="classace__time_1_1clock_1_1Clock.html#a789be177b3a48408fca1805a90d7e34e" title="Send a time request asynchronously.">sendRequest()</a>, <a class="el" href="classace__time_1_1clock_1_1Clock.html#ada1474de64fd88ca8466bea08165b3c3" title="Return true if a response is ready.">isResponseReady()</a>, and <a class="el" href="classace__time_1_1clock_1_1Clock.html#acb014777a376ad582151486b64db67fc" title="Returns number of seconds since AceTime epoch (2000-01-01).">readResponse()</a>) instead. </p>
+<p>This is a blocking call. Some clocks (e.g. NTP client) this may take many seconds. On those clocks, use the asynchronous methods (<a class="el" href="classace__time_1_1clock_1_1Clock.html#a789be177b3a48408fca1805a90d7e34e" title="Send a time request asynchronously.">sendRequest()</a>, <a class="el" href="classace__time_1_1clock_1_1Clock.html#ada1474de64fd88ca8466bea08165b3c3" title="Return true if a response is ready.">isResponseReady()</a>, and <a class="el" href="classace__time_1_1clock_1_1Clock.html#acb014777a376ad582151486b64db67fc" title="Returns number of seconds since AceTime epoch (2000-01-01).">readResponse()</a>) instead.</p>
+<p>Since <code>acetime_t</code> is a 32-bit integer, this method is valid if the current Unix time() is within about +/- 68 years of the current epoch being used by the AceTime library, as defined by <code>Epoch::currentEpochYear()</code>. </p>
 
 <p>Implements <a class="el" href="classace__time_1_1clock_1_1Clock.html#a018eaa1936dd0750eb2098e1c6ada9e4">ace_time::clock::Clock</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="UnixClock_8h_source.html#l00028">28</a> of file <a class="el" href="UnixClock_8h_source.html">UnixClock.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="UnixClock_8h_source.html#l00036">36</a> of file <a class="el" href="UnixClock_8h_source.html">UnixClock.h</a>.</p>
 
 </div>
 </div>
