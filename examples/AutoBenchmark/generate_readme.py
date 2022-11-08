@@ -24,7 +24,7 @@ print(f"""\
 
 Here are the results from `AutoBenchmark.ino` for various boards.
 
-**Version**: AceTimeClock v1.1.0
+**Version**: AceTimeClock v1.2.2
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -97,10 +97,22 @@ The CPU times below are given in microseconds.
     * The results for ESP8266 is surprisingly slow, slower than the AVR. Not
       sure why.
 
+**v1.2.2**
+
+* Upgrade tool chains
+    * Arduino CLI from 0.27.1
+    * STM32duino from 2.3.0
+    * AVR Core from 1.8.4 to 1.8.5
+    * ESP32 Core from 2.0.2 to 2.0.5
+    * Teensyduino from 1.56 to 1.57
+* Upgrade to AceTime v2.0
+    * Update `NtpClock` to use AceTime `Epoch::currentEpochYear()`
+* No significant changes to CPU time.
+
 ## Arduino Nano
 
 * 16MHz ATmega328P
-* Arduino IDE 1.8.19, Arduino CLI 0.20.2
+* Arduino IDE 1.8.19, Arduino CLI 0.27.1
 * Arduino AVR Boards 1.8.4
 
 ```
@@ -110,7 +122,7 @@ The CPU times below are given in microseconds.
 ## Sparkfun Pro Micro
 
 * 16 MHz ATmega32U4
-* Arduino IDE 1.8.19, Arduino CLI 0.20.2
+* Arduino IDE 1.8.19, Arduino CLI 0.27.1
 * SparkFun AVR Boards 1.1.13
 
 ```
@@ -120,8 +132,8 @@ The CPU times below are given in microseconds.
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3
-* Arduino IDE 1.8.19, Arduino CLI 0.20.2
-* STM32duino 2.2.0
+* Arduino IDE 1.8.19, Arduino CLI 0.27.1
+* STM32duino 2.3.0
 
 ```
 {stm32_results}
@@ -130,7 +142,7 @@ The CPU times below are given in microseconds.
 ## ESP8266
 
 * NodeMCU 1.0 clone, 80MHz ESP8266
-* Arduino IDE 1.8.19, Arduino CLI 0.20.2
+* Arduino IDE 1.8.19, Arduino CLI 0.27.1
 * ESP8266 Boards 3.0.2
 
 ```
@@ -140,8 +152,8 @@ The CPU times below are given in microseconds.
 ## ESP32
 
 * ESP32-01 Dev Board, 240 MHz Tensilica LX6
-* Arduino IDE 1.8.19, Arduino CLI 0.20.2
-* ESP32 Boards 2.0.2
+* Arduino IDE 1.8.19, Arduino CLI 0.27.1
+* ESP32 Boards 2.0.5
 
 ```
 {esp32_results}
@@ -150,8 +162,8 @@ The CPU times below are given in microseconds.
 ## Teensy 3.2
 
 * 96 MHz ARM Cortex-M4
-* Arduino IDE 1.8.19, Arduino CLI 0.20.2
-* Teensyduino 1.56
+* Arduino IDE 1.8.19, Arduino CLI 0.27.1
+* Teensyduino 1.57
 * Compiler options: "Faster"
 
 ```

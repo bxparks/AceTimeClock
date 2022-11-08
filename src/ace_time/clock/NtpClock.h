@@ -30,7 +30,24 @@ namespace clock {
  * So every now and then, it can take 5-6 seconds for the call to return,
  * blocking everything (e.g. display refresh, button clicks) until it times out.
  *
- * TODO: Create a version that uses a non-blocking DNS look up.
+ * NTP seconds is an unsigned 32-bit integer offset from the NTP epoch of
+ * 1900-01-01. It rolls over every 136 years, with the first rollover happening
+ * just after 2036-02-07 06:28:15 UTC. Each NTP rollover enters into the next
+ * NTP Era. I have seen documentation that says that NTP v4 packets contain the
+ * NTP era number but I have yet to find information on how to extract that
+ * number. So currently this class ignores the NTP Era from the NTP packet.
+ * Instead, the NTP Era is automatically inferred to be the ones that completely
+ * span the currently defined AceTime epoch range, as described next.
+ *
+ * The AceTime seconds is a signed 32-bit integer with a range of 136 years
+ * centered around the `Epoch::currentEpochYear()`. This class converts NTP
+ * seconds to AceTime seconds by mapping the the AceTime seconds range onto the
+ * NTP seconds range, straddling any NTP era necessary to meet the AceTime
+ * seconds range. For example, for the default AceTime v2 epoch of 2050, the NTP
+ * seconds will be interpreted to be from 1982 to 2118, crossing from NTP era 0
+ * to NTP era 1. If the AceTime epoch is changed to 2150, then the NTP seconds
+ * will be interpreted to be from 2082 to 2218, crossing from NTP era 1 to NTP
+ * era 2.
  *
  * Warning: If you are using an ESP8266, AND you are using the `analogRead()`
  * function, calling `analogRead()` too quickly will cause the WiFi connection
@@ -38,12 +55,15 @@ namespace clock {
  * the disconnect. See https://github.com/esp8266/Arduino/issues/1634 and
  * https://github.com/esp8266/Arduino/issues/5083. The solution is to add a
  * slightly delay between calls to analogRead(). I don't know what the minimum
- * value should be, but using a 10ms delay seems to work for me.
+ * value should be, but using a 10ms delay (i.e. no faster than 100 times a
+ * second) seems to work for me.
  *
  * Borrowed from
  * https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/examples/NTPClient/NTPClient.ino
  * and
  * https://github.com/PaulStoffregen/Time/blob/master/examples/TimeNTP/TimeNTP.ino
+ *
+ * TODO: Create a version that uses a non-blocking DNS look up.
  */
 class NtpClock: public Clock {
   public:
@@ -105,15 +125,32 @@ class NtpClock: public Clock {
 
     acetime_t readResponse() const override;
 
+    /**
+     * Convert an NTP seconds to AceTime seconds relative to the current AceTime
+     * epoch defined by `Epoch::currentEpochYear()`. Since NTP epoch is
+     * 1900-01-01 and is due to rollover just after 2036-02-07 06:28:15, this
+     * function automatically accounts for the rollover of NTP seconds by
+     * shifting the NTP seconds into AceTime seconds using modulo 2^32 unsigned
+     * operations.
+     *
+     * The result of this function is that it takes the entire 32-bit range of
+     * the (signed) AceTime seconds (centered around the `currentEpochYear()`,
+     * and overlays it on top of the (unsigned) NTP seconds time line (with
+     * rollovers into new NTP eras every 2^32 seconds), and converts each NTP
+     * seconds (regardless of its NTP era) into its corresonding AceTime
+     * seconds.
+     */
+    static acetime_t convertNtpSecondsToAceTimeSeconds(uint32_t ntpSeconds);
+
   private:
     /** NTP time is in the first 48 bytes of message. */
     static const uint8_t kNtpPacketSize = 48;
 
     /**
-     * Number of seconds between NTP epoch (1900-01-01T00:00:00Z) and
-     * AceTime epoch (2000-01-01T00:00:00Z).
+     * Number of days between NTP epoch (1900-01-01T00:00:00Z) and
+     * AceTime Epoch Converter epoch (2000-01-01T00:00:00Z).
      */
-    static const uint32_t kSecondsSinceNtpEpoch = 3155673600;
+    static const int32_t kDaysToConverterEpochFromNtpEpoch = 36524;
 
     /** Send an NTP request to the time server at the given address. */
     void sendNtpPacket(const IPAddress& address) const;

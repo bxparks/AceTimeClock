@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">AceTimeClock
-   &#160;<span id="projectnumber">1.2.1</span>
+   &#160;<span id="projectnumber">1.2.2</span>
    </div>
    <div id="projectbrief">Clock classes for Arduino that can synchronize from an NTP server or an RTC chip</div>
   </td>
@@ -69,6 +69,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classace__time_1_1clock_1_1NtpClock-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -141,6 +142,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a958ab88f7ba9893c557038e1424138ca inherit pub_methods_classace__time_1_1clock_1_1Clock"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the time to the indicated seconds.  <a href="classace__time_1_1clock_1_1Clock.html#a958ab88f7ba9893c557038e1424138ca">More...</a><br /></td></tr>
 <tr class="separator:a958ab88f7ba9893c557038e1424138ca inherit pub_methods_classace__time_1_1clock_1_1Clock"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a089fa15e59b45faf79289cbca4760221"><td class="memItemLeft" align="right" valign="top">static acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a089fa15e59b45faf79289cbca4760221">convertNtpSecondsToAceTimeSeconds</a> (uint32_t ntpSeconds)</td></tr>
+<tr class="memdesc:a089fa15e59b45faf79289cbca4760221"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an NTP seconds to AceTime seconds relative to the current AceTime epoch defined by <code>Epoch::currentEpochYear()</code>.  <a href="classace__time_1_1clock_1_1NtpClock.html#a089fa15e59b45faf79289cbca4760221">More...</a><br /></td></tr>
+<tr class="separator:a089fa15e59b45faf79289cbca4760221"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a282fa5d05aba3d8d7959ecf2602cc70b"><td class="memItemLeft" align="right" valign="top"><a id="a282fa5d05aba3d8d7959ecf2602cc70b"></a>
@@ -171,11 +178,13 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A <a class="el" href="classace__time_1_1clock_1_1Clock.html" title="Abstract base class for objects that provide and store time.">Clock</a> that retrieves the time from an NTP server. </p>
 <p>This class has the deficiency that the DNS name resolver WiFi.hostByName() is a blocking call. So every now and then, it can take 5-6 seconds for the call to return, blocking everything (e.g. display refresh, button clicks) until it times out.</p>
-<p>TODO: Create a version that uses a non-blocking DNS look up.</p>
-<p>Warning: If you are using an ESP8266, AND you are using the <code>analogRead()</code> function, calling <code>analogRead()</code> too quickly will cause the WiFi connection to disconnect after 5-10 seconds. Calling <a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a1f5c3c95e63ff869b93f9a8682fbe787" title="Set up the WiFi connection using the given ssid and password, and prepare the UDP connection.">NtpClock::setup()</a> will <em>not</em> fix the disconnect. See <a href="https://github.com/esp8266/Arduino/issues/1634">https://github.com/esp8266/Arduino/issues/1634</a> and <a href="https://github.com/esp8266/Arduino/issues/5083">https://github.com/esp8266/Arduino/issues/5083</a>. The solution is to add a slightly delay between calls to analogRead(). I don't know what the minimum value should be, but using a 10ms delay seems to work for me.</p>
-<p>Borrowed from <a href="https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/examples/NTPClient/NTPClient.ino">https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/examples/NTPClient/NTPClient.ino</a> and <a href="https://github.com/PaulStoffregen/Time/blob/master/examples/TimeNTP/TimeNTP.ino">https://github.com/PaulStoffregen/Time/blob/master/examples/TimeNTP/TimeNTP.ino</a> </p>
+<p>NTP seconds is an unsigned 32-bit integer offset from the NTP epoch of 1900-01-01. It rolls over every 136 years, with the first rollover happening just after 2036-02-07 06:28:15 UTC. Each NTP rollover enters into the next NTP Era. I have seen documentation that says that NTP v4 packets contain the NTP era number but I have yet to find information on how to extract that number. So currently this class ignores the NTP Era from the NTP packet. Instead, the NTP Era is automatically inferred to be the ones that completely span the currently defined AceTime epoch range, as described next.</p>
+<p>The AceTime seconds is a signed 32-bit integer with a range of 136 years centered around the <code>Epoch::currentEpochYear()</code>. This class converts NTP seconds to AceTime seconds by mapping the the AceTime seconds range onto the NTP seconds range, straddling any NTP era necessary to meet the AceTime seconds range. For example, for the default AceTime v2 epoch of 2050, the NTP seconds will be interpreted to be from 1982 to 2118, crossing from NTP era 0 to NTP era 1. If the AceTime epoch is changed to 2150, then the NTP seconds will be interpreted to be from 2082 to 2218, crossing from NTP era 1 to NTP era 2.</p>
+<p>Warning: If you are using an ESP8266, AND you are using the <code>analogRead()</code> function, calling <code>analogRead()</code> too quickly will cause the WiFi connection to disconnect after 5-10 seconds. Calling <a class="el" href="classace__time_1_1clock_1_1NtpClock.html#a1f5c3c95e63ff869b93f9a8682fbe787" title="Set up the WiFi connection using the given ssid and password, and prepare the UDP connection.">NtpClock::setup()</a> will <em>not</em> fix the disconnect. See <a href="https://github.com/esp8266/Arduino/issues/1634">https://github.com/esp8266/Arduino/issues/1634</a> and <a href="https://github.com/esp8266/Arduino/issues/5083">https://github.com/esp8266/Arduino/issues/5083</a>. The solution is to add a slightly delay between calls to analogRead(). I don't know what the minimum value should be, but using a 10ms delay (i.e. no faster than 100 times a second) seems to work for me.</p>
+<p>Borrowed from <a href="https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/examples/NTPClient/NTPClient.ino">https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/examples/NTPClient/NTPClient.ino</a> and <a href="https://github.com/PaulStoffregen/Time/blob/master/examples/TimeNTP/TimeNTP.ino">https://github.com/PaulStoffregen/Time/blob/master/examples/TimeNTP/TimeNTP.ino</a></p>
+<p>TODO: Create a version that uses a non-blocking DNS look up. </p>
 
-<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00048">48</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00068">68</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a6e55c40705df3b56e885d4dcfde062cc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6e55c40705df3b56e885d4dcfde062cc">&#9670;&nbsp;</a></span>NtpClock()</h2>
@@ -227,11 +236,43 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00071">71</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00091">91</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a089fa15e59b45faf79289cbca4760221"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a089fa15e59b45faf79289cbca4760221">&#9670;&nbsp;</a></span>convertNtpSecondsToAceTimeSeconds()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">acetime_t ace_time::clock::NtpClock::convertNtpSecondsToAceTimeSeconds </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>ntpSeconds</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convert an NTP seconds to AceTime seconds relative to the current AceTime epoch defined by <code>Epoch::currentEpochYear()</code>. </p>
+<p>Since NTP epoch is 1900-01-01 and is due to rollover just after 2036-02-07 06:28:15, this function automatically accounts for the rollover of NTP seconds by shifting the NTP seconds into AceTime seconds using modulo 2^32 unsigned operations.</p>
+<p>The result of this function is that it takes the entire 32-bit range of the (signed) AceTime seconds (centered around the <code>currentEpochYear()</code>, and overlays it on top of the (unsigned) NTP seconds time line (with rollovers into new NTP eras every 2^32 seconds), and converts each NTP seconds (regardless of its NTP era) into its corresonding AceTime seconds. </p>
+
+<p class="definition">Definition at line <a class="el" href="NtpClock_8cpp_source.html#l00172">172</a> of file <a class="el" href="NtpClock_8cpp_source.html">NtpClock.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a98da4bb8736d7833454d3efaa6bc6364"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a98da4bb8736d7833454d3efaa6bc6364">&#9670;&nbsp;</a></span>getNow()</h2>
 
@@ -368,7 +409,7 @@ static const acetime_t&#160;</td><td class="memItemRight" valign="bottom"><a cla
 <p>Deprecated. </p>
 <p>Use kRequestTimeoutMillis instead. </p>
 
-<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00060">60</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="NtpClock_8h_source.html#l00080">80</a> of file <a class="el" href="NtpClock_8h_source.html">NtpClock.h</a>.</p>
 
 </div>
 </div>

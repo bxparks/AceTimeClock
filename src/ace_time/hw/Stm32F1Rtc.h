@@ -58,8 +58,8 @@ namespace hw {
  * (hardware abstarction layer) and writes the 32-bit epochSeconds quantity
  * directly into the `RTC->CNTH` and `RTC->CNTL` registers.
  *
- * The Backup DR2 register is used to hold a single bit, indicating whether or
- * not the RTC has been initialized.
+ * The Backup DR1 register (defined by `RTC_INIT_REG`) is used to hold a single
+ * bit, indicating whether or not the RTC has been initialized.
  */
 class Stm32F1Rtc {
   public:

@@ -58,13 +58,21 @@ namespace clock {
  * counter on the STM32F1 chip. It bypasses the entire generic RTC and HAL
  * layers provided by the STM32duino framework.
  *
+ * AceTime v2 allows the epoch year of the library to be adjustable by the
+ * client application, from the year 2000 until the year 10000. The use of a
+ * simple 32-bit counter in the STM32F1 works to its advantage because it makes
+ * it allows it work for any the epoch year selected in the AceTime library.
+ * This is in contrast to the other STM32 processors which use a 2-digit year
+ * offset from the year 2000. The RTC of those processors will break in the year
+ * 2100 unless a software fix can be created to work around that limitation.
+ *
  * The `Stm32F1Rtc` class uses one additional register, the Backup DR1 register,
  * which holds a single status bit to indicate whether or not the underlying RTC
  * counter has been initialized to a valid time. The selection of the `DR1`
  * register, instead of any of the other 9-10 backup registers, is currently
- * hardcoded in `Stm32F1Rtc.h`. If that causes a conflict with something else,
- * let me know, because this is fixable. We can make that a configurable
- * parameter in the Stm32F1Rtc::begin() method.
+ * hardcoded in the `RTC_INIT_REG` macro in `Stm32F1Rtc.h`. If that causes a
+ * conflict with something else, let me know, because this is fixable. We can
+ * make that a configurable parameter in the Stm32F1Rtc::begin() method.
  */
 class Stm32F1Clock: public Clock {
   public:
