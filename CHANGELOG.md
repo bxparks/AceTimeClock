@@ -1,6 +1,12 @@
 # Changelog
 
 * Unreleased
+    * Fix `NtpClock` to handle the `uint32_t` overflow of NTP seconds, with the
+      first one occuring just after 2036-02-07 06:28:15 UTC.
+    * Review and document the range of validity of the `getNow()` seconds of
+      various `Clock` classes. See [Bugs and Limitations](README.md#Bugs).
+    * Update various sections of README.md to account for the change of AceTime
+      epoch from 2000-01-01 (v1) to 2050-01-01 (v2).
 * v1.2.1 (2022-11-06)
     * Fix incorrect reference to
      `LocalDate::secondsToCurrentEpochFromUnixEpoch64` instead of

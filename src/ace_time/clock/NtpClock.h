@@ -32,12 +32,12 @@ namespace clock {
  *
  * NTP seconds is an unsigned 32-bit integer offset from the NTP epoch of
  * 1900-01-01. It rolls over every 136 years, with the first rollover happening
- * just after 2036-02-07 06:28:16 UTC. Each NTP rollover enters into the next
+ * just after 2036-02-07 06:28:15 UTC. Each NTP rollover enters into the next
  * NTP Era. I have seen documentation that says that NTP v4 packets contain the
  * NTP era number but I have yet to find information on how to extract that
  * number. So currently this class ignores the NTP Era from the NTP packet.
- * Instead, the NTP Era is automatically inferred to be compatible with the
- * currently defined AceTime epoch, as described next.
+ * Instead, the NTP Era is automatically inferred to be the ones that completely
+ * span the currently defined AceTime epoch range, as described next.
  *
  * The AceTime seconds is a signed 32-bit integer with a range of 136 years
  * centered around the `Epoch::currentEpochYear()`. This class converts NTP
@@ -128,9 +128,10 @@ class NtpClock: public Clock {
     /**
      * Convert an NTP seconds to AceTime seconds relative to the current AceTime
      * epoch defined by `Epoch::currentEpochYear()`. Since NTP epoch is
-     * 1900-01-01 and is due to rollover in 2036-02-07 06:28:16, this function
-     * automatically accounts for the rollover of NTP seconds by shifting the
-     * NTP seconds into AceTime seconds using modulo 2^32 unsigned operations.
+     * 1900-01-01 and is due to rollover just after 2036-02-07 06:28:15, this
+     * function automatically accounts for the rollover of NTP seconds by
+     * shifting the NTP seconds into AceTime seconds using modulo 2^32 unsigned
+     * operations.
      *
      * The result of this function is that it takes the entire 32-bit range of
      * the (signed) AceTime seconds (centered around the `currentEpochYear()`,

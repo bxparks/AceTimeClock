@@ -2,13 +2,16 @@
 
 [![AUnit Tests](https://github.com/bxparks/AceTimeClock/actions/workflows/aunit_tests.yml/badge.svg)](https://github.com/bxparks/AceTimeClock/actions/workflows/aunit_tests.yml)
 
-The AceTimeClock library provides various `Clock` classes to retrieve and
-synchronize the real time clock from different sources. The different clock
-sources are converted to a 32-bit signed integer (`int32_t`) that
-represents the number of seconds since a fixed point in the past called the
-**epoch**. The epoch in this library is defined to be 2000-01-01T00:00:00 UTC
-for compatibility with the [AceTime](https://github.com/bxparks/AceTime)
-companion library.
+The AceTimeClock library is a companion library to the
+[AceTime](https://github.com/bxparks/AceTime) library. The AceTime library
+provides classes to convert between the "epoch seconds" and human-readable
+date/time fields. It also supports calculating DST shifts for all timezones in
+the IANA TZ database. This library provides various `Clock` classes to retrieve
+and synchronize the "epoch seconds" from external sources, such as an NTP client
+(ESP8266, ESP32), an SNTP client (ESP8266, ESP32) , the STM32 RTC clock (STM32),
+and the DS3231 RTC chip. The different clock sources are converted to the
+`int32_t` epoch seconds used by the AceTime library, using the same AceTime
+epoch of 2050-01-01 UTC as defined by `ace_time::Epoch::currentEpochYear()`.
 
 The following clock sources are supported:
 
@@ -40,11 +43,8 @@ the `system_tick()` function exactly once a second. On the SAMD21 and Teensy
 platforms, the `time.h` header file does not exist.
 
 This library was part of the [AceTime](https://github.com/bxparks/AceTime)
-library, but extracted into a separate library to manage the complexity of both
-libraries. The AceTime library provides the mechanism for converting the epoch
-seconds from AceTimeClock into human-readable date and time in different time
-zones. AceTimeClock currently has a dependency on AceTime, but that may go away
-in the future.
+library, but extracted into a separate library in AceTime v1.8 to manage the
+complexity of both libraries.
 
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
@@ -482,7 +482,7 @@ void setup() {
   Wire.begin();
   wireInterface.begin();
   dsClock.setup();
-  dsClock.setNow(0); // 2000-01-01T00:00:00Z
+  dsClock.setNow(0); // 2050-01-01T00:00:00Z
 }
 
 void loop() {
@@ -532,10 +532,6 @@ class StmRtcClock: public Clock {
 }
 }
 ```
-
-This class is relatively new (added in v1.4) and may require more extensive
-testing. I have done some rough testing on the STM32F103 (Blue Pill) and the
-STM32F411 (Black Pill) dev boards.
 
 The `StmRtcClock` uses the `STM32RTC::getInstance()` singleton instance from the
 `STM32RTC` library which should be configured in the global
@@ -600,6 +596,10 @@ the following issues:
 
 The bug was fixed with
 [STM32RTC#58](https://github.com/stm32duino/STM32RTC/pull/58).
+
+The RTC module on most (all?) STM32 processors use a 2-digit year offset from
+the year 2000. Therefore, the `acetime_t` returned by `Stm32Clock::getNow()` is
+valid from the year 2000 until the year 2100.
 
 <a name="Stm32F1ClockClass"></a>
 ### Stm32F1Clock Class
@@ -678,6 +678,10 @@ accurate to better than 1 second per 48 hours. See for example:
 
 * https://github.com/rogerclarkmelbourne/Arduino_STM32/issues/572
 * https://www.stm32duino.com/viewtopic.php?t=143
+
+Unlike other STM32 processors, the RTC module on the STM32F1 uses a 32-bit
+counter, instead of a 2-digit year. The `Stm32F1Clock` takes advantage of this
+by mapping this counter directly to the `acetime_t` type. So the `Stm32F1Clock::getNow()` method should be valid for the entire 136 year range of `acetime_t`, from the year 1982 until the year 2118.
 
 <a name="NtpClockClass"></a>
 ## NtpClock Class
@@ -793,6 +797,16 @@ See the following examples for more details:
 public repository like GitHub because they will become public to anyone. Even if
 you delete the commit, they can be retrieved from the git history.
 
+The [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) counts the number
+of seconds from its epoch of 1900-01-01 00:00:00 UTC, using a 32-bit unsigned
+integer. Each time the 32-bit number overflows, the NTP clock enters a new era.
+The first overflow will happen just after 2036-02-07 06:28:15 UTC. The
+`NtpClock` class has been updated to handle this overflow by mapping the
+full 32-bit range of `acetime_t` relative to the AceTime epoch  to the
+full 32-bit range of the NTP seconds straddling the appropriate NTP eras. See
+the doc comments in [NtpClock.h](src/ace_time/clock/DS3231Clock.h) for more
+details.
+
 <a name="EspSntpClockClass"></a>
 ### ESP SNTP Clock Class
 
@@ -834,7 +848,7 @@ DST offset are set to 0). The `setup()` method returns `true` on success,
 The `getNow()` method calls the built-in `time()` function and converts the
 64-bit `time_t` Unix epoch seconds used on the ESP8266 and ESP32 platforms to
 the 32-bit `acetime_t` epoch seconds used by the AceTime library. In the current
-version of AceTime, this is valid until 2068-01-19 03:14:07 UTC.
+version of AceTime, this is valid from 1982 to 2118.
 
 The SNTP client apparently performs automatic synchronization of the `time()`
 function every 1 hour, but the only documentation for this that I can find is in
@@ -842,8 +856,8 @@ this
 [NTP-TZ-DST](https://github.com/esp8266/Arduino/tree/master/libraries/esp8266/examples/NTP-TZ-DST)
 example file.
 
-**Note**: You use the ESP SNTP service with the AceTime library directly without
-going through the `EspSntpClock` class. See
+**Note**: You can use the ESP SNTP service with the AceTime library directly
+without going through the `EspSntpClock` class. See
 [AceTime/examples/EspTime](https://github.com/bxparks/AceTime/tree/develop/examples/EspTime).
 
 <a name="UnixClockClass"></a>
@@ -1730,17 +1744,38 @@ them.
 <a name="Bugs"></a>
 ## Bugs and Limitations
 
+* AceTimeClock epoch is the same as AceTime epoch
+    * The AceTime epoch defined by `ace_time::Epoch::currentEpochYear()`, which
+      is 2050-01-01 00:00:00 UTC by default as of AceTime v2.
+    * If the AceTime epoch is changed, then the interpretation of the `getNow()`
+      and `setNow()` methods of this library will also be changed.
+* `DS3231Clock`
+    * Uses a 2-digit year, so the `getNow()` is valid from 2000 until 2100.
+    * If the AceTime epoch is changed so that this range is no longer covered by
+      `acetime_t`, then the result is unpredictable.
 * `NtpClock`
-    * The `NtpClock` on an ESP8266 calls `WiFi.hostByName()` to resolve
-      the IP address of the NTP server. Unfortunately, when I tested this
-      library, it seems to be a blocking call (later versions may have fixed
-      this). When the DNS resolver is working properly, this call returns in
-      ~10ms or less. But sometimes, the DNS resolver seems to get into a state
-      where it takes 4-5 **seconds** to time out. Even if you use AceRoutine
-      coroutines, the entire program will block for those 4-5 seconds.
-    * [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) uses an epoch
-      of 1900-01-01T00:00:00Z, with 32-bit unsigned integer as the seconds
-      counter. It will overflow just after 2036-02-07T06:28:15Z.
+    * Calls `WiFi.hostByName()` to resolve the IP address which seems to be a
+      blocking call.
+        * When the DNS resolver is working properly, this call returns in ~10ms
+          or less.
+        * Occasionally, the DNS resolver takes 4-5 **seconds** to time out.
+          When this happens, the entire program will block for those 4-5
+          seconds.
+    * Supports the full range of `acetime_t`, from 1982 to 2116, by accounting
+      for the NTP second rollover using the current AceTime epoch to
+      automatically select the appropriate NTP eras.
+* `EspSntpClock`
+    * Valid for the full range of `acetime_t` from 1982 to 2116,
+      assuming the SNTP client provided by the ESP8266 and ESP32 libraries uses
+      the `int64_t` type properly.
+* `StmRtcClock`
+    * Limited from 2000 until 2100 due to the 2-digit year used by the RTC
+      module on STM32 chips.
+    * If the AceTime epoch is changed so that this range is no longer covered by
+      `acetime_t`, then the result is unpredictable.
+* `Stm32F1Clock`
+    * Supports the full range of `acetime_t`, from 1982 to 2116, because this
+      class directly accesses the 32-bit counter used by the STM32F1.
 
 <a name="License"></a>
 ## License
