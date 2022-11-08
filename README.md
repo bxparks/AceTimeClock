@@ -148,7 +148,7 @@ To use the AceTimeClock library, client apps must install the following
 libraries at a minimum:
 
 * AceTimeClock (https://github.com/bxparks/AceTimeClock)
-* AceTime v1.8.0 or later (https://github.com/bxparks/AceTime)
+* AceTime v2.0 or later (https://github.com/bxparks/AceTime)
 * AceCommon (https://github.com/bxparks/AceCommon)
 * AceSorting (https://github.com/bxparks/AceSorting)
 
