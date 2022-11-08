@@ -132,20 +132,63 @@ acetime_t NtpClock::readResponse() const {
   // read packet into the buffer
   mUdp.read(mPacketBuffer, kNtpPacketSize);
 
-  // convert four bytes starting at location 40 to a long integer
-  uint32_t secsSince1900 =  (uint32_t) mPacketBuffer[40] << 24;
-  secsSince1900 |= (uint32_t) mPacketBuffer[41] << 16;
-  secsSince1900 |= (uint32_t) mPacketBuffer[42] << 8;
-  secsSince1900 |= (uint32_t) mPacketBuffer[43];
+  // Extract the NTP seconds, an unsigned number of seconds since the NTP epoch
+  // of 1900-01-01. The NTP timestamp is a 32:32 fixed point number (64-bits
+  // total) starting at byte 40. The location is determined from the following
+  // headers (see https://en.wikipedia.org/wiki/User_Datagram_Protocol):
+  //
+  //  * IP header - 12 bytes
+  //  * UDP header - 8 bytes
+  //  * NTP message packet
+  //    (https://www.meinbergglobal.com/english/info/ntp-packet.htm):
+  //    * flags - 4 bytes
+  //    * Root delay - 4 bytes
+  //    * Root dispersion - 4 bytes
+  //    * Reference identifier - 4 bytes
+  //    * Reference timestamp - 8 bytes (40th byte here)
+  //      * whole seconds (unsigned 32 bits)
+  //      * fractional seconds (unsigned 32 bits, in units of 1/2^32 seconds)
+  //
+  // The timestamp is stored in big-endian order.
+  uint32_t ntpSeconds =  (uint32_t) mPacketBuffer[40] << 24;
+  ntpSeconds |= (uint32_t) mPacketBuffer[41] << 16;
+  ntpSeconds |= (uint32_t) mPacketBuffer[42] << 8;
+  ntpSeconds |= (uint32_t) mPacketBuffer[43];
 
-  acetime_t epochSeconds = (secsSince1900 == 0)
-      ? kInvalidSeconds
-      : secsSince1900 - kSecondsSinceNtpEpoch;
+  // Convert to AceTime epoch (as defined by Epoch::currentEpochYear()).
+  acetime_t epochSeconds = convertNtpSecondsToAceTimeSeconds(ntpSeconds);
   #if ACE_TIME_NTP_CLOCK_DEBUG >= 1
-    SERIAL_PORT_MONITOR.print(F("NtpClock::readResponse(): epoch="));
+    SERIAL_PORT_MONITOR.print(F("NtpClock::readResponse(): ntpSeconds="));
+    SERIAL_PORT_MONITOR.print(ntpSeconds);
+    SERIAL_PORT_MONITOR.print(F("; epochSeconds="));
     SERIAL_PORT_MONITOR.println(epochSeconds);
   #endif
+
   return epochSeconds;
+}
+
+// NTP epoch is 1900-01-01. Unix epoch is 1970-01-01. GPS epoch is 1980-01-06.
+// AceTime v2 epoch is 2050-01-01 by default  but is adjustable at runtime.
+acetime_t NtpClock::convertNtpSecondsToAceTimeSeconds(uint32_t ntpSeconds) {
+  // Sometimes the NTP packet is garage and contains 0. Mark that as invalid.
+  // NOTE: Is this necessary? Let's comment it out for now.
+  //if (ntpSeconds == 0) return kInvalidSeconds;
+
+  // Shift the NTP seconds to AceTime seconds, using uint32_t operations,
+  // which performs a shift using modulo 2^32 arithmetic. This maps the entire
+  // 32-bit range of NTP seconds to the 32-bit AceTime seconds, automatically
+  // accounting for NTP rollovers, for any AceTime currentEpochYear().
+  int32_t daysToCurrentEpochFromNtpEpoch =
+      Epoch::daysToCurrentEpochFromConverterEpoch()
+      + kDaysToConverterEpochFromNtpEpoch;
+  uint32_t secondsToCurrentEpochFromNtpEpoch = (uint32_t) 86400
+      * (uint32_t) daysToCurrentEpochFromNtpEpoch;
+  uint32_t epochSeconds = ntpSeconds - secondsToCurrentEpochFromNtpEpoch;
+
+  // Cast the uint32_t to an int32_t, which has the effect of mapping the upper
+  // half of the AceTime seconds 32-bit range to its lower half. In other words,
+  // `if epochSeconds > INT32_MAX: epochSeconds -= 2^32`.
+  return (int32_t) epochSeconds;
 }
 
 void NtpClock::sendNtpPacket(const IPAddress& address) const {
