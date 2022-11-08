@@ -8,6 +8,12 @@
       various `Clock` classes. See [Bugs and Limitations](README.md#Bugs).
     * Update various sections of README.md to account for the change of AceTime
       epoch from 2000-01-01 (v1) to 2050-01-01 (v2).
+    * Upgrade tool chains
+        * Arduino CLI from 0.27.1
+        * STM32duino from 2.3.0
+        * AVR Core from 1.8.4 to 1.8.5
+        * ESP32 Core from 2.0.2 to 2.0.5
+        * Teensyduino from 1.56 to 1.57
 * v1.2.1 (2022-11-06)
     * Fix incorrect reference to
      `LocalDate::secondsToCurrentEpochFromUnixEpoch64` instead of
