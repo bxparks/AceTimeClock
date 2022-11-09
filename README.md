@@ -30,7 +30,7 @@ chip
     * when using [EpoxyDuino](https://github.com/bxparks/EpoxyDuino)
 
 A special version of the `Clock` class called the `SystemClock` provides an
-auto-incrementing "epoch seconds" that can be access very quickly and cheaply
+auto-incrementing "epoch seconds" that can be accessed very quickly and cheaply
 across all Arduino compatible systems. At a minimum, it should handle at least
 10 requests per second, but the current implementation should be able to handle
 1000 to 1M requests per second, depending on the processor.
