@@ -333,18 +333,18 @@ The upward arrow means "is-subclass-of", the side-ways arrow means "depends on",
 and the diamond-line means "is-aggregation-of":
 
 ```
-     (0..2)
-.----------- Clock
-|            ^    ^
-|            |     \
-|            |      DS3231Clock -----> hw::DS3231
-|            |      EspSntpClock ----> configTime(), time()
-|            |      NtpClock --------> WiFi, ESP8266WiFi
-|            |      StmRtcClock -----> hw::StmRtc
-|            |      Stm32F1Clock ----> hw::Stm32F1Rtc
-|            |      UnixClock -------> time()
-|            |
-`------<> SystemClock
+      (0..2)
+   .-------> Clock
+   |           ^  ^
+   |           |   \
+   |           |    DS3231Clock -----> hw::DS3231
+   |           |    EspSntpClock ----> configTime(), time()
+   |           |    NtpClock --------> WiFi, ESP8266WiFi
+   |           |    StmRtcClock -----> hw::StmRtc ----> STM32RTC
+   |           |    Stm32F1Clock ----> hw::Stm32F1Rtc
+   |           |    UnixClock -------> time()
+   |           |
+   `---<> SystemClock
            ^       ^
           /         \
 SystemClockLoop      SystemClockCoroutine
@@ -430,7 +430,7 @@ DS3231 chip stores the time broken down by various date and time components
 (i.e. year, month, day, hour, minute, seconds). It contains internal logic that
 knows about the number of days in an month, and leap years. It supports dates
 from 2000 to 2099. It does *not* contain the concept of a time zone. Therefore,
-The `DS3231Clock` assumes that the date/time components stored on the chip is in
+the `DS3231Clock` assumes that the date/time components stored on the chip is in
 **UTC** time.
 
 The class declaration looks like this:
