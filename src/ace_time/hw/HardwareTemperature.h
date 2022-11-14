@@ -19,39 +19,40 @@ namespace hw {
  * a "-" in front of it. If you print just the (lsb / 256 * 100), it will be
  * incorrect for negative temperatures.
  */
-struct HardwareTemperature {
-  /** Return temperature in units of 1/256 degrees. */
-  int16_t toTemperature256() const {
-    return (int16_t) ((msb << 8) | lsb);
-  }
-
-  /** Print HardwareTemperature to 'printer'. */
-  void printTo(Print& printer) const {
-    uint8_t m;
-    uint8_t l;
-
-    int16_t temp = toTemperature256();
-    if (temp < 0) {
-      temp = -temp;
-      m = ((uint16_t) temp) >> 8;
-      l = ((uint16_t) temp) & 0xFF;
-      printer.print('-');
-    } else {
-      m = msb;
-      l = lsb;
+class HardwareTemperature {
+  public:
+    /** Return temperature in units of 1/256 degrees. */
+    int16_t toTemperature256() const {
+      return (int16_t) ((msb << 8) | lsb);
     }
 
-    uint8_t frac = (uint16_t) l * 100 / 256;
-    printer.print(m);
-    printer.print('.');
-    ace_common::printPad2To(printer, frac, '0');
-  }
+    /** Print HardwareTemperature to 'printer'. */
+    void printTo(Print& printer) const {
+      uint8_t m;
+      uint8_t l;
 
-  /** Upper byte of signed (8.8) fixed point temperature. */
-  uint8_t msb;
+      int16_t temp = toTemperature256();
+      if (temp < 0) {
+        temp = -temp;
+        m = ((uint16_t) temp) >> 8;
+        l = ((uint16_t) temp) & 0xFF;
+        printer.print('-');
+      } else {
+        m = msb;
+        l = lsb;
+      }
 
-  /** Lower byte of signed (8.8) fixed point temperature. */
-  uint8_t lsb;
+      uint8_t frac = (uint16_t) l * 100 / 256;
+      printer.print(m);
+      printer.print('.');
+      ace_common::printPad2To(printer, frac, '0');
+    }
+
+    /** Upper byte of signed (8.8) fixed point temperature. */
+    uint8_t msb;
+
+    /** Lower byte of signed (8.8) fixed point temperature. */
+    uint8_t lsb;
 };
 
 /**

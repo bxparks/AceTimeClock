@@ -91,7 +91,7 @@ class StmRtcClock: public Clock {
           dt.dayOfWeek()};
     }
 
-    const hw::StmRtc mStmRtc;
+    hw::StmRtc mStmRtc;
 };
 
 } // hw
