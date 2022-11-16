@@ -5,9 +5,8 @@
 
 #if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)
 
-#if defined(EPOXY_DUINO)
-  #include <EpoxyMockSTM32RTC.h>
-#else
+// Use the STM32RTC library if compiling under Stm32duino.
+#if ! defined(EPOXY_DUINO)
   #include <STM32RTC.h>
 #endif
 #include "HardwareDateTime.h"
@@ -17,6 +16,16 @@ namespace ace_time {
 namespace hw {
 
 void StmRtc::readDateTime(HardwareDateTime* dateTime) const {
+#if defined(EPOXY_DUINO)
+  // Hardcode the date to 2000-01-01T00:00:00 under EpoxyDuino.
+  dateTime->second = 0;
+  dateTime->minute = 0;
+  dateTime->hour = 0;
+  dateTime->dayOfWeek = 6;
+  dateTime->day = 1;
+  dateTime->month = 1;
+  dateTime->year = 0; // 2 digit year, so 0 means year 2000
+#else
   STM32RTC& rtc = STM32RTC::getInstance();
   if (rtc.isTimeSet()) {
     dateTime->second = rtc.getSeconds();
@@ -44,17 +53,26 @@ void StmRtc::readDateTime(HardwareDateTime* dateTime) const {
     dateTime->month = 1;
     dateTime->year = 0; // 2 digit year, so 0 means year 2000
   }
+#endif
 }
 
 void StmRtc::setDateTime(const HardwareDateTime& dateTime) const {
+#if defined(EPOXY_DUINO)
+  (void) dateTime;
+#else
   STM32RTC& rtc = STM32RTC::getInstance();
   rtc.setTime(dateTime.hour, dateTime.minute, dateTime.second);
   rtc.setDate(dateTime.dayOfWeek, dateTime.day, dateTime.month, dateTime.year);
+#endif
 }
 
 bool StmRtc::isTimeSet() const {
+#if defined(EPOXY_DUINO)
+  return false;
+#else
   STM32RTC& rtc = STM32RTC::getInstance();
   return rtc.isTimeSet();
+#endif
 }
 
 } // hw

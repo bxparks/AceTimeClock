@@ -2,8 +2,7 @@
 # Makefile to compile and run Arduino programs natively on Linux or MacOS.
 
 APP_NAME := HelloEspSntpClock
-ARDUINO_LIBS := AceCommon AceSorting AceTime AceTimeClock AceRoutine \
-	ESP8266WiFi EpoxyMockSTM32RTC
+ARDUINO_LIBS := AceCommon AceSorting AceTime AceTimeClock AceRoutine ESP8266WiFi
 ARDUINO_LIB_DIRS := $(abspath ../../..) $(abspath ../../../EspMock/libraries)
 EPOXY_CORE := EPOXY_CORE_ESP8266
 MORE_CLEAN := more_clean

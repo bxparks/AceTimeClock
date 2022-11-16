@@ -1,6 +1,11 @@
 # Changelog
 
 * Unreleased
+    * When compiled under EpoxyDuino, implement stubs directly in
+      `ace_time/hw/StmRtc.cpp` instead of relying on the `STM32RTC.{h,cpp}` from
+      the `EpoxyMockSTM32RTC` library which mocks out the real STM32RTC library.
+        * Eliminates the need to include `EpoxyMockSTM32RTC` in various
+          downstream `Makefile` when using EpoxyDuino.
 * v1.2.2 (2022-11-08)
     * Fix `NtpClock` to handle the `uint32_t` overflow of NTP seconds, with the
       first one occuring just after 2036-02-07 06:28:15 UTC.
