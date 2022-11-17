@@ -16,33 +16,34 @@ namespace hw {
  * The date (year, month, day) and time (hour, minute, second) fields supported
  * by the DS3231 RTC chip.
  */
-struct HardwareDateTime {
-  /** Base year of the DS3231 chip. */
-  static const int16_t kBaseYear = 2000;
+class HardwareDateTime {
+  public:
+    /** Base year of the DS3231 chip. */
+    static const int16_t kBaseYear = 2000;
 
-  /** Print HardwareDateTime to 'printer'. */
-  void printTo(Print& printer) const;
+    /** Print HardwareDateTime to 'printer'. */
+    void printTo(Print& printer) const;
 
-  /** [00, 99], year - 2000 */
-  uint8_t year;
+    /** [00, 99], year - 2000 */
+    uint8_t year;
 
-  /** [1, 12] */
-  uint8_t month;
+    /** [1, 12] */
+    uint8_t month;
 
-  /** [1, 31] */
-  uint8_t day;
+    /** [1, 31] */
+    uint8_t day;
 
-  /** [0, 23] */
-  uint8_t hour;
+    /** [0, 23] */
+    uint8_t hour;
 
-  /** [0, 59] */
-  uint8_t minute;
+    /** [0, 59] */
+    uint8_t minute;
 
-  /** [0, 59] */
-  uint8_t second;
+    /** [0, 59] */
+    uint8_t second;
 
-  /** [1, 7], interpretation undefined, increments every day */
-  uint8_t dayOfWeek;
+    /** [1, 7], interpretation undefined, increments every day */
+    uint8_t dayOfWeek;
 };
 
 /**

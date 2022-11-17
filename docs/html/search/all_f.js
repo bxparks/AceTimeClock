@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['second_53',['second',['../structace__time_1_1hw_1_1HardwareDateTime.html#a8b34d41ec3f10e1b63e595c55791dfcd',1,'ace_time::hw::HardwareDateTime']]],
+  ['second_53',['second',['../classace__time_1_1hw_1_1HardwareDateTime.html#a8b34d41ec3f10e1b63e595c55791dfcd',1,'ace_time::hw::HardwareDateTime']]],
   ['sendrequest_54',['sendRequest',['../classace__time_1_1clock_1_1Clock.html#a789be177b3a48408fca1805a90d7e34e',1,'ace_time::clock::Clock::sendRequest()'],['../classace__time_1_1clock_1_1NtpClock.html#ac409c020d3e1dd476edfc81094f37e8e',1,'ace_time::clock::NtpClock::sendRequest()']]],
   ['setdatetime_55',['setDateTime',['../classace__time_1_1hw_1_1DS3231.html#a77b76e8105cffadb31d44d6848b9e620',1,'ace_time::hw::DS3231::setDateTime()'],['../classace__time_1_1hw_1_1StmRtc.html#a04bc4099820d02aea9451ef9cf6726a7',1,'ace_time::hw::StmRtc::setDateTime()']]],
   ['setnextsyncattemptmillis_56',['setNextSyncAttemptMillis',['../classace__time_1_1clock_1_1SystemClockTemplate.html#abf07b8025c8c73fc7342ae3a967daf66',1,'ace_time::clock::SystemClockTemplate']]],

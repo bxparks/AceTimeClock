@@ -37,7 +37,7 @@
 #endif // #if defined(ARDUINO_ARCH_STM32) || defined(EPOXY_DUINO)
 
 // Version format: xxyyzz == "xx.yy.zz"
-#define ACE_TIME_CLOCK_VERSION 10202
-#define ACE_TIME_CLOCK_VERSION_STRING "1.2.2"
+#define ACE_TIME_CLOCK_VERSION 10203
+#define ACE_TIME_CLOCK_VERSION_STRING "1.2.3"
 
 #endif

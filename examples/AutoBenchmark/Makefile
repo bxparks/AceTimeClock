@@ -2,8 +2,7 @@
 # Makefile to compile and run Arduino programs natively on Linux or MacOS.
 
 APP_NAME := AutoBenchmark
-ARDUINO_LIBS := AceCommon AceSorting AceTime AceTimeClock AceRoutine AceWire \
-	EpoxyMockSTM32RTC
+ARDUINO_LIBS := AceCommon AceSorting AceTime AceTimeClock AceRoutine AceWire
 MORE_CLEAN := more_clean
 include ../../../EpoxyDuino/EpoxyDuino.mk
 

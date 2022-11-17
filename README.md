@@ -30,7 +30,7 @@ chip
     * when using [EpoxyDuino](https://github.com/bxparks/EpoxyDuino)
 
 A special version of the `Clock` class called the `SystemClock` provides an
-auto-incrementing "epoch seconds" that can be access very quickly and cheaply
+auto-incrementing "epoch seconds" that can be accessed very quickly and cheaply
 across all Arduino compatible systems. At a minimum, it should handle at least
 10 requests per second, but the current implementation should be able to handle
 1000 to 1M requests per second, depending on the processor.
@@ -49,7 +49,7 @@ complexity of both libraries.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.2.2 (2022-11-08)
+**Version**: v1.2.3 (2022-11-16)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
@@ -333,18 +333,18 @@ The upward arrow means "is-subclass-of", the side-ways arrow means "depends on",
 and the diamond-line means "is-aggregation-of":
 
 ```
-     (0..2)
-.----------- Clock
-|            ^    ^
-|            |     \
-|            |      DS3231Clock -----> hw::DS3231
-|            |      EspSntpClock ----> configTime(), time()
-|            |      NtpClock --------> WiFi, ESP8266WiFi
-|            |      StmRtcClock -----> hw::StmRtc
-|            |      Stm32F1Clock ----> hw::Stm32F1Rtc
-|            |      UnixClock -------> time()
-|            |
-`------<> SystemClock
+      (0..2)
+   .-------> Clock
+   |           ^  ^
+   |           |   \
+   |           |    DS3231Clock -----> hw::DS3231
+   |           |    EspSntpClock ----> configTime(), time()
+   |           |    NtpClock --------> WiFi, ESP8266WiFi
+   |           |    StmRtcClock -----> hw::StmRtc ----> STM32RTC
+   |           |    Stm32F1Clock ----> hw::Stm32F1Rtc
+   |           |    UnixClock -------> time()
+   |           |
+   `---<> SystemClock
            ^       ^
           /         \
 SystemClockLoop      SystemClockCoroutine
@@ -430,7 +430,7 @@ DS3231 chip stores the time broken down by various date and time components
 (i.e. year, month, day, hour, minute, seconds). It contains internal logic that
 knows about the number of days in an month, and leap years. It supports dates
 from 2000 to 2099. It does *not* contain the concept of a time zone. Therefore,
-The `DS3231Clock` assumes that the date/time components stored on the chip is in
+the `DS3231Clock` assumes that the date/time components stored on the chip is in
 **UTC** time.
 
 The class declaration looks like this:
@@ -1567,17 +1567,17 @@ are 2 samples:
 |----------------------------------------+--------------+--------------|
 | Baseline                               |    496/   17 |      0/    0 |
 |----------------------------------------+--------------+--------------|
-| DS3231Clock<TwoWire>                   |   4828/  259 |   4332/  242 |
-| DS3231Clock<SimpleWire>                |   3282/   49 |   2786/   32 |
-| DS3231Clock<SimpleWireFast>            |   2598/   43 |   2102/   26 |
+| DS3231Clock<TwoWire>                   |   4958/  259 |   4462/  242 |
+| DS3231Clock<SimpleWire>                |   3412/   49 |   2916/   32 |
+| DS3231Clock<SimpleWireFast>            |   2742/   43 |   2246/   26 |
 |----------------------------------------+--------------+--------------|
 | SystemClockLoop                        |   1016/   72 |    520/   55 |
-| SystemClockLoop+1 Basic zone           |   6876/  262 |   6380/  245 |
-| SystemClockLoop+1 Extended zone        |  10318/  296 |   9822/  279 |
+| SystemClockLoop+1 Basic zone           |   7102/  262 |   6606/  245 |
+| SystemClockLoop+1 Extended zone        |  10702/  296 |  10206/  279 |
 |----------------------------------------+--------------+--------------|
 | SystemClockCoroutine                   |   1820/  100 |   1324/   83 |
-| SystemClockCoroutine+1 Basic zone      |   7650/  290 |   7154/  273 |
-| SystemClockCoroutine+1 Extended zone   |  11092/  324 |  10596/  307 |
+| SystemClockCoroutine+1 Basic zone      |   7876/  290 |   7380/  273 |
+| SystemClockCoroutine+1 Extended zone   |  11476/  324 |  10980/  307 |
 +----------------------------------------------------------------------+
 ```
 
@@ -1589,19 +1589,19 @@ are 2 samples:
 |----------------------------------------+--------------+--------------|
 | Baseline                               | 260109/27896 |      0/    0 |
 |----------------------------------------+--------------+--------------|
-| DS3231Clock<TwoWire>                   | 269505/28556 |   9396/  660 |
-| DS3231Clock<SimpleWire>                | 267297/28172 |   7188/  276 |
+| DS3231Clock<TwoWire>                   | 269573/28560 |   9464/  664 |
+| DS3231Clock<SimpleWire>                | 267365/28176 |   7256/  280 |
 |----------------------------------------+--------------+--------------|
-| NtpClock                               | 269101/28212 |   8992/  316 |
-| EspSntpClock                           | 266601/28236 |   6492/  340 |
+| NtpClock                               | 269137/28216 |   9028/  320 |
+| EspSntpClock                           | 266637/28240 |   6528/  344 |
 |----------------------------------------+--------------+--------------|
 | SystemClockLoop                        | 264809/28124 |   4700/  228 |
-| SystemClockLoop+1 Basic zone           | 271329/28684 |  11220/  788 |
-| SystemClockLoop+1 Extended zone        | 273873/28828 |  13764/  932 |
+| SystemClockLoop+1 Basic zone           | 271365/28688 |  11256/  792 |
+| SystemClockLoop+1 Extended zone        | 273957/28832 |  13848/  936 |
 |----------------------------------------+--------------+--------------|
 | SystemClockCoroutine                   | 265353/28156 |   5244/  260 |
-| SystemClockCoroutine+1 Basic zone      | 271889/28716 |  11780/  820 |
-| SystemClockCoroutine+1 Extended zone   | 274433/28860 |  14324/  964 |
+| SystemClockCoroutine+1 Basic zone      | 271925/28720 |  11816/  824 |
+| SystemClockCoroutine+1 Extended zone   | 274517/28864 |  14408/  968 |
 +----------------------------------------------------------------------+
 ```
 
