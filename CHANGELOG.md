@@ -1,6 +1,7 @@
 # Changelog
 
 * Unreleased
+* v1.2.3 (2022-11-16)
     * When compiled under EpoxyDuino, implement stubs directly in
       `ace_time/hw/StmRtc.cpp` instead of relying on the `STM32RTC.{h,cpp}` from
       the `EpoxyMockSTM32RTC` library which mocks out the real STM32RTC library.
