@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['kbaseyear_132',['kBaseYear',['../structace__time_1_1hw_1_1HardwareDateTime.html#a51db21070f8c397269e506235da0cb83',1,'ace_time::hw::HardwareDateTime']]],
+  ['kbaseyear_132',['kBaseYear',['../classace__time_1_1hw_1_1HardwareDateTime.html#a51db21070f8c397269e506235da0cb83',1,'ace_time::hw::HardwareDateTime']]],
   ['kconnecttimeoutmillis_133',['kConnectTimeoutMillis',['../classace__time_1_1clock_1_1NtpClock.html#a47881db1fde24a38df4b411ed4c84333',1,'ace_time::clock::NtpClock']]],
   ['kdefaultntpserver_134',['kDefaultNtpServer',['../classace__time_1_1clock_1_1EspSntpClock.html#aafacb27a12ce1bfc499c39c295871644',1,'ace_time::clock::EspSntpClock']]],
   ['kdefaulttimeoutmillis_135',['kDefaultTimeoutMillis',['../classace__time_1_1clock_1_1EspSntpClock.html#a31f80a7e10ffc094cefec417a205300e',1,'ace_time::clock::EspSntpClock']]],
