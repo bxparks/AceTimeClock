@@ -42,7 +42,7 @@ namespace clock {
  * I find the code easier to understand. But for the end-users of the library,
  * they are equivalent.
  *
- * @tparam T_SCCI SystemClock ClockInterface
+ * @tparam T_SCCI the SystemClock ClockInterface
  */
 template <typename T_SCCI>
 class SystemClockLoopTemplate : public SystemClockTemplate<T_SCCI> {
@@ -198,7 +198,9 @@ class SystemClockLoopTemplate : public SystemClockTemplate<T_SCCI> {
 
 /**
  * Concrete template instance of SystemClockLoopTemplate that uses the real
- * millis().
+ * millis(). Use the ace_time::hw::ClockInterface defined in this library
+ * instead of ace_routine::ClockInterface, to avoid dependency to the AceRoutine
+ * library.
  */
 using SystemClockLoop = SystemClockLoopTemplate<hw::ClockInterface>;
 
