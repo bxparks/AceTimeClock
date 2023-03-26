@@ -1572,12 +1572,12 @@ are 2 samples:
 | DS3231Clock<SimpleWireFast>            |   2742/   43 |   2246/   26 |
 |----------------------------------------+--------------+--------------|
 | SystemClockLoop                        |   1016/   72 |    520/   55 |
-| SystemClockLoop+1 Basic zone           |   7102/  262 |   6606/  245 |
-| SystemClockLoop+1 Extended zone        |  10702/  296 |  10206/  279 |
+| SystemClockLoop+1 Basic zone           |   7694/  272 |   7198/  255 |
+| SystemClockLoop+1 Extended zone        |  10846/  340 |  10350/  323 |
 |----------------------------------------+--------------+--------------|
 | SystemClockCoroutine                   |   1820/  100 |   1324/   83 |
-| SystemClockCoroutine+1 Basic zone      |   7876/  290 |   7380/  273 |
-| SystemClockCoroutine+1 Extended zone   |  11476/  324 |  10980/  307 |
+| SystemClockCoroutine+1 Basic zone      |   8468/  300 |   7972/  283 |
+| SystemClockCoroutine+1 Extended zone   |  11620/  368 |  11124/  351 |
 +----------------------------------------------------------------------+
 ```
 
@@ -1596,12 +1596,12 @@ are 2 samples:
 | EspSntpClock                           | 266637/28240 |   6528/  344 |
 |----------------------------------------+--------------+--------------|
 | SystemClockLoop                        | 264809/28124 |   4700/  228 |
-| SystemClockLoop+1 Basic zone           | 271365/28688 |  11256/  792 |
-| SystemClockLoop+1 Extended zone        | 273957/28832 |  13848/  936 |
+| SystemClockLoop+1 Basic zone           | 271485/28720 |  11376/  824 |
+| SystemClockLoop+1 Extended zone        | 273493/28880 |  13384/  984 |
 |----------------------------------------+--------------+--------------|
 | SystemClockCoroutine                   | 265353/28156 |   5244/  260 |
-| SystemClockCoroutine+1 Basic zone      | 271925/28720 |  11816/  824 |
-| SystemClockCoroutine+1 Extended zone   | 274517/28864 |  14408/  968 |
+| SystemClockCoroutine+1 Basic zone      | 272045/28752 |  11936/  856 |
+| SystemClockCoroutine+1 Extended zone   | 274053/28912 |  13944/ 1016 |
 +----------------------------------------------------------------------+
 ```
 
@@ -1646,7 +1646,7 @@ are shown below:
 |------------------------------------+-------------+----------|
 | EmptyLoop                          |       0.139 |    0.000 |
 |------------------------------------+-------------+----------|
-| SystemClockLoop                    |       9.584 |    9.445 |
+| SystemClockLoop                    |       9.583 |    9.444 |
 +------------------------------------+-------------+----------+
 ```
 
@@ -1662,6 +1662,7 @@ These boards are tested on each release:
 
 * Arduino Nano (16 MHz ATmega328P)
 * SparkFun Pro Micro (16 MHz ATmega32U4)
+* Seeed Studio XIAO M0 (SAMD21, 48 MHz ARM Cortex-M0+)
 * STM32 Blue Pill (STM32F103C8, 72 MHz ARM Cortex-M3)
 * NodeMCU 1.0 (ESP-12E module, 80 MHz ESP8266)
 * WeMos D1 Mini (ESP-12E module, 80 MHz ESP8266)
@@ -1680,15 +1681,13 @@ These boards should work but I don't test them as often:
 
 **Tier 3: May work, but not supported**
 
-* SAMD21 M0 Mini (48 MHz ARM Cortex-M0+)
-    * Arduino-branded SAMD21 boards use the ArduinoCore-API, so are explicitly
-      blacklisted. See below.
-    * Other 3rd party SAMD21 boards *may* work using the SparkFun SAMD core.
-    * However, as of SparkFun SAMD Core v1.8.6 and Arduino IDE 1.8.19, I can no
-      longer upload binaries to these 3rd party boards due to errors.
-    * Therefore, third party SAMD21 boards are now in this new Tier 3 category.
-    * The AceTime library may work on these boards, but I can no longer support
-      them.
+* Other SAMD21 based boards.
+    * SAMD21 based boards are now split into 2 groups:
+        * Those using the new ArduinoCore-API, usually Arduino-branded
+        boards. These are explicitly blacklisted. See below.
+        * Other 3rd party SAMD21 boards using the previous Arduino API.
+    * The ones using the previous Arduino API *may* work but I have not
+      explicitly tested any of them except for the Seeed Studio XIAO M0.
 
 **Tier Blacklisted**
 
