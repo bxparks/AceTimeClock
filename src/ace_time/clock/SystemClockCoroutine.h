@@ -43,8 +43,8 @@ namespace clock {
  * I find the code easier to understand. But for the end-users of the library,
  * they are equivalent.
  *
- * @tparam T_SCCI SystemClock ClockInterface
- * @tparam T_CRCI Coroutine ClockInterface
+ * @tparam T_SCCI the SystemClock ClockInterface
+ * @tparam T_CRCI the Coroutine ClockInterface
  */
 template <typename T_SCCI, typename T_CRCI>
 class SystemClockCoroutineTemplate :
@@ -218,11 +218,45 @@ class SystemClockCoroutineTemplate :
 };
 
 /**
- * Concrete template instance of SystemClockCoroutineTemplate that uses the
- * real millis().
+ * Concrete template instance of `SystemClockCoroutineTemplate` that uses the
+ * real `millis()` provided by concrete `ClockInterface` classes.
+ *
+ * Warning: The first template parameter must be `hw::ClockInterface` because
+ * that is used by the `SystemClock` parent class, and this class must remain a
+ * subclass of that class for ease of use.
+ *
+ * The second template parameter must be `ace_routine::ClockInterface` because
+ * that is the one used by the `ace_routine::Coroutine` parent class. This
+ * allows the SystemClockRoutine to be used with the predefined
+ * `ace_routine::CoroutineScheduler`.
+ *
+ * If the second template parameter is set to `ace_time::hw::ClockInterface` (as
+ * was done with `SystemClockLoop`), this create another hierarchy of
+ * `CoroutineTemplate<ace_time::hw::ClockInterface>` instances which is tracked
+ * by a different linked list of coroutines than other coroutines created by
+ * just the default `COROUTINE()` macro. The default `CoroutineScheduler`
+ * only knows about the `CoroutineTemplate<ace_routine::ClockInterface>`
+ * hierarchy. The end result is a bug that is very difficult to track down:
+ * `SystemClockCoroutine` will not be executed by `Coroutinescheduler::loop()`.
+ *
+ * This is complexity is the result of combining several C++ features into a
+ * single place:
+ *
+ * 1) Compile-time inheritance (`SystemClockCoroutine` subclasses `SystemClock`)
+ *    which was simplifies the downstream API,
+ * 2) Compile-time polymorphism using C++ templates (which allows a user-defined
+ *   `ClockInterface` to be injected), and
+ * 3) Mixin classes (inheriting from 2 different parent classes), which allows
+ *    the asynchornous algorithm of `SystemClockRoutine::runCoroutine()` to be
+ *    implemented using a coroutine control flow.
+ *
+ * In hindslight, I am not sure this level of complexity was worth it. On the
+ * other hand, the alternative would be to use more virtual functions and
+ * dynamic dispatches, which would increase the flash size, especially on 8-bit
+ * processors.
  */
 using SystemClockCoroutine = SystemClockCoroutineTemplate<
-    hw::ClockInterface, hw::ClockInterface
+    hw::ClockInterface, ace_routine::ClockInterface
 >;
 
 }

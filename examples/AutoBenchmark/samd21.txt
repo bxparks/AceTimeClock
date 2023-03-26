@@ -1,11 +1,9 @@
 SIZEOF
 sizeof(DS3231Clock): 12
-sizeof(StmRtcClock): 8
-sizeof(Stm32F1Clock): 8
 sizeof(SystemClock): 36
 sizeof(SystemClockLoop): 52
 sizeof(SystemClockCoroutine): 80
 BENCHMARKS
-EmptyLoop 0.226
-SystemClockLoop 2.138
+EmptyLoop 0.252
+SystemClockLoop 2.792
 END

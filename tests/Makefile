@@ -16,7 +16,7 @@ runtests:
 	set -e; \
 	for i in *Test/Makefile; do \
 		echo '==== Running:' $$(dirname $$i); \
-		$$(dirname $$i)/$$(dirname $$i).out; \
+		$(MAKE) -C $$(dirname $$i) run; \
 	done
 
 clean:

@@ -1,13 +1,19 @@
 # Changelog
 
 * Unreleased
-* v1.2.3 (2022-11-16)
+* 1.2.4 (2023-03-26)
+    * **Bug Fix**: Fix incorrect template parameter in the definition
+      of `SystemClockCoroutine` which prevented it from being executed by
+      the `CoroutineScheduler::loop()`.
+    * Upgrade to AceTime v2.2.1.
+    * Re-add support for SAMD21 using the Seeed Studio XIAO.
+* 1.2.3 (2022-11-16)
     * When compiled under EpoxyDuino, implement stubs directly in
       `ace_time/hw/StmRtc.cpp` instead of relying on the `STM32RTC.{h,cpp}` from
       the `EpoxyMockSTM32RTC` library which mocks out the real STM32RTC library.
         * Eliminates the need to include `EpoxyMockSTM32RTC` in various
           downstream `Makefile` when using EpoxyDuino.
-* v1.2.2 (2022-11-08)
+* 1.2.2 (2022-11-08)
     * Fix `NtpClock` to handle the `uint32_t` overflow of NTP seconds, with the
       first one occuring just after 2036-02-07 06:28:15 UTC.
     * Review and document the range of validity of the `getNow()` seconds of
@@ -20,14 +26,14 @@
         * AVR Core from 1.8.4 to 1.8.5
         * ESP32 Core from 2.0.2 to 2.0.5
         * Teensyduino from 1.56 to 1.57
-* v1.2.1 (2022-11-06)
+* 1.2.1 (2022-11-06)
     * Fix incorrect reference to
      `LocalDate::secondsToCurrentEpochFromUnixEpoch64` instead of
      `Epoch::secondsToCurrentEpochFromUnixEpoch64`.
     * Enable GitHub Actions for ESP8266 examples (HelloEspSntpClock,
       HelloNtpClock, HelloNtpClockLazy) to catch compiler errors.
-        * Depends on EpoxyDuino v1.4.0, and hsaturn/EspMock v0.1.
-* v1.2.0 (2022-11-04)
+        * Depends on EpoxyDuino 1.4.0, and hsaturn/EspMock v0.1.
+* 1.2.0 (2022-11-04)
     * Replace `LocalDate::kEpochYear` with `HardwareDateTime::kBaseYear`
       since AceTime current epoch is no longer a constant and AceTime no longer
       uses a 2-digit year offset internally.
@@ -35,13 +41,13 @@
       `Epoch::secondsToCurrentEpochFromUnixEpoch64()` since AceTime current
       epoch is no longer constant.
     * There should be no visible breakage of the client-facing API.
-* v1.1.0 (2022-03-28)
+* 1.1.0 (2022-03-28)
     * Simplify `StmRtcClock` and `StmRtc` classes to use
       `STM32RTC::getInstance()` directly.
         * Move configuration of the `STM32RTC` singleton to the `STM32RTC`
           object itself (e.g. configuring `LSE_CLOCK`, `HSE_CLOCK`).
         * Update [README.md documentation](README.md#StmRtcClockClass) to
-          indicate that `STM32RTC` v1.2.0 fixes the bug which caused the date
+          indicate that `STM32RTC` 1.2.0 fixes the bug which caused the date
           components to be lost upon power reset.
     * Incorporate `EpoxyMockSTM32RTC` mock library from EpoxyDuino to allow
       `StmRtcClock` to be compiled in GitHub Actions.
@@ -59,18 +65,18 @@
         * ESP32 Core from 1.0.6 to 2.0.2
         * Teensyduino from 1.55 to 1.56
     * Add initial supporting and testing of a STM32F411 dev board.
-* v1.0.5 (2022-03-25)
+* 1.0.5 (2022-03-25)
     * Add a `uint16_t` template parameter to `CoroutineTemplate` for
-      compatibility with AceRoutine v1.5.0.
-* v1.0.4 (2022-01-18)
+      compatibility with AceRoutine 1.5.0.
+* 1.0.4 (2022-01-18)
     * Add `EspSntpClock` class which configures the SNTP client on the ESP8266
       and ESP32 platforms, sets the `configTime()` timezone to UTC, and exposes
       the `time()` function through the `Clock` interface.
-* v1.0.3 (2021-12-02)
+* 1.0.3 (2021-12-02)
     * Add `AceSorting` library to various Makefiles, a new dependency for
-      AceTime v1.9.0.
+      AceTime 1.9.0.
     * Adding accidentally missing Baseline line in MemoryBenchmark.
-* v1.0.2 (2021-10-19)
+* 1.0.2 (2021-10-19)
     * Add `examples/HelloDS3231Clock` to show how to configure and use the new
       `DS3231Clock<T>` template class.
     * Rename `examples/HelloSystemClock` to `examples/HelloSystemClockLoop` for
@@ -80,15 +86,15 @@
     * Update MemoryBenchmark with 3 variations of `DS3231Clock`: TwoWire,
       SimpleWire, and SimpleWireFast.
         * Saves 1600-2200 bytes of flash on AVR by avoiding `<Wire.h>`.
-* v1.0.1 (2021-10-16)
+* 1.0.1 (2021-10-16)
     * Add AceWire and AceRoutine to the `depends` parameter in
       `library.properties` so that the Library Manager installs them
       automatically for convenience.
     * Add `make -C examples/MemoryBenchmark epoxy` to GitHub actions.
-* v1.0.0 (2021-10-15)
-    * Extract from AceTime v1.7.5 to work with AceTime v1.8.0. See
+* 1.0.0 (2021-10-15)
+    * Extract from AceTime 1.7.5 to work with AceTime 1.8.0. See
       [Migrating to
-      v1.8](https://github.com/bxparks/AceTime/blob/develop/MIGRATING.md#MigratingToVersion180) for migration notes.
+      1.8](https://github.com/bxparks/AceTime/blob/develop/MIGRATING.md#MigratingToVersion180) for migration notes.
     * Merge `installation.md` and `docs/clock_system_clock.md` from AceTime
       library into a self-contained README.md, instead of information being
       scattered over multiple files.

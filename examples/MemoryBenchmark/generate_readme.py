@@ -10,6 +10,8 @@ nano_results = check_output(
     "./generate_table.awk < nano.txt", shell=True, text=True)
 micro_results = check_output(
     "./generate_table.awk < micro.txt", shell=True, text=True)
+samd21_results = check_output(
+    "./generate_table.awk < samd21.txt", shell=True, text=True)
 stm32_results = check_output(
     "./generate_table.awk < stm32.txt", shell=True, text=True)
 esp8266_results = check_output(
@@ -27,7 +29,7 @@ memory and static RAM sizes were recorded. The `FEATURE_BASELINE` selection is
 the baseline, and its memory usage  numbers are subtracted from the subsequent
 `FEATURE_*` memory usage.
 
-**Version**: AceTimeClock v1.2.3
+**Version**: AceTimeClock v1.2.4
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -108,8 +110,8 @@ ASCII table.
 **v1.2.2**
 
 * Upgrade tool chains
-    * Arduino CLI from 0.27.1
-    * STM32duino from 2.3.0
+    * Arduino CLI to 0.27.1
+    * STM32duino to 2.3.0
     * AVR Core from 1.8.4 to 1.8.5
     * ESP32 Core from 2.0.2 to 2.0.5
     * Teensyduino from 1.56 to 1.57
@@ -122,11 +124,20 @@ ASCII table.
       (`Epoch::currentEpochYear()`), and the change from `int8_t` year to
       `int16_t` year.
 
+**v1.2.4**
+
+* Upgrade tool chains
+    * Arduino CLI to 0.31.0
+    * STM32duino to 2.4.0
+    * AVR Core to 1.8.6
+    * ESP32 Core to 2.0.7
+* Upgrade to AceTime v2.2.1
+
 ## Arduino Nano
 
 * 16MHz ATmega328P
-* Arduino IDE 1.8.19, Arduino CLI 0.27.1
-* Arduino AVR Boards 1.8.5
+* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* Arduino AVR Boards 1.8.6
 
 ```
 {nano_results}
@@ -135,18 +146,28 @@ ASCII table.
 ## Sparkfun Pro Micro
 
 * 16 MHz ATmega32U4
-* Arduino IDE 1.8.19, Arduino CLI 0.27.1
+* Arduino IDE 1.8.19, Arduino CLI 0.31.0
 * SparkFun AVR Boards 1.1.13
 
 ```
 {micro_results}
 ```
 
+## Seeed Studio XIAO SAMD21
+
+* SAMD21, 48 MHz ARM Cortex-M0+
+* Arduino IDE 1.8.19, Arduino CLI 0.31.1
+* Seeeduino SAMD Boards 1.8.3
+
+```
+{samd21_results}
+```
+
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3
-* Arduino IDE 1.8.19, Arduino CLI 0.27.1
-* STM32duino 2.3.0
+* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* STM32duino 2.4.0
 
 ```
 {stm32_results}
@@ -155,7 +176,7 @@ ASCII table.
 ## ESP8266
 
 * NodeMCU 1.0, 80MHz ESP8266
-* Arduino IDE 1.8.19, Arduino CLI 0.27.1
+* Arduino IDE 1.8.19, Arduino CLI 0.31.0
 * ESP8266 Boards 3.0.2
 
 ```
@@ -165,8 +186,8 @@ ASCII table.
 ## ESP32
 
 * ESP32-01 Dev Board, 240 MHz Tensilica LX6
-* Arduino IDE 1.8.19, Arduino CLI 0.27.1
-* ESP32 Boards 2.0.5
+* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* ESP32 Boards 2.0.7
 
 ```
 {esp32_results}
@@ -179,7 +200,7 @@ usage by objects.
 ## Teensy 3.2
 
 * 96 MHz ARM Cortex-M4
-* Arduino IDE 1.8.19, Arduino CLI 0.27.1
+* Arduino IDE 1.8.19, Arduino CLI 0.31.0
 * Teensyduino 1.57
 
 ```
