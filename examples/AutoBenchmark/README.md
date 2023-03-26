@@ -144,6 +144,30 @@ CPU:
 
 ```
 
+## Seeed Studio XIAO SAMD21
+
+* SAMD21, 48 MHz ARM Cortex-M0+
+* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* Seeeduino 1.8.3
+
+```
+Sizes of Objects:
+sizeof(DS3231Clock): 12
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 80
+
+CPU:
++------------------------------------+-------------+----------+
+| Method                             | micros/iter |     diff |
+|------------------------------------+-------------+----------|
+| EmptyLoop                          |       0.252 |    0.000 |
+|------------------------------------+-------------+----------|
+| SystemClockLoop                    |       2.792 |    2.540 |
++------------------------------------+-------------+----------+
+
+```
+
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3

@@ -10,6 +10,8 @@ nano_results = check_output(
     "./generate_table.awk < nano.txt", shell=True, text=True)
 micro_results = check_output(
     "./generate_table.awk < micro.txt", shell=True, text=True)
+samd21_results = check_output(
+    "./generate_table.awk < samd21.txt", shell=True, text=True)
 stm32_results = check_output(
     "./generate_table.awk < stm32.txt", shell=True, text=True)
 esp8266_results = check_output(
@@ -136,6 +138,16 @@ The CPU times below are given in microseconds.
 
 ```
 {micro_results}
+```
+
+## Seeed Studio XIAO SAMD21
+
+* SAMD21, 48 MHz ARM Cortex-M0+
+* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* Seeeduino 1.8.3
+
+```
+{samd21_results}
 ```
 
 ## STM32 Blue Pill

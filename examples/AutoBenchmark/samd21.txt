@@ -1,0 +1,9 @@
+SIZEOF
+sizeof(DS3231Clock): 12
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 80
+BENCHMARKS
+EmptyLoop 0.252
+SystemClockLoop 2.792
+END
