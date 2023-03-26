@@ -6,6 +6,7 @@
       of `SystemClockCoroutine` which prevented it from being executed by
       the `CoroutineScheduler::loop()`.
     * Upgrade to AceTime v2.2.1.
+    * Re-add support for SAMD21 using the Seeed Studio XIAO.
 * 1.2.3 (2022-11-16)
     * When compiled under EpoxyDuino, implement stubs directly in
       `ace_time/hw/StmRtc.cpp` instead of relying on the `STM32RTC.{h,cpp}` from

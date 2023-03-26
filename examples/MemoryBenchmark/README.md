@@ -163,6 +163,32 @@ ASCII table.
 
 ```
 
+## Seeed Studio XIAO SAMD21
+
+* SAMD21, 48 MHz ARM Cortex-M0+
+* Arduino IDE 1.8.19, Arduino CLI 0.31.1
+* Seeeduino SAMD Boards 1.8.3
+
+```
++----------------------------------------------------------------------+
+| Functionality                          |  flash/  ram |        delta |
+|----------------------------------------+--------------+--------------|
+| Baseline                               |  34076/    0 |      0/    0 |
+|----------------------------------------+--------------+--------------|
+| DS3231Clock<TwoWire>                   |  36700/    0 |   2624/    0 |
+| DS3231Clock<SimpleWire>                |  35684/    0 |   1608/    0 |
+|----------------------------------------+--------------+--------------|
+| SystemClockLoop                        |  34364/    0 |    288/    0 |
+| SystemClockLoop+1 Basic zone           |  38868/    0 |   4792/    0 |
+| SystemClockLoop+1 Extended zone        |  40924/    0 |   6848/    0 |
+|----------------------------------------+--------------+--------------|
+| SystemClockCoroutine                   |  34892/    0 |    816/    0 |
+| SystemClockCoroutine+1 Basic zone      |  39396/    0 |   5320/    0 |
+| SystemClockCoroutine+1 Extended zone   |  41444/    0 |   7368/    0 |
++----------------------------------------------------------------------+
+
+```
+
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3
