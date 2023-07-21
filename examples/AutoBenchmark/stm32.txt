@@ -6,6 +6,6 @@ sizeof(SystemClock): 36
 sizeof(SystemClockLoop): 52
 sizeof(SystemClockCoroutine): 80
 BENCHMARKS
-EmptyLoop 0.226
-SystemClockLoop 2.138
+EmptyLoop 0.309
+SystemClockLoop 2.069
 END

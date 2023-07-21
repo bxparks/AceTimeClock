@@ -170,7 +170,7 @@ acetime_t NtpClock::readResponse() const {
 // NTP epoch is 1900-01-01. Unix epoch is 1970-01-01. GPS epoch is 1980-01-06.
 // AceTime v2 epoch is 2050-01-01 by default  but is adjustable at runtime.
 acetime_t NtpClock::convertNtpSecondsToAceTimeSeconds(uint32_t ntpSeconds) {
-  // Sometimes the NTP packet is garage and contains 0. Mark that as invalid.
+  // Sometimes the NTP packet is garbage and contains 0. Mark that as invalid.
   // NOTE: Is this necessary? Let's comment it out for now.
   //if (ntpSeconds == 0) return kInvalidSeconds;
 
@@ -179,8 +179,8 @@ acetime_t NtpClock::convertNtpSecondsToAceTimeSeconds(uint32_t ntpSeconds) {
   // 32-bit range of NTP seconds to the 32-bit AceTime seconds, automatically
   // accounting for NTP rollovers, for any AceTime currentEpochYear().
   int32_t daysToCurrentEpochFromNtpEpoch =
-      Epoch::daysToCurrentEpochFromConverterEpoch()
-      + kDaysToConverterEpochFromNtpEpoch;
+      Epoch::daysToCurrentEpochFromInternalEpoch()
+      + kDaysToInternalEpochFromNtpEpoch;
   uint32_t secondsToCurrentEpochFromNtpEpoch = (uint32_t) 86400
       * (uint32_t) daysToCurrentEpochFromNtpEpoch;
   uint32_t epochSeconds = ntpSeconds - secondsToCurrentEpochFromNtpEpoch;

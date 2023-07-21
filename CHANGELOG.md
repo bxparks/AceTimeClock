@@ -1,6 +1,37 @@
 # Changelog
 
 * Unreleased
+* 1.3.0 (2023-07-20)
+    * Replace call to `Epoch::daysToCurrentEpochFromConverterEpoch()` with
+      `Epoch::daysToCurrentEpochFromInternalEpoch()`, to be consistent with
+      AceTime v2.3.0.
+        * This an internal implementation detail, it should not cause an API
+          breakage.
+    * Upgrade tool chain
+        * Upgrade Arduino CLI to 0.33.0.
+        * Upgrade Arduino AVR Core to 1.8.6.
+        * Upgrade STM32 Core to 2.6.0.
+        * Upgrade ESP32 Core to 2.0.9.
+        * Upgrade Teensyduino from 1.56 to 1.57.
+    * Update supported boards and tiers
+        * Add SAMD21 and SAMD51 boards to Tier 1
+            * Add 2 SAMD boards from 2 different companies, to test their
+              Arduino Board software:
+                * Seeeduino XIAO M0 (SAMD21 48MHz ARM Cortex-M0+)
+                * Adafruit ItsyBitsy M4 (SAMD51 120MHz ARM Cortex-M4)
+            * SAMD21 and SAMD51 boards are back in Tier 1, as long as they use
+              the traditional Arduino API instead of the new
+              [ArduinoCore-api](https://github.com/arduino/ArduinoCore-api).
+            * Fortunately most third party SAMD21 and SAMD51 boards continue to
+              use the traditional Arduino API.
+        * Move Teensy 3.2 to Tier 2 ("Should work but not tested often")
+            * This board is entering end-of-life.
+            * As well, the Teensyduino environment integrates with the Arduino
+              IDE and CLI in a way that's different than all other third-party
+              Arduino boards. Some of my automation scripts do not work with
+              Teensyduino, so it becomes very time consuming to test the Teensy
+              boards.
+            * All Teensy boards are now in Tier 2 .
 * 1.2.4 (2023-03-26)
     * **Bug Fix**: Fix incorrect template parameter in the definition
       of `SystemClockCoroutine` which prevented it from being executed by

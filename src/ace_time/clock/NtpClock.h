@@ -148,9 +148,9 @@ class NtpClock: public Clock {
 
     /**
      * Number of days between NTP epoch (1900-01-01T00:00:00Z) and
-     * AceTime Epoch Converter epoch (2000-01-01T00:00:00Z).
+     * AceTime internal epoch (2000-01-01T00:00:00Z).
      */
-    static const int32_t kDaysToConverterEpochFromNtpEpoch = 36524;
+    static const int32_t kDaysToInternalEpochFromNtpEpoch = 36524;
 
     /** Send an NTP request to the time server at the given address. */
     void sendNtpPacket(const IPAddress& address) const;

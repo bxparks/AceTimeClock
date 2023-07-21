@@ -14,12 +14,12 @@ samd21_results = check_output(
     "./generate_table.awk < samd21.txt", shell=True, text=True)
 stm32_results = check_output(
     "./generate_table.awk < stm32.txt", shell=True, text=True)
+samd51_results = check_output(
+    "./generate_table.awk < samd51.txt", shell=True, text=True)
 esp8266_results = check_output(
     "./generate_table.awk < esp8266.txt", shell=True, text=True)
 esp32_results = check_output(
     "./generate_table.awk < esp32.txt", shell=True, text=True)
-teensy32_results = check_output(
-    "./generate_table.awk < teensy32.txt", shell=True, text=True)
 
 print(f"""\
 # Memory Benchmark
@@ -29,7 +29,7 @@ memory and static RAM sizes were recorded. The `FEATURE_BASELINE` selection is
 the baseline, and its memory usage  numbers are subtracted from the subsequent
 `FEATURE_*` memory usage.
 
-**Version**: AceTimeClock v1.2.4
+**Version**: AceTimeClock v1.3.0
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -133,10 +133,15 @@ ASCII table.
     * ESP32 Core to 2.0.7
 * Upgrade to AceTime v2.2.1
 
+**v1.3.0**
+
+* Upgrade tool chains
+* Upgrade to AceTime v2.3
+
 ## Arduino Nano
 
 * 16MHz ATmega328P
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
 * Arduino AVR Boards 1.8.6
 
 ```
@@ -146,7 +151,7 @@ ASCII table.
 ## Sparkfun Pro Micro
 
 * 16 MHz ATmega32U4
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
 * SparkFun AVR Boards 1.1.13
 
 ```
@@ -156,8 +161,8 @@ ASCII table.
 ## Seeed Studio XIAO SAMD21
 
 * SAMD21, 48 MHz ARM Cortex-M0+
-* Arduino IDE 1.8.19, Arduino CLI 0.31.1
-* Seeeduino SAMD Boards 1.8.3
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
+* Seeeduino SAMD Boards 1.8.4
 
 ```
 {samd21_results}
@@ -166,17 +171,27 @@ ASCII table.
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
-* STM32duino 2.4.0
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
+* STM32duino 2.6.0
 
 ```
 {stm32_results}
 ```
 
+## SAMD51 Adafruit ItsyBitsy M4
+
+* SAMD51, 120 MHz ARM Cortex-M4
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
+* Adafruit SAMD 1.7.11
+
+```
+{samd51_results}
+```
+
 ## ESP8266
 
 * NodeMCU 1.0, 80MHz ESP8266
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
 * ESP8266 Boards 3.0.2
 
 ```
@@ -186,8 +201,8 @@ ASCII table.
 ## ESP32
 
 * ESP32-01 Dev Board, 240 MHz Tensilica LX6
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
-* ESP32 Boards 2.0.7
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
+* ESP32 Boards 2.0.9
 
 ```
 {esp32_results}
@@ -196,14 +211,4 @@ ASCII table.
 RAM usage remains constant as more objects are created, which indicates that an
 initial pool of a certain minimum size is created regardless of the actual RAM
 usage by objects.
-
-## Teensy 3.2
-
-* 96 MHz ARM Cortex-M4
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
-* Teensyduino 1.57
-
-```
-{teensy32_results}
-```
 """)

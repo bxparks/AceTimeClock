@@ -2,7 +2,7 @@
 
 Here are the results from `AutoBenchmark.ino` for various boards.
 
-**Version**: AceTimeClock v1.2.4
+**Version**: AceTimeClock v1.3.0
 
 **DO NOT EDIT**: This file was auto-generated using `make README.md`.
 
@@ -96,6 +96,11 @@ The CPU times below are given in microseconds.
     * ESP32 Core to 2.0.7
 * Upgrade to AceTime v2.2
 
+**v1.3.0**
+
+* Upgrade tool chains
+* Upgrade to AceTime v2.3
+
 ## Arduino Nano
 
 * 16MHz ATmega328P
@@ -113,9 +118,9 @@ CPU:
 +------------------------------------+-------------+----------+
 | Method                             | micros/iter |     diff |
 |------------------------------------+-------------+----------|
-| EmptyLoop                          |       1.106 |    0.000 |
+| EmptyLoop                          |       1.107 |    0.000 |
 |------------------------------------+-------------+----------|
-| SystemClockLoop                    |       9.011 |    7.905 |
+| SystemClockLoop                    |       9.012 |    7.905 |
 +------------------------------------+-------------+----------+
 
 ```
@@ -123,7 +128,7 @@ CPU:
 ## Sparkfun Pro Micro
 
 * 16 MHz ATmega32U4
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
 * SparkFun AVR Boards 1.1.13
 
 ```
@@ -147,8 +152,8 @@ CPU:
 ## Seeed Studio XIAO SAMD21
 
 * SAMD21, 48 MHz ARM Cortex-M0+
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
-* Seeeduino 1.8.3
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
+* Seeeduino 1.8.4
 
 ```
 Sizes of Objects:
@@ -171,8 +176,8 @@ CPU:
 ## STM32 Blue Pill
 
 * STM32F103C8, 72 MHz ARM Cortex-M3
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
-* STM32duino 2.4.0
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
+* STM32duino 2.6.0
 
 ```
 Sizes of Objects:
@@ -187,9 +192,33 @@ CPU:
 +------------------------------------+-------------+----------+
 | Method                             | micros/iter |     diff |
 |------------------------------------+-------------+----------|
-| EmptyLoop                          |       0.226 |    0.000 |
+| EmptyLoop                          |       0.309 |    0.000 |
 |------------------------------------+-------------+----------|
-| SystemClockLoop                    |       2.138 |    1.912 |
+| SystemClockLoop                    |       2.069 |    1.760 |
++------------------------------------+-------------+----------+
+
+```
+
+## SAMD51 Adafruit ItsyBitsy M4
+
+* SAMD51, 120 MHz ARM Cortex-M4
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
+* Adafruit SAMD 1.7.11
+
+```
+Sizes of Objects:
+sizeof(DS3231Clock): 12
+sizeof(SystemClock): 36
+sizeof(SystemClockLoop): 52
+sizeof(SystemClockCoroutine): 80
+
+CPU:
++------------------------------------+-------------+----------+
+| Method                             | micros/iter |     diff |
+|------------------------------------+-------------+----------|
+| EmptyLoop                          |       0.108 |    0.000 |
+|------------------------------------+-------------+----------|
+| SystemClockLoop                    |       0.634 |    0.526 |
 +------------------------------------+-------------+----------+
 
 ```
@@ -197,7 +226,7 @@ CPU:
 ## ESP8266
 
 * NodeMCU 1.0 clone, 80MHz ESP8266
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
 * ESP8266 Boards 3.0.2
 
 ```
@@ -215,7 +244,7 @@ CPU:
 |------------------------------------+-------------+----------|
 | EmptyLoop                          |       0.139 |    0.000 |
 |------------------------------------+-------------+----------|
-| SystemClockLoop                    |       9.583 |    9.444 |
+| SystemClockLoop                    |       9.586 |    9.447 |
 +------------------------------------+-------------+----------+
 
 ```
@@ -223,8 +252,8 @@ CPU:
 ## ESP32
 
 * ESP32-01 Dev Board, 240 MHz Tensilica LX6
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
-* ESP32 Boards 2.0.7
+* Arduino IDE 1.8.19, Arduino CLI 0.33.0
+* ESP32 Boards 2.0.9
 
 ```
 Sizes of Objects:
@@ -242,31 +271,6 @@ CPU:
 | EmptyLoop                          |       0.050 |    0.000 |
 |------------------------------------+-------------+----------|
 | SystemClockLoop                    |       2.101 |    2.051 |
-+------------------------------------+-------------+----------+
-
-```
-
-## Teensy 3.2
-
-* 96 MHz ARM Cortex-M4
-* Arduino IDE 1.8.19, Arduino CLI 0.31.0
-* Teensyduino 1.57
-* Compiler options: "Faster"
-
-```
-Sizes of Objects:
-sizeof(DS3231Clock): 12
-sizeof(SystemClock): 36
-sizeof(SystemClockLoop): 52
-sizeof(SystemClockCoroutine): 80
-
-CPU:
-+------------------------------------+-------------+----------+
-| Method                             | micros/iter |     diff |
-|------------------------------------+-------------+----------|
-| EmptyLoop                          |       0.073 |    0.000 |
-|------------------------------------+-------------+----------|
-| SystemClockLoop                    |       0.522 |    0.449 |
 +------------------------------------+-------------+----------+
 
 ```
