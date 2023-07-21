@@ -19,7 +19,7 @@ using ace_wire::SimpleWireInterface;
 
 void setup() {
 #if ! defined(EPOXY_DUINO)
-  delay(1000);
+  delay(2000);
 #endif
 
   SERIAL_PORT_MONITOR.begin(115200);
