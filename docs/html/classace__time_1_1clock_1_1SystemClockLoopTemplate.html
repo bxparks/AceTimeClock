@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">AceTimeClock
-   &#160;<span id="projectnumber">1.2.3</span>
+   &#160;<span id="projectnumber">1.3.0</span>
    </div>
    <div id="projectbrief">Clock classes for Arduino that can synchronize from an NTP server or an RTC chip</div>
   </td>
@@ -277,7 +277,7 @@ class ace_time::clock::SystemClockLoopTemplate&lt; T_SCCI &gt;</h3>
 <p>Initially, <code>SystemClockLoop</code> used the blocking API of <a class="el" href="classace__time_1_1clock_1_1Clock.html" title="Abstract base class for objects that provide and store time.">Clock</a>, and <code>SystemClockCoroutine</code> used the non-blocking API. That meant that <code>SystemClockCoroutine</code> was better suited for referenceClocks that could block for a long time (e.g. <a class="el" href="classace__time_1_1clock_1_1NtpClock.html" title="A Clock that retrieves the time from an NTP server.">NtpClock</a>). at some point however, <code>SystemClockLoop</code> was converted to use the non-blocking API as well, so the two classes are now functionally equivalent. I keep around the SystemClockCoroutine class because I find the code easier to understand. But for the end-users of the library, they are equivalent.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T_SCCI</td><td>SystemClock ClockInterface </td></tr>
+    <tr><td class="paramname">T_SCCI</td><td>the SystemClock ClockInterface </td></tr>
   </table>
   </dd>
 </dl>
