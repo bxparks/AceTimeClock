@@ -49,7 +49,7 @@ complexity of both libraries.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.2.5 (2023-07-20)
+**Version**: v1.3.0 (2023-07-20)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
