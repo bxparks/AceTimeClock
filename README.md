@@ -49,7 +49,7 @@ complexity of both libraries.
 This library can be an alternative to the Arduino Time
 (https://github.com/PaulStoffregen/Time) library.
 
-**Version**: v1.2.4 (2023-03-26)
+**Version**: v1.2.5 (2023-07-20)
 
 **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
@@ -1527,7 +1527,7 @@ having possibility that the setup process of the application could take longer.
 sizeof(DS3231Clock): 7
 sizeof(SystemClock): 28
 sizeof(SystemClockLoop): 41
-sizeof(SystemClockCoroutine): 52
+sizeof(SystemClockCoroutine): 57
 ```
 
 **STM32: 32-bit processors**
@@ -1572,12 +1572,12 @@ are 2 samples:
 | DS3231Clock<SimpleWireFast>            |   2742/   43 |   2246/   26 |
 |----------------------------------------+--------------+--------------|
 | SystemClockLoop                        |   1016/   72 |    520/   55 |
-| SystemClockLoop+1 Basic zone           |   7694/  272 |   7198/  255 |
-| SystemClockLoop+1 Extended zone        |  10846/  340 |  10350/  323 |
+| SystemClockLoop+1 Basic zone           |   8412/  124 |   7916/  107 |
+| SystemClockLoop+1 Extended zone        |  12166/  124 |  11670/  107 |
 |----------------------------------------+--------------+--------------|
 | SystemClockCoroutine                   |   1820/  100 |   1324/   83 |
-| SystemClockCoroutine+1 Basic zone      |   8468/  300 |   7972/  283 |
-| SystemClockCoroutine+1 Extended zone   |  11620/  368 |  11124/  351 |
+| SystemClockCoroutine+1 Basic zone      |   9186/  152 |   8690/  135 |
+| SystemClockCoroutine+1 Extended zone   |  12940/  152 |  12444/  135 |
 +----------------------------------------------------------------------+
 ```
 
@@ -1596,12 +1596,12 @@ are 2 samples:
 | EspSntpClock                           | 266637/28240 |   6528/  344 |
 |----------------------------------------+--------------+--------------|
 | SystemClockLoop                        | 264809/28124 |   4700/  228 |
-| SystemClockLoop+1 Basic zone           | 271485/28720 |  11376/  824 |
-| SystemClockLoop+1 Extended zone        | 273493/28880 |  13384/  984 |
+| SystemClockLoop+1 Basic zone           | 271541/28528 |  11432/  632 |
+| SystemClockLoop+1 Extended zone        | 273981/28640 |  13872/  744 |
 |----------------------------------------+--------------+--------------|
 | SystemClockCoroutine                   | 265353/28156 |   5244/  260 |
-| SystemClockCoroutine+1 Basic zone      | 272045/28752 |  11936/  856 |
-| SystemClockCoroutine+1 Extended zone   | 274053/28912 |  13944/ 1016 |
+| SystemClockCoroutine+1 Basic zone      | 272101/28560 |  11992/  664 |
+| SystemClockCoroutine+1 Extended zone   | 274541/28672 |  14432/  776 |
 +----------------------------------------------------------------------+
 ```
 
@@ -1632,9 +1632,9 @@ are shown below:
 +------------------------------------+-------------+----------+
 | Method                             | micros/iter |     diff |
 |------------------------------------+-------------+----------|
-| EmptyLoop                          |       1.106 |    0.000 |
+| EmptyLoop                          |       1.107 |    0.000 |
 |------------------------------------+-------------+----------|
-| SystemClockLoop                    |       9.011 |    7.905 |
+| SystemClockLoop                    |       9.012 |    7.905 |
 +------------------------------------+-------------+----------+
 ```
 
@@ -1646,7 +1646,7 @@ are shown below:
 |------------------------------------+-------------+----------|
 | EmptyLoop                          |       0.139 |    0.000 |
 |------------------------------------+-------------+----------|
-| SystemClockLoop                    |       9.583 |    9.444 |
+| SystemClockLoop                    |       9.586 |    9.447 |
 +------------------------------------+-------------+----------+
 ```
 
@@ -1664,10 +1664,10 @@ These boards are tested on each release:
 * SparkFun Pro Micro (16 MHz ATmega32U4)
 * Seeed Studio XIAO M0 (SAMD21, 48 MHz ARM Cortex-M0+)
 * STM32 Blue Pill (STM32F103C8, 72 MHz ARM Cortex-M3)
+* Adafruit ItsyBitsy M4 (SAMD51, 120 MHz ARM Cortext-M4)
 * NodeMCU 1.0 (ESP-12E module, 80 MHz ESP8266)
 * WeMos D1 Mini (ESP-12E module, 80 MHz ESP8266)
 * ESP32 dev board (ESP-WROOM-32 module, 240 MHz dual core Tensilica LX6)
-* Teensy 3.2 (96 MHz ARM Cortex-M4)
 
 **Tier 2: Should work**
 
@@ -1677,17 +1677,14 @@ These boards should work but I don't test them as often:
 * Arduino Pro Mini (16 MHz ATmega328P)
 * Mini Mega 2560 (Arduino Mega 2560 compatible, 16 MHz ATmega2560)
 * Teensy LC (48 MHz ARM Cortex-M0+)
+* Teensy 3.2 (96 MHz ARM Cortex-M4)
 * STM32F411 Black Pill (STM32F411CEU6, 100 MHz ARM Cortex-M4)
 
 **Tier 3: May work, but not supported**
 
-* Other SAMD21 based boards.
-    * SAMD21 based boards are now split into 2 groups:
-        * Those using the new ArduinoCore-API, usually Arduino-branded
-        boards. These are explicitly blacklisted. See below.
-        * Other 3rd party SAMD21 boards using the previous Arduino API.
-    * The ones using the previous Arduino API *may* work but I have not
-      explicitly tested any of them except for the Seeed Studio XIAO M0.
+* Other 3rd party SAMD21 and SAMD51 boards *may* work if their board software
+  uses the traditional Arduino API, instead of the
+  [ArduinoCore-API](https://github.com/arduino/ArduinoCore-api)
 
 **Tier Blacklisted**
 
@@ -1696,10 +1693,11 @@ the compiler to print useful error messages instead of hundreds of lines of
 compiler errors:
 
 * Any platform using the ArduinoCore-API
-  (https://github.com/arduino/ArduinoCore-api), such as:
-    * megaAVR (e.g. Nano Every)
-    * SAMD21 boards w/ `arduino:samd` version >= 1.8.10 (e.g. Nano 33 IoT,
-      MKRZero, etc)
+  (https://github.com/arduino/ArduinoCore-api). For example:
+    * Arduino Nano Every
+    * Arduino Nano 33 IoT
+    * Arduino MKRZero
+    * Arduino UNO R4
     * Raspberry Pi Pico RP2040
 
 <a name="ToolChain"></a>
@@ -1708,24 +1706,28 @@ compiler errors:
 This library was developed and tested using:
 
 * [Arduino IDE 1.8.19](https://www.arduino.cc/en/Main/Software)
-* [Arduino CLI 0.27.1](https://arduino.github.io/arduino-cli)
+* [Arduino CLI 0.33.0](https://arduino.github.io/arduino-cli)
 * [SpenceKonde ATTinyCore 1.5.2](https://github.com/SpenceKonde/ATTinyCore)
-* [Arduino AVR Boards 1.8.5](https://github.com/arduino/ArduinoCore-avr)
+* [Arduino AVR Boards 1.8.6](https://github.com/arduino/ArduinoCore-avr)
 * [Arduino SAMD Boards 1.8.9](https://github.com/arduino/ArduinoCore-samd)
 * [SparkFun AVR Boards 1.1.13](https://github.com/sparkfun/Arduino_Boards)
 * [SparkFun SAMD Boards 1.8.6](https://github.com/sparkfun/Arduino_Boards)
-* [STM32duino 2.3.0](https://github.com/stm32duino/Arduino_Core_STM32)
+* [Adafruit SAMD Boards 1.7.11](https://github.com/adafruit/ArduinoCore-samd)
+* [Seeeduino SAMD Boards 1.8.4](https://github.com/Seeed-Studio/ArduinoCore-samd)
+* [STM32duino 2.6.0](https://github.com/stm32duino/Arduino_Core_STM32)
 * [ESP8266 Arduino 3.0.2](https://github.com/esp8266/Arduino)
-* [ESP32 Arduino 2.0.5](https://github.com/espressif/arduino-esp32)
+* [ESP32 Arduino 2.0.9](https://github.com/espressif/arduino-esp32)
 * [Teensyduino 1.57](https://www.pjrc.com/teensy/td_download.html)
 
 This library is *not* compatible with:
 
 * Any platform using the
   [ArduinoCore-API](https://github.com/arduino/ArduinoCore-api), for example:
-    * [Arduino megaAVR](https://github.com/arduino/ArduinoCore-megaavr/)
+    * [ArduinoCore SAMD >=1.8.10](https://github.com/arduino/ArduinoCore-samd)
+    * [ArduinoCore megaAVR](https://github.com/arduino/ArduinoCore-megaavr/)
+    * [ArduinoCore renesas](https://github.com/arduino/ArduinoCore-renesas)
+    * [Arduino-Pico](https://github.com/earlephilhower/arduino-pico)
     * [MegaCoreX](https://github.com/MCUdude/MegaCoreX)
-    * [Arduino SAMD Boards >=1.8.10](https://github.com/arduino/ArduinoCore-samd)
 
 It should work with [PlatformIO](https://platformio.org/) but I have
 not tested it.
